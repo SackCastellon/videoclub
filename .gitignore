@@ -1,0 +1,15 @@
+### Gradle
+.gradle
+/build/
+
+### JetBrains
+# User-specific stuff
+.idea/**/workspace.xml
+
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+
+# IntelliJ
+out/
+
