@@ -25,6 +25,8 @@ import java.time.LocalDateTime
 data class Stat(
     /** A unique id for this stat. */
     val id: Int,
+    /** The id of the member this sta is about */
+    val memberId: Int,
     /** The date when this stat was created. */
     val creationDate: LocalDateTime,
     /** The total amount of money spent. */

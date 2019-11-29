@@ -25,6 +25,8 @@ import java.time.LocalDate
 data class Movie(
     /** A unique id for this movie. */
     val id: Int,
+    /** The id of the shop this movie belongs to */
+    val shopId: Int,
     /** The name of this movie. */
     val name: String,
     /** The director of this movie. This filed is optional. */
