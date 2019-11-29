@@ -31,6 +31,6 @@ data class Movie(
     val director: String?,
     /** The release date of this movie. */
     val releaseDate: LocalDate,
-    /** The price to rent this movie. */
+    /** The rent price of this movie. */
     val price: BigDecimal
 )
