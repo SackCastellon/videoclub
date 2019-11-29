@@ -22,6 +22,10 @@ dependencies {
     implementation(ktor("websockets"))
     implementation(ktor("network-tls"))
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
+
+    implementation(exposed("core"))
+    implementation(exposed("jdbc"))
+    implementation(exposed("java-time"))
 }
 
 tasks {
