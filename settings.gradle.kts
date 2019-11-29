@@ -1,2 +1,2 @@
 rootProject.name = "videoclub"
-include("videoclub-backend")
+include("videoclub-backend", "videoclub-frontend")
