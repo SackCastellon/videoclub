@@ -6,6 +6,11 @@
 # User-specific stuff
 .idea/**/workspace.xml
 
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
