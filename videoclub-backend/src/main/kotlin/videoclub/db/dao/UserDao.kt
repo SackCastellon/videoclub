@@ -36,6 +36,7 @@ interface UserDao {
 
     /**
      * Adds a new user from the given [credential].
+     * Returns `true` if the user was added successfully, `false` otherwise.
      */
     suspend fun add(credential: UserPasswordCredential): Boolean
 }
