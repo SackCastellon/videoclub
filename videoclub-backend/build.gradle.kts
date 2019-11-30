@@ -29,6 +29,10 @@ dependencies {
     implementation(exposed("core"))
     implementation(exposed("jdbc"))
     implementation(exposed("java-time"))
+
+    implementation("org.springframework.security:spring-security-crypto:5.2.1.RELEASE")
+    implementation("org.springframework:spring-jcl:5.2.1.RELEASE")
+    implementation("org.bouncycastle:bcpkix-jdk15on:1.64")
 }
 
 tasks {
@@ -37,6 +41,7 @@ tasks {
             jvmTarget = "1.8"
             freeCompilerArgs = listOf(
                 "-Xjsr305=strict",
+                "-Xuse-experimental=kotlin.time.ExperimentalTime",
                 "-Xuse-experimental=io.ktor.util.KtorExperimentalAPI"
             )
         }

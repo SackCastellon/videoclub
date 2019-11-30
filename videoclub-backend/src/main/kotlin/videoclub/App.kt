@@ -4,6 +4,7 @@ import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
+import io.ktor.auth.jwt.jwt
 import io.ktor.features.*
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -11,10 +12,16 @@ import io.ktor.http.HttpMethod
 import io.ktor.jackson.jackson
 import io.ktor.response.respondText
 import io.ktor.routing.get
+import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.websocket.WebSockets
 import org.koin.Logger.slf4jLogger
 import org.koin.ktor.ext.Koin
+import videoclub.auth.JwtConfig
+import videoclub.auth.UserPrincipal
+import videoclub.auth.authModule
+import videoclub.db.dao.daoModule
+import videoclub.route.auth
 import java.time.Duration
 
 @Suppress("unused")
@@ -22,9 +29,15 @@ fun Application.module() {
     install(Koin) {
         slf4jLogger()
 
+        modules(authModule)
+        modules(daoModule)
     }
 
     install(Authentication) {
+        jwt {
+            verifier(JwtConfig.verifier)
+            validate { it.payload.getClaim("id").asInt()?.let(::UserPrincipal) }
+        }
     }
 
     install(ContentNegotiation) {
@@ -70,6 +83,10 @@ fun Application.module() {
     routing {
         get("/") {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+        }
+
+        route("api") {
+            auth()
         }
     }
 }
