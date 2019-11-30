@@ -20,6 +20,7 @@ import org.koin.ktor.ext.Koin
 import videoclub.auth.JwtConfig
 import videoclub.auth.UserPrincipal
 import videoclub.auth.authModule
+import videoclub.db.DatabaseConfig
 import videoclub.db.dao.daoModule
 import videoclub.route.auth
 import java.time.Duration
@@ -32,6 +33,8 @@ fun Application.module() {
         modules(authModule)
         modules(daoModule)
     }
+
+    DatabaseConfig.setup()
 
     install(Authentication) {
         jwt {

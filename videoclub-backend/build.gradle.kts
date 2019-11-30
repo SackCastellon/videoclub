@@ -30,6 +30,9 @@ dependencies {
     implementation(exposed("jdbc"))
     implementation(exposed("java-time"))
 
+    implementation("com.zaxxer:HikariCP:3.4.1")
+    implementation("org.postgresql:postgresql:42.2.8")
+
     implementation("org.springframework.security:spring-security-crypto:5.2.1.RELEASE")
     implementation("org.springframework:spring-jcl:5.2.1.RELEASE")
     implementation("org.bouncycastle:bcpkix-jdk15on:1.64")
