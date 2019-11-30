@@ -13,10 +13,17 @@ import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.websocket.WebSockets
+import org.koin.Logger.slf4jLogger
+import org.koin.ktor.ext.Koin
 import java.time.Duration
 
 @Suppress("unused")
 fun Application.module() {
+    install(Koin) {
+        slf4jLogger()
+
+    }
+
     install(Authentication) {
     }
 

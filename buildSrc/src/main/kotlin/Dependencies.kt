@@ -21,11 +21,16 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 const val kotlinVersion: String = "1.3.61"
 const val logbackVersion: String = "1.2.1"
 const val ktorVersion: String = "1.2.6"
+const val koinVersion: String = "2.0.1"
 const val exposedVersion: String = "0.18.1"
 
 @Suppress("unused")
 fun DependencyHandler.ktor(module: String, version: String = ktorVersion): Any =
     "io.ktor:ktor-$module:$version"
+
+@Suppress("unused")
+fun DependencyHandler.koin(module: String, version: String = koinVersion): Any =
+    "org.koin:koin-$module:$version"
 
 @Suppress("unused")
 fun DependencyHandler.exposed(module: String, version: String = exposedVersion): Any =

@@ -23,6 +23,9 @@ dependencies {
     implementation(ktor("network-tls"))
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
+    implementation(koin("ktor"))
+    implementation(koin("logger-slf4j"))
+
     implementation(exposed("core"))
     implementation(exposed("jdbc"))
     implementation(exposed("java-time"))
