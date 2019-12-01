@@ -11,7 +11,7 @@ object CertificateGenerator {
         }
 
         if (!jksFile.exists()) {
-            generateCertificate(jksFile) // Generates the certificate
+            generateCertificate(jksFile, "SHA384withRSA")
         }
     }
 }
