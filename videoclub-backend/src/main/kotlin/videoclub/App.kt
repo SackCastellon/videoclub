@@ -43,6 +43,8 @@ fun Application.module() {
         }
     }
 
+    install(CallLogging)
+
     install(ContentNegotiation) {
         jackson()
     }
