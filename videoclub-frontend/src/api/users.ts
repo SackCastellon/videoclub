@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-import Vue, { VNode } from "vue";
+import {ICredentials, IRegistrationInfo} from '@/store/modules/user';
+import {AxiosResponse} from 'axios';
+import api from '@/api';
 
-declare global {
-  namespace JSX {
-    // tslint:disable no-empty-interface
-    interface Element extends VNode {}
-    // tslint:disable no-empty-interface
-    interface ElementClass extends Vue {}
-    interface IntrinsicElements {
-      [elem: string]: any;
-    }
-  }
+interface LoginResponse {
+    token: string;
+    username: string;
 }
+
+export const register = (registrationInfo: IRegistrationInfo): Promise<AxiosResponse> =>
+    api.post('auth/register', registrationInfo);
+
+export const login = (credentials: ICredentials): Promise<AxiosResponse<LoginResponse>> =>
+    api.post<LoginResponse>('auth/login', credentials);
+
+export const refresh = (): Promise<AxiosResponse<LoginResponse>> =>
+    api.get<LoginResponse>('auth/refresh');

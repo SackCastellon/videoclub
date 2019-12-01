@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-import Vue, { VNode } from "vue";
+import axios from 'axios';
+import {UserModule} from '@/store/modules/user';
 
-declare global {
-  namespace JSX {
-    // tslint:disable no-empty-interface
-    interface Element extends VNode {}
-    // tslint:disable no-empty-interface
-    interface ElementClass extends Vue {}
-    interface IntrinsicElements {
-      [elem: string]: any;
+const api = axios.create({
+    baseURL: process.env.VUE_APP_BASE_API,
+});
+
+api.interceptors.request.use((config) => {
+    const token = UserModule.token;
+    if (token != null) {
+        config.headers.Authorization = `Bearer ${UserModule.token}`;
     }
-  }
-}
+    return config;
+});
+
+export default api;
