@@ -62,11 +62,16 @@ fun Application.module() {
     install(AutoHeadResponse)
 
     install(CORS) {
+        // Methods
         method(HttpMethod.Options)
         method(HttpMethod.Put)
         method(HttpMethod.Delete)
         method(HttpMethod.Patch)
+
+        // Headers
+        header(HttpHeaders.ContentType)
         header(HttpHeaders.Authorization)
+
         anyHost() // TODO: Don't do this in production if possible. Try to limit it.
     }
 
