@@ -16,8 +16,8 @@
 
 package videoclub.db.dao
 
-import io.ktor.auth.UserPasswordCredential
 import videoclub.auth.User
+import videoclub.auth.UserCredential
 
 /**
  * DAO for [User].
@@ -25,9 +25,14 @@ import videoclub.auth.User
 interface UserDao {
 
     /**
-     * Returns the user that matches the given [credential] if any.
+     * Returns the user with the given [id], if any.
      */
-    suspend fun getByCredential(credential: UserPasswordCredential): User?
+    suspend fun getById(id: Int): User?
+
+    /**
+     * Returns the user that matches the given [credential], if any.
+     */
+    suspend fun getByCredential(credential: UserCredential): User?
 
     /**
      * Returns `true` if the given [username] is already stored, `false` otherwise.
@@ -38,5 +43,5 @@ interface UserDao {
      * Adds a new user from the given [credential].
      * Returns `true` if the user was added successfully, `false` otherwise.
      */
-    suspend fun add(credential: UserPasswordCredential): Boolean
+    suspend fun add(credential: UserCredential): Boolean
 }

@@ -16,14 +16,18 @@
 
 package videoclub.auth
 
-import io.ktor.auth.Principal
+import io.ktor.auth.Credential
 
 /**
- * Represents an authenticated principal.
+ * Represents the credentials for authentication.
  */
-data class UserPrincipal(
+data class UserCredential(
     /**
-     * The id of the [User].
+     * The username of the [User].
      */
-    val id: Int
-) : Principal
+    val username: String,
+    /**
+     * The password of the [User].
+     */
+    val password: String
+) : Credential

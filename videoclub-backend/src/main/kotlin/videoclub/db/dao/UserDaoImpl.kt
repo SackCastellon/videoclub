@@ -16,7 +16,6 @@
 
 package videoclub.db.dao
 
-import io.ktor.auth.UserPasswordCredential
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.mapLazy
 import org.jetbrains.exposed.sql.select
@@ -24,6 +23,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 import org.springframework.security.crypto.password.PasswordEncoder
 import videoclub.auth.User
+import videoclub.auth.UserCredential
 import videoclub.db.DatabaseConfig.dbQuery
 import videoclub.db.sql.tables.Users
 
@@ -31,26 +31,30 @@ internal object UserDaoImpl : UserDao, KoinComponent {
 
     private val encoder by inject<PasswordEncoder>()
 
-    override suspend fun getByCredential(credential: UserPasswordCredential): User? = dbQuery {
+    override suspend fun getById(id: Int): User? = dbQuery {
+        Users.select { Users.id eq id }.mapLazy { User(it[Users.id], it[Users.username]) }.singleOrNull()
+    }
+
+    override suspend fun getByCredential(credential: UserCredential): User? = dbQuery {
         val (id, encodedPassword) = Users.slice(Users.id, Users.password)
-            .select { Users.username eq credential.name }
+            .select { Users.username eq credential.username }
             .mapLazy { it[Users.id] to it[Users.password] }
             .singleOrNull() ?: return@dbQuery null
 
         if (!encoder.matches(credential.password, encodedPassword)) return@dbQuery null
 
-        User(id, credential.name)
+        User(id, credential.username)
     }
 
     override suspend fun containsUsername(username: String): Boolean = dbQuery {
         Users.select { Users.username eq username }.empty().not()
     }
 
-    override suspend fun add(credential: UserPasswordCredential): Boolean = dbQuery {
+    override suspend fun add(credential: UserCredential): Boolean = dbQuery {
         val encodedPassword = encoder.encode(credential.password)
 
         val id = Users.insert {
-            it[username] = credential.name
+            it[username] = credential.username
             it[password] = encodedPassword
         }.getOrNull(Users.id)
 

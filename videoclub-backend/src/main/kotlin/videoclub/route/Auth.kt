@@ -17,15 +17,20 @@
 package videoclub.route
 
 import io.ktor.application.call
-import io.ktor.auth.UserPasswordCredential
+import io.ktor.auth.authenticate
+import io.ktor.auth.authentication
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveOrNull
 import io.ktor.response.respond
 import io.ktor.routing.Route
+import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 import videoclub.auth.JwtConfig
+import videoclub.auth.UserCredential
+import videoclub.auth.UserPrincipal
+import videoclub.auth.UserRegistration
 import videoclub.db.dao.UserDao
 
 fun Route.auth() {
@@ -33,10 +38,10 @@ fun Route.auth() {
 
     route("auth") {
         post("login") {
-            val credential = call.receiveOrNull<UserPasswordCredential>()
+            val credential = call.receiveOrNull<UserCredential>()
                 ?: return@post call.respond(HttpStatusCode.BadRequest)
 
-            if (credential.name.length !in 4..24 || credential.password.length !in 8..128) {
+            if (credential.username.length !in 4..24 || credential.password.length !in 8..128) {
                 return@post call.respond(HttpStatusCode.BadRequest)
             }
 
@@ -45,26 +50,42 @@ fun Route.auth() {
 
             val token = JwtConfig.createToken(user)
 
-            call.respond(mapOf("token" to token))
+            call.respond(mapOf("token" to token, "username" to user.username))
         }
 
         post("register") {
-            val credential = call.receiveOrNull<UserPasswordCredential>()
+            val registration = call.receiveOrNull<UserRegistration>()
                 ?: return@post call.respond(HttpStatusCode.BadRequest)
 
-            if (credential.name.length !in 4..24 || credential.password.length !in 8..128) {
+            if (registration.username.length !in 4..24 || registration.password.length !in 8..128) {
                 return@post call.respond(HttpStatusCode.BadRequest)
             }
 
-            if (userDao.containsUsername(credential.name)) {
+            if (userDao.containsUsername(registration.username)) {
                 return@post call.respond(HttpStatusCode.Conflict)
             }
 
-            val success = userDao.add(credential)
+            // TODO Add member information to database
+
+            val success = userDao.add(registration.toCredential())
 
             when {
                 success -> call.respond(HttpStatusCode.OK)
                 else -> call.respond(HttpStatusCode.InternalServerError)
+            }
+        }
+
+        authenticate {
+            get("refresh") {
+                val (id) = call.authentication.principal<UserPrincipal>()
+                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                val user = userDao.getById(id)
+                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                val token = JwtConfig.createToken(user)
+
+                call.respond(mapOf("token" to token, "username" to user.username))
             }
         }
     }
