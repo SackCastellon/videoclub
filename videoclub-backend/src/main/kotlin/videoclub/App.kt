@@ -77,12 +77,6 @@ fun Application.module() {
 
     install(DefaultHeaders)
 
-    install(HSTS)
-
-    install(HttpsRedirect) {
-        sslPort = environment.config.property("ktor.deployment.sslPort").getString().toInt()
-    }
-
     install(WebSockets) {
         pingPeriod = Duration.ofSeconds(15)
         timeout = Duration.ofSeconds(15)

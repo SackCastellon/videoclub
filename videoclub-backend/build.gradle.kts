@@ -20,7 +20,6 @@ dependencies {
     implementation(ktor("auth-jwt"))
     implementation(ktor("jackson"))
     implementation(ktor("websockets"))
-    implementation(ktor("network-tls"))
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     implementation(koin("ktor"))
@@ -50,10 +49,5 @@ tasks {
         }
     }
 
-    val generateJks by register<JavaExec>("generateJks") {
-        classpath = sourceSets["main"].runtimeClasspath
-        main = "videoclub.util.CertificateGenerator"
     }
-
-    getTasksByName("run", false).first().dependsOn(generateJks)
 }
