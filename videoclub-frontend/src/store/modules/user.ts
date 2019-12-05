@@ -76,7 +76,6 @@ class User extends VuexModule implements IUserState {
 
     @MutationAction({mutate: ['token', 'username', 'isAuthenticated']})
     public async refresh() {
-        console.debug('token=' + UserModule.token);
         if (UserModule.token != null && !UserModule.isAuthenticated) {
             const rememberToken = !isOnlySession();
 
