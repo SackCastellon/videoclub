@@ -26,7 +26,7 @@ import kotlin.time.hours
 internal object JwtConfig {
     private const val issuer = "Videoclub"
     private const val subject = "Authentication"
-    private val secret: ByteArray = System.getenv("JWT_SECRET").also { requireNotNull(it) }.let(Base64::decodeBase64)
+    private val secret: ByteArray = System.getenv("JWT_SECRET").let(::checkNotNull).let(Base64::decodeBase64)
 
     private val algorithm = Algorithm.HMAC512(secret)
     private val lifespan = 5.hours.toLongMilliseconds()

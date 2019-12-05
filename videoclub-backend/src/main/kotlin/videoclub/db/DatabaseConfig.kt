@@ -19,11 +19,11 @@ package videoclub.db
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import videoclub.db.sql.tables.*
 
 internal object DatabaseConfig {
@@ -32,28 +32,26 @@ internal object DatabaseConfig {
 
     private fun hikari(): HikariDataSource {
         return HikariConfig().apply {
-            jdbcUrl = System.getenv("DB_URL")
-            username = System.getenv("DB_USER")
-            password = System.getenv("DB_PASS")
+            jdbcUrl = System.getenv("DATABASE_URL").let(::checkNotNull)
+            username = System.getenv("DATABASE_USER").let(::checkNotNull)
+            password = System.getenv("DATABASE_PASSWORD").let(::checkNotNull)
             maximumPoolSize = 5
             isAutoCommit = false
         }.also(HikariConfig::validate).let(::HikariDataSource)
     }
 
-    fun setup() = runBlocking {
-        dbQuery {
-            SchemaUtils.create(
-                Users,
-                Shops,
-                Movies,
-                Members,
-                Rentals,
-                RentalMovies,
-                Stats,
-                Admins,
-                inBatch = true
-            )
-        }
+    fun setup(): Unit = transaction(db) {
+        SchemaUtils.create(
+            Users,
+            Shops,
+            Movies,
+            Members,
+            Rentals,
+            RentalMovies,
+            Stats,
+            Admins,
+            inBatch = true
+        )
     }
 
     suspend fun <T> dbQuery(statement: suspend Transaction.() -> T): T =
