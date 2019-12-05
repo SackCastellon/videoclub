@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     application
     kotlin("jvm") version kotlinVersion
+    id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
 application {
@@ -49,5 +50,9 @@ tasks {
         }
     }
 
+    shadowJar.configure {
+        baseName = "videoclub"
+        classifier = null
+        version = null
     }
 }
