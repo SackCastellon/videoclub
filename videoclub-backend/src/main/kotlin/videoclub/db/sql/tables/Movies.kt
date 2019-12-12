@@ -17,7 +17,7 @@
 package videoclub.db.sql.tables
 
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.date
+import org.jetbrains.exposed.sql.`java-time`.date
 import java.math.BigDecimal
 
 internal object Movies : Table() {

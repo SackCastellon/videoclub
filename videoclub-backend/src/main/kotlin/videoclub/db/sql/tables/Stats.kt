@@ -17,7 +17,7 @@
 package videoclub.db.sql.tables
 
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.datetime
+import org.jetbrains.exposed.sql.`java-time`.datetime
 
 internal object Stats : Table() {
     val id = integer("id").autoIncrement().primaryKey()

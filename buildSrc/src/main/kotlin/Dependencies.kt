@@ -22,7 +22,7 @@ const val kotlinVersion: String = "1.3.61"
 const val logbackVersion: String = "1.2.1"
 const val ktorVersion: String = "1.2.6"
 const val koinVersion: String = "2.0.1"
-const val exposedVersion: String = "0.18.1"
+const val exposedVersion: String = "0.19.1"
 
 @Suppress("unused")
 fun DependencyHandler.ktor(module: String, version: String = ktorVersion): Any =
