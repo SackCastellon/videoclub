@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-import axios from 'axios';
-import {AuthModule} from '@/store/modules/auth';
+import {AxiosResponse} from "axios";
+import api from "@/api/index";
 
-const api = axios.create({
-    baseURL: process.env.VUE_APP_BASE_API,
-    withCredentials: true,
-});
+export interface UserResponse {
+    readonly username: string;
+}
 
-api.interceptors.request.use((config) => {
-    const token = AuthModule.xsrfToken;
-    if (token != null) config.headers["XSRF-Token"] = token;
-    return config;
-});
-
-export default api;
+export const getInfo = (): Promise<AxiosResponse<UserResponse>> =>
+    api.get<UserResponse>("user");

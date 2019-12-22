@@ -42,7 +42,15 @@
         right
         boxed>
         <template v-slot:label>
-          <b-icon :icon="isAuthenticated ? 'account-circle' : 'account-circle-outline'" />
+          <div
+            class="d-flex align-items-center">
+            <b-icon
+              :icon="isAuthenticated ? 'account-circle' : 'account-circle-outline'"
+              class="mr-1" />
+            <p>
+              Account
+            </p>
+          </div>
         </template>
         <template v-if="isAuthenticated">
           <b-navbar-item tag="div">
@@ -97,8 +105,9 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from "vue-property-decorator";
-    import {UserModule} from '@/store/modules/user';
+    import {Component, Vue, Watch} from "vue-property-decorator";
+    import {AuthModule} from '@/store/modules/auth';
+    import {UserModule} from "@/store/modules/user";
 
     const BIcon = () => import(/* webpackChunkName: "b_icon" */ 'buefy/src/components/icon/Icon.vue');
     const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
@@ -124,7 +133,7 @@
         }
 
         public get isAuthenticated(): boolean {
-            return UserModule.isAuthenticated;
+            return AuthModule.isAuthenticated;
         }
 
         // ===== Methods ===== //
@@ -135,7 +144,14 @@
 
         public async logout() {
             this.closeMenu();
-            await UserModule.logout();
+            await AuthModule.logout();
+        }
+
+        // ===== Watchers ===== //
+
+        @Watch('isAuthenticated', {immediate: true})
+        public async onAuthenticated() {
+            await UserModule.loadInfo()
         }
     }
 </script>

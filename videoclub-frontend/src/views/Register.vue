@@ -74,8 +74,8 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {IRegistrationInfo} from '@/store/modules/user';
-    import {register} from '@/api/users';
+    import {IRegistrationInfo} from '@/store/modules/auth';
+    import {register} from '@/api/auth';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');

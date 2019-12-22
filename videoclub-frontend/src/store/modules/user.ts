@@ -14,89 +14,27 @@
  * limitations under the License.
  */
 
-import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
-import {clearToken, getToken, isOnlySession, setToken} from '@/util/jwt';
-import store from '@/store';
-import {login, refresh} from '@/api/users';
+import {getModule, Module, MutationAction, VuexModule} from "vuex-module-decorators";
+import store from "@/store";
+import {getInfo} from "@/api/user";
+import {AuthModule} from "@/store/modules/auth";
 
 interface IUserState {
-    token: string | null;
     username: string | null;
-    isAuthenticated: boolean;
 }
 
-export interface ICredentials {
-    username: string;
-    password: string;
-}
-
-export interface ILoginInfo {
-    username: string;
-    password: string;
-    rememberToken: boolean;
-}
-
-export interface IRegistrationInfo {
-    username: string;
-    password: string;
-    name: string;
-    age: number;
-}
-
-@Module({dynamic: true, store, name: 'user'})
+@Module({dynamic: true, store, name: 'user-sdfsdfsdf'})
 class User extends VuexModule implements IUserState {
-    public token: string | null = getToken();
     public username: string | null = null;
-    public isAuthenticated: boolean = false;
 
-    @MutationAction({mutate: ['token', 'username', 'isAuthenticated']})
-    public async login(loginInfo: ILoginInfo) {
-        const {data} = await login({username: loginInfo.username, password: loginInfo.password});
-        const {token, username} = data;
-
-        setToken(token, loginInfo.rememberToken);
-
-        return {
-            token,
-            username,
-            isAuthenticated: true,
-        };
-    }
-
-    @MutationAction({mutate: ['token', 'username', 'isAuthenticated']})
-    public async logout() {
-        clearToken();
-
-        return {
-            token: null,
-            username: null,
-            isAuthenticated: false,
-        };
-    }
-
-    @MutationAction({mutate: ['token', 'username', 'isAuthenticated']})
-    public async refresh() {
-        if (UserModule.token != null && !UserModule.isAuthenticated) {
-            const rememberToken = !isOnlySession();
-
-            const {data} = await refresh();
-            const {token, username} = data;
-
-            setToken(token, rememberToken);
-
-            return {
-                token,
-                username,
-                isAuthenticated: true,
-            };
+    @MutationAction({mutate: ['username']})
+    public async loadInfo(): Promise<IUserState> {
+        if (AuthModule.isAuthenticated) {
+            const response = await getInfo();
+            const username = response.data.username;
+            return {username};
         } else {
-            clearToken();
-
-            return {
-                token: null,
-                username: null,
-                isAuthenticated: false,
-            };
+            return {username: null};
         }
     }
 }

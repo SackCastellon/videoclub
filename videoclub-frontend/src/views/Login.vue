@@ -42,10 +42,6 @@
                 placeholder="Your password"
                 required />
             </b-field>
-
-            <b-checkbox v-model="loginInfo.rememberToken">
-              Remember me
-            </b-checkbox>
           </section>
           <footer class="modal-card-foot">
             <b-button
@@ -62,7 +58,7 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {ILoginInfo, UserModule} from '@/store/modules/user';
+    import {AuthModule, ILoginInfo} from '@/store/modules/auth';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
@@ -84,15 +80,14 @@
         protected loginInfo: ILoginInfo = {
             username: '',
             password: '',
-            rememberToken: false,
         };
 
         // ===== Methods ===== //
 
         public async onLogin(loginInfo: ILoginInfo) {
-            await UserModule.login(loginInfo);
+            await AuthModule.login(loginInfo);
 
-            if (UserModule.isAuthenticated) {
+            if (AuthModule.isAuthenticated) {
                 await this.$router.push({name: 'home'});
             }
         }

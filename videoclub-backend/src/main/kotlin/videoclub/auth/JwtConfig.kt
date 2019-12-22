@@ -21,15 +21,21 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import org.apache.commons.codec.binary.Base64
 import java.util.*
-import kotlin.time.hours
+import kotlin.time.minutes
 
 internal object JwtConfig {
+
     private const val issuer = "Videoclub"
     private const val subject = "Authentication"
     private val secret: ByteArray = System.getenv("JWT_SECRET").let(::checkNotNull).let(Base64::decodeBase64)
 
     private val algorithm = Algorithm.HMAC512(secret)
-    private val lifespan = 5.hours.toLongMilliseconds()
+    private val lifespan = 10.minutes.toLongMilliseconds()
+
+    internal const val CLAIM_USER = "id"
+    internal const val CLAIM_CSRF = "xsrf"
+    internal const val HEADER_CSRF = "XSRF-Token"
+    internal const val COOKIE_JWT = "token"
 
     val verifier: JWTVerifier = JWT
         .require(algorithm)
@@ -37,16 +43,17 @@ internal object JwtConfig {
         .withSubject(subject)
         .build()
 
-    private const val CLAIM_USER = "id"
-
     /**
-     * Creates a _JSON Web Token_ for the given [user].
+     * Creates a _JSON Web Token_ for the given [user], with the given [xsrfToken].
      */
-    fun createToken(user: User): String = JWT
+    fun createToken(user: User, xsrfToken: String): String = JWT
         .create()
         .withIssuer(issuer)
         .withSubject(subject)
         .withClaim(CLAIM_USER, user.id)
-        .withExpiresAt(Date(System.currentTimeMillis() + lifespan))
+        .withClaim(CLAIM_CSRF, xsrfToken)
+        .withExpiresAt(expiration)
         .sign(algorithm)
+
+    private inline val expiration: Date get() = Date(System.currentTimeMillis() + lifespan)
 }

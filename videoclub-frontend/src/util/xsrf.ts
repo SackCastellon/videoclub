@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import axios from 'axios';
-import {AuthModule} from '@/store/modules/auth';
+const TOKEN_KEY = 'xsrfToken';
 
-const api = axios.create({
-    baseURL: process.env.VUE_APP_BASE_API,
-    withCredentials: true,
-});
+export const getToken = (): string | null =>
+    window.localStorage.getItem(TOKEN_KEY);
 
-api.interceptors.request.use((config) => {
-    const token = AuthModule.xsrfToken;
-    if (token != null) config.headers["XSRF-Token"] = token;
-    return config;
-});
+export const setToken = (token: string): void =>
+    window.localStorage.setItem(TOKEN_KEY, token);
 
-export default api;
+export const clearToken = (): void =>
+    window.localStorage.removeItem(TOKEN_KEY);

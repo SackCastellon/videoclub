@@ -9,6 +9,7 @@ import io.ktor.features.*
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
+import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.jackson.jackson
 import io.ktor.response.respondText
 import io.ktor.routing.get
@@ -23,6 +24,7 @@ import videoclub.auth.authModule
 import videoclub.db.DatabaseConfig
 import videoclub.db.dao.daoModule
 import videoclub.route.auth
+import videoclub.route.user
 import java.time.Duration
 
 @Suppress("unused")
@@ -38,8 +40,19 @@ fun Application.module() {
 
     install(Authentication) {
         jwt {
+            authHeader {
+                val jwtToken = it.request.cookies[JwtConfig.COOKIE_JWT] ?: return@authHeader null
+
+                HttpAuthHeader.Single("Bearer", jwtToken)
+            }
             verifier(JwtConfig.verifier)
-            validate { it.payload.getClaim("id").asInt()?.let(::UserPrincipal) }
+            validate {
+                val xsrfHeader = request.headers[JwtConfig.HEADER_CSRF] ?: return@validate null
+                val xsrfToken = it.payload.getClaim(JwtConfig.CLAIM_CSRF).asString() ?: return@validate null
+                if (xsrfHeader != xsrfToken) return@validate null
+
+                it.payload.getClaim(JwtConfig.CLAIM_USER).asInt()?.let(::UserPrincipal)
+            }
         }
     }
 
@@ -70,7 +83,11 @@ fun Application.module() {
 
         // Headers
         header(HttpHeaders.ContentType)
-        header(HttpHeaders.Authorization)
+        header(JwtConfig.HEADER_CSRF)
+
+        exposeHeader(JwtConfig.HEADER_CSRF)
+
+        allowCredentials = true
 
         anyHost() // TODO: Don't do this in production if possible. Try to limit it.
     }
@@ -91,6 +108,7 @@ fun Application.module() {
 
         route("api") {
             auth()
+            user()
         }
     }
 }

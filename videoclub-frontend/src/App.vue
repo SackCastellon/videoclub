@@ -23,7 +23,7 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {UserModule} from '@/store/modules/user';
+    import {AuthModule} from '@/store/modules/auth';
 
     const Navbar = () => import(/* webpackChunkName: "navbar" */ '@/components/Navbar.vue');
 
@@ -38,7 +38,7 @@
 
         // noinspection JSUnusedGlobalSymbols
         protected async beforeCreate() {
-            await UserModule.refresh();
+            await AuthModule.refreshToken();
         }
     }
 </script>

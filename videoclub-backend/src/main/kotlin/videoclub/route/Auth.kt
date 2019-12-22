@@ -16,22 +16,26 @@
 
 package videoclub.route
 
+import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.auth.authentication
+import io.ktor.http.Cookie
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveOrNull
+import io.ktor.response.header
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
+import io.ktor.util.date.GMTDate
 import org.koin.ktor.ext.inject
-import videoclub.auth.JwtConfig
-import videoclub.auth.UserCredential
-import videoclub.auth.UserPrincipal
-import videoclub.auth.UserRegistration
+import videoclub.auth.*
 import videoclub.db.dao.UserDao
+import java.nio.ByteBuffer
+import java.util.*
+import kotlin.time.minutes
 
 fun Route.auth() {
     val userDao by inject<UserDao>()
@@ -48,9 +52,7 @@ fun Route.auth() {
             val user = userDao.getByCredential(credential)
                 ?: return@post call.respond(HttpStatusCode.Unauthorized)
 
-            val token = JwtConfig.createToken(user)
-
-            call.respond(mapOf("token" to token, "username" to user.username))
+            call.respondAuth(user)
         }
 
         post("register") {
@@ -83,10 +85,52 @@ fun Route.auth() {
                 val user = userDao.getById(id)
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
-                val token = JwtConfig.createToken(user)
+                call.respondAuth(user)
+            }
 
-                call.respond(mapOf("token" to token, "username" to user.username))
+            get("logout") {
+
+                val cookie = Cookie(
+                    name = JwtConfig.COOKIE_JWT,
+                    value = "",
+                    expires = GMTDate.START,
+                    path = "/",
+                    //secure = true,
+                    httpOnly = true,
+                    extensions = mapOf("SameSite" to "Strict")
+                )
+
+                call.response.cookies.append(cookie)
+                call.respond(HttpStatusCode.OK)
             }
         }
     }
 }
+
+private suspend fun ApplicationCall.respondAuth(user: User) {
+    val xsrfToken = createXsrfToken()
+    val cookie = cookie(user, xsrfToken)
+
+    response.header(JwtConfig.HEADER_CSRF, xsrfToken)
+    response.cookies.append(cookie)
+    respond(HttpStatusCode.OK)
+}
+
+private fun createXsrfToken(): String {
+    val uuid = UUID.randomUUID()
+    val bytes = ByteBuffer.allocate(Long.SIZE_BYTES * 2).apply {
+        putLong(uuid.mostSignificantBits)
+        putLong(uuid.leastSignificantBits)
+    }
+    return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes.array())
+}
+
+private fun cookie(user: User, xsrfToken: String): Cookie = Cookie(
+    name = JwtConfig.COOKIE_JWT,
+    value = JwtConfig.createToken(user, xsrfToken),
+    maxAge = 10.minutes.inSeconds.toInt(),
+    path = "/",
+    //secure = true,
+    httpOnly = true,
+    extensions = mapOf("SameSite" to "Strict")
+)
