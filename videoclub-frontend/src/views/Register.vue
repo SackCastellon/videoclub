@@ -127,6 +127,8 @@
 
 <style lang="scss" scoped>
   .modal-card {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+
     @media screen and (min-width: 769px) {
       width: 350px;
       margin-top: 5rem;
