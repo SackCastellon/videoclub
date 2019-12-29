@@ -19,7 +19,7 @@
     <div class="container">
       <form
         method="post"
-        @submit.prevent="onLogin(loginInfo)">
+        @submit.prevent="onLogin(info)">
         <div class="modal-card">
           <header class="modal-card-head">
             <p class="modal-card-title">
@@ -29,14 +29,15 @@
           <section class="modal-card-body">
             <b-field label="Username">
               <b-input
-                v-model="loginInfo.username"
+                v-model="info.username"
+                v-focus
                 placeholder="Your username"
                 required />
             </b-field>
 
             <b-field label="Password">
               <b-input
-                v-model="loginInfo.password"
+                v-model="info.password"
                 type="password"
                 password-reveal
                 placeholder="Your password"
@@ -58,39 +59,49 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {AuthModule, ILoginInfo} from '@/store/modules/auth';
+    import {ILoginInfo, login} from '@/api/auth';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
     const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
-    const BCheckbox = () => import(/* webpackChunkName: "b_checkbox" */ 'buefy/src/components/checkbox/Checkbox.vue');
 
     @Component({
         components: {
             BField,
             BInput,
             BButton,
-            BCheckbox,
         },
     })
     export default class Login extends Vue {
 
-        // ===== Data ===== //
+        // ========== Data ========== //
 
-        protected loginInfo: ILoginInfo = {
+        protected info: ILoginInfo = {
             username: '',
             password: '',
         };
 
-        // ===== Methods ===== //
 
-        public async onLogin(loginInfo: ILoginInfo) {
-            await AuthModule.login(loginInfo);
+        // ========== Computed ========== //
 
-            if (AuthModule.isAuthenticated) {
+
+        // ========== Lifecycle hooks ========== //
+
+
+        // ========== Methods ========== //
+
+        public async onLogin(info: ILoginInfo) {
+            try {
+                await login(info);
                 await this.$router.push({name: 'home'});
+            } catch (error) {
+                alert('TODO: Error during login');
             }
         }
+
+
+        // ========== Watchers ========== //
+
     }
 </script>
 

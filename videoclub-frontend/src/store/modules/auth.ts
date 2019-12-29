@@ -14,83 +14,20 @@
  * limitations under the License.
  */
 
-import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
-import {clearToken, getToken, setToken} from '@/util/xsrf';
+import {getModule, Module, Mutation, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
-import {login, logout, refresh} from '@/api/auth';
 
 interface IAuthState {
-    xsrfToken: string | null;
     isAuthenticated: boolean;
-}
-
-export interface ICredentials {
-    username: string;
-    password: string;
-}
-
-export interface ILoginInfo {
-    username: string;
-    password: string;
-}
-
-export interface IRegistrationInfo {
-    username: string;
-    password: string;
-    name: string;
-    age: number;
 }
 
 @Module({dynamic: true, store, name: 'auth'})
 class Auth extends VuexModule implements IAuthState {
-    public xsrfToken: string | null = getToken();
     public isAuthenticated: boolean = false;
 
-    @MutationAction({mutate: ['xsrfToken', 'isAuthenticated']})
-    public async login(loginInfo: ILoginInfo): Promise<IAuthState> {
-        const response = await login({username: loginInfo.username, password: loginInfo.password});
-        const xsrfToken = response.headers["xsrf-token"];
-
-        setToken(xsrfToken);
-
-        return {
-            xsrfToken,
-            isAuthenticated: true,
-        };
-    }
-
-    @MutationAction({mutate: ['xsrfToken', 'isAuthenticated']})
-    public async logout(): Promise<IAuthState> {
-        await logout();
-
-        clearToken();
-
-        return {
-            xsrfToken: null,
-            isAuthenticated: false,
-        };
-    }
-
-    @MutationAction({mutate: ['xsrfToken', 'isAuthenticated']})
-    public async refreshToken(): Promise<IAuthState> {
-        if (AuthModule.xsrfToken != null && !AuthModule.isAuthenticated) {
-            const response = await refresh();
-            const xsrfToken = response.headers["xsrf-token"];
-
-            setToken(xsrfToken);
-
-            return {
-                xsrfToken,
-                isAuthenticated: true,
-            };
-        } else {
-            clearToken();
-
-            return {
-                xsrfToken: null,
-                isAuthenticated: false,
-            };
-        }
+    @Mutation
+    public setAuthenticated(authenticated: boolean) {
+        this.isAuthenticated = authenticated;
     }
 }
 

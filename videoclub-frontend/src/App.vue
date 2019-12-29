@@ -23,7 +23,7 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {AuthModule} from '@/store/modules/auth';
+    import {refreshToken} from '@/api/auth';
 
     const Navbar = () => import(/* webpackChunkName: "navbar" */ '@/components/Navbar.vue');
 
@@ -34,11 +34,27 @@
     })
     export default class App extends Vue {
 
-        // ===== Lifecycle Hooks ===== //
+        // ========== Data ========== //
+
+
+        // ========== Computed ========== //
+
+
+        // ========== Lifecycle Hooks ========== //
 
         // noinspection JSUnusedGlobalSymbols
-        protected async beforeCreate() {
-            await AuthModule.refreshToken();
+        public async beforeCreate() {
+            try {
+                await refreshToken();
+            } catch (error) {
+            }
         }
+
+
+        // ========== Methods ========== //
+
+
+        // ========== Watchers ========== //
+
     }
 </script>

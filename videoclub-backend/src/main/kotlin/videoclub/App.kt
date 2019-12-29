@@ -18,7 +18,7 @@ import io.ktor.routing.routing
 import io.ktor.websocket.WebSockets
 import org.koin.Logger.slf4jLogger
 import org.koin.ktor.ext.Koin
-import videoclub.auth.JwtConfig
+import videoclub.auth.AuthConfig
 import videoclub.auth.UserPrincipal
 import videoclub.auth.authModule
 import videoclub.db.DatabaseConfig
@@ -41,17 +41,17 @@ fun Application.module() {
     install(Authentication) {
         jwt {
             authHeader {
-                val jwtToken = it.request.cookies[JwtConfig.COOKIE_JWT] ?: return@authHeader null
+                val jwtToken = it.request.cookies[AuthConfig.COOKIE_JWT] ?: return@authHeader null
 
                 HttpAuthHeader.Single("Bearer", jwtToken)
             }
-            verifier(JwtConfig.verifier)
+            verifier(AuthConfig.verifier)
             validate {
-                val xsrfHeader = request.headers[JwtConfig.HEADER_CSRF] ?: return@validate null
-                val xsrfToken = it.payload.getClaim(JwtConfig.CLAIM_CSRF).asString() ?: return@validate null
+                val xsrfHeader = request.headers[AuthConfig.HEADER_XSRF] ?: return@validate null
+                val xsrfToken = it.payload.getClaim(AuthConfig.CLAIM_XSRF).asString() ?: return@validate null
                 if (xsrfHeader != xsrfToken) return@validate null
 
-                it.payload.getClaim(JwtConfig.CLAIM_USER).asInt()?.let(::UserPrincipal)
+                it.payload.getClaim(AuthConfig.CLAIM_USER).asInt()?.let(::UserPrincipal)
             }
         }
     }
@@ -83,9 +83,9 @@ fun Application.module() {
 
         // Headers
         header(HttpHeaders.ContentType)
-        header(JwtConfig.HEADER_CSRF)
+        header(AuthConfig.HEADER_XSRF)
 
-        exposeHeader(JwtConfig.HEADER_CSRF)
+        exposeHeader(AuthConfig.HEADER_XSRF)
 
         allowCredentials = true
 

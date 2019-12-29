@@ -61,7 +61,7 @@
           <hr class="navbar-divider">
           <b-navbar-item
             class="d-flex align-items-center"
-            @click="logout()">
+            @click="logout">
             <b-icon
               icon="logout-variant"
               class="mr-1"
@@ -76,7 +76,7 @@
             tag="router-link"
             :to="{ name: 'login' }"
             class="d-flex align-items-center"
-            @click.native="closeMenu()">
+            @click.native="closeMenu">
             <b-icon
               icon="login-variant"
               class="mr-1" />
@@ -89,7 +89,7 @@
             tag="router-link"
             :to="{ name: 'register' }"
             class="d-flex align-items-center"
-            @click.native="closeMenu()">
+            @click.native="closeMenu">
             <b-icon
               icon="account-plus"
               class="mr-1"
@@ -105,9 +105,10 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue, Watch} from "vue-property-decorator";
+    import {Component, Vue, Watch} from 'vue-property-decorator';
     import {AuthModule} from '@/store/modules/auth';
-    import {UserModule} from "@/store/modules/user";
+    import {UserModule} from '@/store/modules/user';
+    import {logout} from '@/api/auth';
 
     const BIcon = () => import(/* webpackChunkName: "b_icon" */ 'buefy/src/components/icon/Icon.vue');
     const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
@@ -126,7 +127,10 @@
     })
     export default class Navbar extends Vue {
 
-        // ===== Computed ===== //
+        // ========== Data ========== //
+
+
+        // ========== Computed ========== //
 
         public get username(): string | null {
             return UserModule.username;
@@ -136,22 +140,27 @@
             return AuthModule.isAuthenticated;
         }
 
-        // ===== Methods ===== //
+
+        // ========== Lifecycle Hooks ========== //
+
+
+        // ========== Methods ========== //
 
         public closeMenu() {
             (this.$refs.dropdown as any).closeMenu();
         }
 
-        public async logout() {
+        public logout() {
             this.closeMenu();
-            await AuthModule.logout();
+            logout();
         }
 
-        // ===== Watchers ===== //
+
+        // ========== Watchers ========== //
 
         @Watch('isAuthenticated', {immediate: true})
-        public async onAuthenticated() {
-            await UserModule.loadInfo()
+        public onAuthenticated() {
+            UserModule.loadInfo();
         }
     }
 </script>

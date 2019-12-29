@@ -19,7 +19,7 @@
     <div class="container">
       <form
         method="post"
-        @submit.prevent="onRegister(registrationInfo)">
+        @submit.prevent="onRegister(info)">
         <div class="modal-card">
           <header class="modal-card-head">
             <p class="modal-card-title">
@@ -29,14 +29,15 @@
           <section class="modal-card-body">
             <b-field label="Name">
               <b-input
-                v-model="registrationInfo.name"
+                v-model="info.name"
+                v-focus
                 placeholder="Your full name"
                 required />
             </b-field>
 
             <b-field label="Age">
               <b-numberinput
-                v-model="registrationInfo.age"
+                v-model="info.age"
                 min="0"
                 max="150"
                 placeholder="Your age"
@@ -45,14 +46,14 @@
 
             <b-field label="Username">
               <b-input
-                v-model="registrationInfo.username"
+                v-model="info.username"
                 placeholder="Your username"
                 required />
             </b-field>
 
             <b-field label="Password">
               <b-input
-                v-model="registrationInfo.password"
+                v-model="info.password"
                 type="password"
                 password-reveal
                 placeholder="Your password"
@@ -74,8 +75,7 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {IRegistrationInfo} from '@/store/modules/auth';
-    import {register} from '@/api/auth';
+    import {IRegistrationInfo, register} from '@/api/auth';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
@@ -91,20 +91,37 @@
         },
     })
     export default class Register extends Vue {
-        protected registrationInfo: IRegistrationInfo = {
+
+        // ========== Data ========== //
+
+        public info: IRegistrationInfo = {
             name: '',
             age: 0,
             username: '',
             password: '',
         };
 
-        protected async onRegister(registrationInfo: IRegistrationInfo) {
-            const {status} = await register(registrationInfo);
 
-            if (status == 200) {
+        // ========== Computed ========== //
+
+
+        // ========== Lifecycle hooks ========== //
+
+
+        // ========== Methods ========== //
+
+        public async onRegister(info: IRegistrationInfo) {
+            try {
+                await register(info);
                 await this.$router.push({name: 'login'});
+            } catch (error) {
+                alert('TODO: Error during registration');
             }
         }
+
+
+        // ========== Watchers ========== //
+
     }
 </script>
 

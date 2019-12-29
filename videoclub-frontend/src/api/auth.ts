@@ -14,18 +14,65 @@
  * limitations under the License.
  */
 
-import {ICredentials, IRegistrationInfo} from '@/store/modules/auth';
 import {AxiosResponse} from 'axios';
 import api from '@/api';
+import {AuthModule} from '@/store/modules/auth';
 
-export const register = (registrationInfo: IRegistrationInfo): Promise<AxiosResponse> =>
-    api.post('auth/register', registrationInfo);
 
-export const login = (credentials: ICredentials): Promise<AxiosResponse> =>
-    api.post('auth/login', credentials);
+const refreshWindow = 5000;
+const minRefreshTimeout = 30000;
+let timeoutID: number;
 
-export const refresh = (): Promise<AxiosResponse> =>
-    api.get('auth/refresh');
 
-export const logout = (): Promise<AxiosResponse> =>
-    api.get('auth/logout');
+export const register = async (registrationInfo: IRegistrationInfo): Promise<AxiosResponse> => {
+    return await api.post('auth/register', registrationInfo);
+};
+
+export const login = async (loginInfo: ILoginInfo): Promise<AxiosResponse> => {
+    try {
+        const response = await api.post('auth/login', loginInfo);
+        const lifespan: number = response.data.lifespan;
+        const timeout = Math.max(minRefreshTimeout, lifespan - refreshWindow);
+        timeoutID = window.setTimeout(refreshToken, timeout);
+        AuthModule.setAuthenticated(true);
+        return response;
+    } catch (error) {
+        AuthModule.setAuthenticated(false);
+        throw error;
+    }
+};
+
+export const refreshToken = async (): Promise<AxiosResponse> => {
+    try {
+        window.clearTimeout(timeoutID);
+        const response = await api.get('auth/refresh');
+        const lifespan: number = response.data.lifespan;
+        const timeout = Math.max(minRefreshTimeout, lifespan - refreshWindow);
+        timeoutID = window.setTimeout(refreshToken, timeout);
+        AuthModule.setAuthenticated(true);
+        return response;
+    } catch (error) {
+        AuthModule.setAuthenticated(false);
+        throw error;
+    }
+};
+
+export const logout = async (): Promise<AxiosResponse> => {
+    window.clearTimeout(timeoutID);
+    const response = await api.get('auth/logout');
+    AuthModule.setAuthenticated(false);
+    return response;
+};
+
+
+export interface ILoginInfo {
+    username: string;
+    password: string;
+}
+
+export interface IRegistrationInfo {
+    name: string;
+    age: number;
+    username: string;
+    password: string;
+}

@@ -23,19 +23,19 @@ import io.ktor.auth.authentication
 import io.ktor.http.Cookie
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveOrNull
-import io.ktor.response.header
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
-import io.ktor.util.date.GMTDate
 import org.koin.ktor.ext.inject
 import videoclub.auth.*
 import videoclub.db.dao.UserDao
 import java.nio.ByteBuffer
 import java.util.*
-import kotlin.time.minutes
+import java.util.concurrent.TimeUnit
+import kotlin.time.DurationUnit
+import kotlin.time.milliseconds
 
 fun Route.auth() {
     val userDao by inject<UserDao>()
@@ -89,18 +89,10 @@ fun Route.auth() {
             }
 
             get("logout") {
-
-                val cookie = Cookie(
-                    name = JwtConfig.COOKIE_JWT,
-                    value = "",
-                    expires = GMTDate.START,
-                    path = "/",
-                    //secure = true,
-                    httpOnly = true,
-                    extensions = mapOf("SameSite" to "Strict")
-                )
-
-                call.response.cookies.append(cookie)
+                call.response.cookies.apply {
+                    appendExpired(name = AuthConfig.COOKIE_JWT, path = "/")
+                    appendExpired(name = AuthConfig.COOKIE_XSRF, path = "/")
+                }
                 call.respond(HttpStatusCode.OK)
             }
         }
@@ -109,12 +101,19 @@ fun Route.auth() {
 
 private suspend fun ApplicationCall.respondAuth(user: User) {
     val xsrfToken = createXsrfToken()
-    val cookie = cookie(user, xsrfToken)
 
-    response.header(JwtConfig.HEADER_CSRF, xsrfToken)
-    response.cookies.append(cookie)
-    respond(HttpStatusCode.OK)
+    response.cookies.apply {
+        append(jwtCookie(user, xsrfToken))
+        append(xsrfCookie(xsrfToken))
+    }
+
+    respond(HttpStatusCode.OK, mapOf("lifespan" to AuthConfig.tokenLifespan))
 }
+
+// ========== Auxiliary methods ========== //
+
+private val encoder: Base64.Encoder by lazy { Base64.getUrlEncoder().withoutPadding() }
+private val cookieMaxAge: Int = AuthConfig.tokenLifespan.milliseconds.toInt(DurationUnit.SECONDS)
 
 private fun createXsrfToken(): String {
     val uuid = UUID.randomUUID()
@@ -122,15 +121,24 @@ private fun createXsrfToken(): String {
         putLong(uuid.mostSignificantBits)
         putLong(uuid.leastSignificantBits)
     }
-    return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes.array())
+    return encoder.encodeToString(bytes.array())
 }
 
-private fun cookie(user: User, xsrfToken: String): Cookie = Cookie(
-    name = JwtConfig.COOKIE_JWT,
-    value = JwtConfig.createToken(user, xsrfToken),
-    maxAge = 10.minutes.inSeconds.toInt(),
+private fun jwtCookie(user: User, xsrfToken: String): Cookie = Cookie(
+    name = AuthConfig.COOKIE_JWT,
+    value = AuthConfig.createToken(user, xsrfToken),
+    maxAge = cookieMaxAge,
     path = "/",
     //secure = true,
     httpOnly = true,
+    extensions = mapOf("SameSite" to "Strict")
+)
+
+private fun xsrfCookie(xsrfToken: String): Cookie = Cookie(
+    name = AuthConfig.COOKIE_XSRF,
+    value = xsrfToken,
+    maxAge = cookieMaxAge,
+    path = "/",
+    //secure = true,
     extensions = mapOf("SameSite" to "Strict")
 )

@@ -21,12 +21,19 @@ import store from './store';
 
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.min.css';
-import '@mdi/font/css/materialdesignicons.min.css'
-import 'bootstrap/dist/css/bootstrap-grid.min.css'
+import '@mdi/font/css/materialdesignicons.min.css';
+import 'bootstrap/dist/css/bootstrap-grid.min.css';
 
 Vue.config.productionTip = false;
 
 Vue.use(Buefy);
+
+Vue.directive('focus', {
+    inserted: el => {
+        const child = el.querySelector('input') || el.querySelector('button');
+        if (child) child.focus();
+    },
+});
 
 new Vue({
     router,

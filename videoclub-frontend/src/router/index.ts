@@ -31,7 +31,7 @@ const routes: RouteConfig[] = [
         path: '/login',
         name: 'login',
         meta: {
-            requiresNoAuth: true,
+            requiresAuth: false,
         },
         component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
     },
@@ -39,7 +39,7 @@ const routes: RouteConfig[] = [
         path: '/register',
         name: 'register',
         meta: {
-            requiresNoAuth: true,
+            requiresAuth: false,
         },
         component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue'),
     },
@@ -52,12 +52,9 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    if (to.meta.requiresNoAuth) {
-        await AuthModule.refreshToken();
-
-        if (AuthModule.isAuthenticated) {
-            return next({name: 'home'});
-        }
+    const requiresAuth = to.meta.requiresAuth;
+    if (requiresAuth !== undefined && requiresAuth !== AuthModule.isAuthenticated) {
+        return next({name: 'home'});
     }
 
     next();

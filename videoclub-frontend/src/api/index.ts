@@ -15,17 +15,12 @@
  */
 
 import axios from 'axios';
-import {AuthModule} from '@/store/modules/auth';
 
 const api = axios.create({
     baseURL: process.env.VUE_APP_BASE_API,
+    xsrfCookieName: 'XSRF-Token',
+    xsrfHeaderName: 'XSRF-Token',
     withCredentials: true,
-});
-
-api.interceptors.request.use((config) => {
-    const token = AuthModule.xsrfToken;
-    if (token != null) config.headers["XSRF-Token"] = token;
-    return config;
 });
 
 export default api;

@@ -23,19 +23,21 @@ import org.apache.commons.codec.binary.Base64
 import java.util.*
 import kotlin.time.minutes
 
-internal object JwtConfig {
+internal object AuthConfig {
 
     private const val issuer = "Videoclub"
     private const val subject = "Authentication"
     private val secret: ByteArray = System.getenv("JWT_SECRET").let(::checkNotNull).let(Base64::decodeBase64)
-
     private val algorithm = Algorithm.HMAC512(secret)
-    private val lifespan = 10.minutes.toLongMilliseconds()
+
+    internal val tokenLifespan = 10.minutes.toLongMilliseconds()
 
     internal const val CLAIM_USER = "id"
-    internal const val CLAIM_CSRF = "xsrf"
-    internal const val HEADER_CSRF = "XSRF-Token"
-    internal const val COOKIE_JWT = "token"
+    internal const val CLAIM_XSRF = "xsrf"
+
+    internal const val COOKIE_JWT = "JWT-Token"
+    internal const val COOKIE_XSRF = "XSRF-Token"
+    internal const val HEADER_XSRF = COOKIE_XSRF
 
     val verifier: JWTVerifier = JWT
         .require(algorithm)
@@ -51,9 +53,9 @@ internal object JwtConfig {
         .withIssuer(issuer)
         .withSubject(subject)
         .withClaim(CLAIM_USER, user.id)
-        .withClaim(CLAIM_CSRF, xsrfToken)
+        .withClaim(CLAIM_XSRF, xsrfToken)
         .withExpiresAt(expiration)
         .sign(algorithm)
 
-    private inline val expiration: Date get() = Date(System.currentTimeMillis() + lifespan)
+    private inline val expiration: Date get() = Date(System.currentTimeMillis() + tokenLifespan)
 }

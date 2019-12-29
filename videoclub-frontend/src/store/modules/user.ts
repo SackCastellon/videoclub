@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-import {getModule, Module, MutationAction, VuexModule} from "vuex-module-decorators";
-import store from "@/store";
-import {getInfo} from "@/api/user";
-import {AuthModule} from "@/store/modules/auth";
+import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
+import store from '@/store';
+import {getInfo} from '@/api/user';
+import {AuthModule} from '@/store/modules/auth';
 
 interface IUserState {
     username: string | null;
 }
 
-@Module({dynamic: true, store, name: 'user-sdfsdfsdf'})
+@Module({dynamic: true, store, name: 'user'})
 class User extends VuexModule implements IUserState {
     public username: string | null = null;
 
     @MutationAction({mutate: ['username']})
     public async loadInfo(): Promise<IUserState> {
-        if (AuthModule.isAuthenticated) {
+        let authenticated = AuthModule.isAuthenticated;
+        console.log('isAuth=' + authenticated);
+        if (authenticated) {
             const response = await getInfo();
             const username = response.data.username;
             return {username};

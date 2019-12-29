@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import {AxiosResponse} from "axios";
-import api from "@/api/index";
+import {AxiosResponse} from 'axios';
+import api from '@/api/index';
 
 export interface UserResponse {
     readonly username: string;
 }
 
 export const getInfo = (): Promise<AxiosResponse<UserResponse>> =>
-    api.get<UserResponse>("user");
+    api.get<UserResponse>('user');
