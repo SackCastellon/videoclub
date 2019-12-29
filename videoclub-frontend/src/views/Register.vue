@@ -113,9 +113,19 @@
         public async onRegister(info: IRegistrationInfo) {
             try {
                 await register(info);
+                this.$buefy.toast.open({
+                    type: 'is-primary',
+                    message: 'Registered successfully',
+                    position: 'is-top',
+                });
                 await this.$router.push({name: 'login'});
             } catch (error) {
-                alert('TODO: Error during registration');
+                // TODO Improve error message
+                this.$buefy.toast.open({
+                    type: 'is-danger',
+                    message: 'Something went wrong during the registration process',
+                    position: 'is-top',
+                });
             }
         }
 

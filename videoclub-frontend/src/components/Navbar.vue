@@ -163,9 +163,14 @@
             (this.$refs.dropdown as any).closeMenu();
         }
 
-        public logout() {
+        public async logout() {
             this.closeMenu();
-            logout();
+            await logout();
+            this.$buefy.toast.open({
+                type: 'is-primary',
+                message: 'Signed out successfully',
+                position: 'is-top',
+            });
         }
 
 

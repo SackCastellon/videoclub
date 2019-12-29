@@ -93,9 +93,19 @@
         public async onLogin(info: ILoginInfo) {
             try {
                 await login(info);
+                this.$buefy.toast.open({
+                    type: 'is-primary',
+                    message: 'Signed in successfully',
+                    position: 'is-top',
+                });
                 await this.$router.push({name: 'home'});
             } catch (error) {
-                alert('TODO: Error during login');
+                // TODO Improve error message
+                this.$buefy.toast.open({
+                    type: 'is-danger',
+                    message: 'Something went wrong during the sign in process',
+                    position: 'is-top',
+                });
             }
         }
 
