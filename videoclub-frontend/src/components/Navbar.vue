@@ -60,6 +60,19 @@
           </b-navbar-item>
           <hr class="navbar-divider">
           <b-navbar-item
+            tag="router-link"
+            :to="{ name: 'profile' }"
+            class="d-flex align-items-center"
+            @click.native="closeMenu">
+            <b-icon
+              icon="account"
+              class="mr-1" />
+            <p>
+              Profile
+            </p>
+          </b-navbar-item>
+          <hr class="navbar-divider">
+          <b-navbar-item
             class="d-flex align-items-center"
             @click="logout">
             <b-icon
@@ -107,7 +120,7 @@
 <script lang="ts">
     import {Component, Vue, Watch} from 'vue-property-decorator';
     import {AuthModule} from '@/store/modules/auth';
-    import {UserModule} from '@/store/modules/user';
+    import {MemberModule} from '@/store/modules/member';
     import {logout} from '@/api/auth';
 
     const BIcon = () => import(/* webpackChunkName: "b_icon" */ 'buefy/src/components/icon/Icon.vue');
@@ -133,7 +146,7 @@
         // ========== Computed ========== //
 
         public get username(): string | null {
-            return UserModule.username;
+            return MemberModule.username;
         }
 
         public get isAuthenticated(): boolean {
@@ -160,7 +173,7 @@
 
         @Watch('isAuthenticated', {immediate: true})
         public onAuthenticated() {
-            UserModule.loadInfo();
+            MemberModule.fetchMemberData();
         }
     }
 </script>

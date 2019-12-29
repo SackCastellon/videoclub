@@ -21,7 +21,7 @@ import videoclub.data.Member
 /**
  * Information required to register a new user into the system.
  */
-data class UserRegistration(
+data class RegistrationInfo(
     /**
      * The name of the new user.
      *
@@ -36,15 +36,12 @@ data class UserRegistration(
     val age: Int,
     /**
      * The username of the new user.
+     *
+     * @see Member.username
      */
     val username: String,
     /**
      * The password of the new user.
      */
     val password: String
-) {
-    /**
-     * Returns a new [UserCredential] with same `username` and `password` as this [UserRegistration].
-     */
-    fun toCredential(): UserCredential = UserCredential(username, password)
-}
+)

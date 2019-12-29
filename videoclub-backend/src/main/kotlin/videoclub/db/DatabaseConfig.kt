@@ -42,7 +42,6 @@ internal object DatabaseConfig {
 
     fun setup(): Unit = transaction(db) {
         SchemaUtils.create(
-            Users,
             Shops,
             Movies,
             Members,

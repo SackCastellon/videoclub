@@ -46,13 +46,13 @@ internal object AuthConfig {
         .build()
 
     /**
-     * Creates a _JSON Web Token_ for the given [user], with the given [xsrfToken].
+     * Creates a _JSON Web Token_ for the given [userId], with the given [xsrfToken].
      */
-    fun createToken(user: User, xsrfToken: String): String = JWT
+    fun createToken(userId: Int, xsrfToken: String): String = JWT
         .create()
         .withIssuer(issuer)
         .withSubject(subject)
-        .withClaim(CLAIM_USER, user.id)
+        .withClaim(CLAIM_USER, userId)
         .withClaim(CLAIM_XSRF, xsrfToken)
         .withExpiresAt(expiration)
         .sign(algorithm)

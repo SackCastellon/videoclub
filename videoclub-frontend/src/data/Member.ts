@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package videoclub.db.sql.tables
+import {JsonObject, JsonProperty} from 'json2typescript';
 
-import org.jetbrains.exposed.sql.Table
+@JsonObject
+export class Member {
+    @JsonProperty('id', Number)
+    public id: number = undefined!;
 
-internal object Users : Table() {
-    val id = integer("id").autoIncrement().primaryKey()
-    val username = varchar("username", 24).uniqueIndex()
-    val password = varchar("password", 150)
+    @JsonProperty('name', String)
+    public name: string = undefined!;
+
+    @JsonProperty('age', Number)
+    public age: number = undefined!;
+
+    @JsonProperty('username', String)
+    public username: string = undefined!;
 }

@@ -22,4 +22,6 @@ internal object Members : Table() {
     val id = integer("id").autoIncrement().primaryKey()
     val name = varchar("name", 150)
     val age = integer("age").check { it greater 0 }
+    val username = varchar("username", 24).uniqueIndex()
+    val password = varchar("password", 150)
 }

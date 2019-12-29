@@ -26,24 +26,21 @@ import io.ktor.routing.get
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 import videoclub.auth.UserPrincipal
-import videoclub.db.dao.UserDao
+import videoclub.db.dao.MemberDao
 
-fun Route.user() {
-    val userDao by inject<UserDao>()
+fun Route.member() {
+    val memberDao by inject<MemberDao>()
 
     authenticate {
-        route("user") {
+        route("member") {
             get {
                 val (id) = call.authentication.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
-                val user = userDao.getById(id)
+                val member = memberDao.getById(id)
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
-                call.respond(
-                    HttpStatusCode.OK,
-                    mapOf("username" to user.username)
-                )
+                call.respond(member)
             }
         }
     }

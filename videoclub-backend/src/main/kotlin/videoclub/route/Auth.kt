@@ -30,15 +30,14 @@ import io.ktor.routing.post
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 import videoclub.auth.*
-import videoclub.db.dao.UserDao
+import videoclub.db.dao.MemberDao
 import java.nio.ByteBuffer
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.time.DurationUnit
 import kotlin.time.milliseconds
 
 fun Route.auth() {
-    val userDao by inject<UserDao>()
+    val memberDao by inject<MemberDao>()
 
     route("auth") {
         post("login") {
@@ -49,27 +48,25 @@ fun Route.auth() {
                 return@post call.respond(HttpStatusCode.BadRequest)
             }
 
-            val user = userDao.getByCredential(credential)
+            val userId = memberDao.findId(credential)
                 ?: return@post call.respond(HttpStatusCode.Unauthorized)
 
-            call.respondAuth(user)
+            call.respondAuth(userId)
         }
 
         post("register") {
-            val registration = call.receiveOrNull<UserRegistration>()
+            val registration = call.receiveOrNull<RegistrationInfo>()
                 ?: return@post call.respond(HttpStatusCode.BadRequest)
 
             if (registration.username.length !in 4..24 || registration.password.length !in 8..128) {
                 return@post call.respond(HttpStatusCode.BadRequest)
             }
 
-            if (userDao.containsUsername(registration.username)) {
+            if (memberDao.containsUsername(registration.username)) {
                 return@post call.respond(HttpStatusCode.Conflict)
             }
 
-            // TODO Add member information to database
-
-            val success = userDao.add(registration.toCredential())
+            val success = memberDao.add(registration)
 
             when {
                 success -> call.respond(HttpStatusCode.OK)
@@ -82,10 +79,11 @@ fun Route.auth() {
                 val (id) = call.authentication.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
-                val user = userDao.getById(id)
-                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+                if (!memberDao.containsId(id)) {
+                    return@get call.respond(HttpStatusCode.Forbidden)
+                }
 
-                call.respondAuth(user)
+                call.respondAuth(id)
             }
 
             get("logout") {
@@ -99,11 +97,11 @@ fun Route.auth() {
     }
 }
 
-private suspend fun ApplicationCall.respondAuth(user: User) {
+private suspend fun ApplicationCall.respondAuth(userId: Int) {
     val xsrfToken = createXsrfToken()
 
     response.cookies.apply {
-        append(jwtCookie(user, xsrfToken))
+        append(jwtCookie(userId, xsrfToken))
         append(xsrfCookie(xsrfToken))
     }
 
@@ -124,9 +122,9 @@ private fun createXsrfToken(): String {
     return encoder.encodeToString(bytes.array())
 }
 
-private fun jwtCookie(user: User, xsrfToken: String): Cookie = Cookie(
+private fun jwtCookie(userId: Int, xsrfToken: String): Cookie = Cookie(
     name = AuthConfig.COOKIE_JWT,
-    value = AuthConfig.createToken(user, xsrfToken),
+    value = AuthConfig.createToken(userId, xsrfToken),
     maxAge = cookieMaxAge,
     path = "/",
     //secure = true,

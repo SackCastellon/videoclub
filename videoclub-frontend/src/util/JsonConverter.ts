@@ -14,18 +14,6 @@
  * limitations under the License.
  */
 
-package videoclub.data
+import {JsonConvert, OperationMode} from 'json2typescript';
 
-/**
- * A member of the APPV chain.
- */
-data class Member(
-    /** A unique id for this member. */
-    val id: Int,
-    /** The full name of the member. */
-    val name: String,
-    /** The age of the member. */
-    val age: Int,
-    /** The username of the member. */
-    val username: String
-)
+export const converter = new JsonConvert(process.env.NODE_ENV === 'production' ? OperationMode.ENABLE : OperationMode.LOGGING);

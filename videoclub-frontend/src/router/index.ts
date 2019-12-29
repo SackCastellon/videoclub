@@ -30,18 +30,26 @@ const routes: RouteConfig[] = [
     {
         path: '/login',
         name: 'login',
+        component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
         meta: {
             requiresAuth: false,
         },
-        component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
     },
     {
         path: '/register',
         name: 'register',
+        component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue'),
         meta: {
             requiresAuth: false,
         },
-        component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue'),
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: () => import(/* webpackChunkName: "profile_viewer" */ '@/views/Profile.vue'),
+        meta: {
+            requiresAuth: true,
+        },
     },
 ];
 

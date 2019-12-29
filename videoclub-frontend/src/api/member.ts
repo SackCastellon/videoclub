@@ -16,10 +16,7 @@
 
 import {AxiosResponse} from 'axios';
 import api from '@/api/index';
+import {Member} from '@/data/Member';
 
-export interface UserResponse {
-    readonly username: string;
-}
-
-export const getInfo = (): Promise<AxiosResponse<UserResponse>> =>
-    api.get<UserResponse>('user');
+export const getMemberData = (): Promise<AxiosResponse<Member>> =>
+    api.get<Member>('member');

@@ -24,7 +24,7 @@ import videoclub.auth.authModule
 import videoclub.db.DatabaseConfig
 import videoclub.db.dao.daoModule
 import videoclub.route.auth
-import videoclub.route.user
+import videoclub.route.member
 import java.time.Duration
 
 @Suppress("unused")
@@ -102,13 +102,9 @@ fun Application.module() {
     }
 
     routing {
-        get("/") {
-            call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
-        }
-
         route("api") {
             auth()
-            user()
+            member()
         }
     }
 }
