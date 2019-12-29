@@ -29,9 +29,7 @@ class User extends VuexModule implements IUserState {
 
     @MutationAction({mutate: ['username']})
     public async loadInfo(): Promise<IUserState> {
-        let authenticated = AuthModule.isAuthenticated;
-        console.log('isAuth=' + authenticated);
-        if (authenticated) {
+        if (AuthModule.isAuthenticated) {
             const response = await getInfo();
             const username = response.data.username;
             return {username};
