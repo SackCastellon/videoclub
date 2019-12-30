@@ -36,7 +36,7 @@
       style="position: relative">
       <a
         class="navigation"
-        style="left: 0"
+        style="left: .25rem"
         :disabled="!canGoPrev"
         @click="goPrev">
         <b-icon
@@ -61,7 +61,7 @@
       </carousel>
       <a
         class="navigation"
-        style="right: 0"
+        style="right: .25rem"
         :disabled="!canGoNext"
         @click="goNext">
         <b-icon
@@ -157,5 +157,10 @@
       opacity: .5;
       cursor: not-allowed;
     }
+  }
+
+  img {
+    width: 300px;
+    max-width: 100%;
   }
 </style>
