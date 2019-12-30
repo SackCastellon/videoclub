@@ -16,7 +16,7 @@
 
 <template>
   <section class="section">
-    <div class="level">
+    <div class="level is-mobile">
       <div class="level-left">
         <h1 class="title is-3">
           {{ title }}
