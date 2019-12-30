@@ -21,12 +21,17 @@ import store from './store';
 
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.min.css';
+
+// @ts-ignore
+import VueCarousel from 'vue-carousel';
+
 import '@mdi/font/css/materialdesignicons.min.css';
 import 'bootstrap/dist/css/bootstrap-grid.min.css';
 
 Vue.config.productionTip = false;
 
 Vue.use(Buefy);
+Vue.use(VueCarousel);
 
 Vue.directive('focus', {
     inserted: el => {

@@ -15,20 +15,35 @@
   -->
 
 <template>
-  <section class="section">
-    <div class="container">
+  <div class="container">
+    <section class="section">
       <h1 class="title is-1">
         Videoclub
       </h1>
-    </div>
-  </section>
+    </section>
+    <MovieCarousel
+      title="New movies"
+      view-more-link="/" />
+    <MovieCarousel
+      title="Popular movies"
+      view-more-link="/" />
+  </div>
 </template>
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
 
-    @Component({})
-    export default class Login extends Vue {
+    const MovieCarousel = () => import(/* webpackChunkName: "movie_carousel" */ '@/views/MovieCarousel.vue');
+
+    @Component({
+        components: {
+            MovieCarousel,
+        },
+    })
+    export default class Home extends Vue {
+
+        // ========== Props ========== //
+
 
         // ========== Data ========== //
 
@@ -46,3 +61,4 @@
 
     }
 </script>
+
