@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package videoclub.auth
+import {JsonObject, JsonProperty} from 'json2typescript';
 
-import videoclub.data.MemberUpdate
+@JsonObject
+export class Admin {
+    @JsonProperty('id', Number)
+    public id: number = undefined!;
 
-/**
- * Information required to register a new user into the system.
- */
-data class RegistrationInfo(
-    /**
-     * The member information.
-     */
-    val member: MemberUpdate,
-    /**
-     * User credential.
-     */
-    val credential: UserCredential
-)
+    @JsonProperty('name', String)
+    public name: string = undefined!;
+}

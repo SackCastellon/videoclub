@@ -16,23 +16,29 @@
 
 package videoclub.db.dao
 
+import videoclub.auth.User
+import videoclub.auth.UserCredential
 import videoclub.data.Member
-import videoclub.data.MemberUpdate
 
 /**
  * DAO for [Member].
  */
-interface MemberDao {
+interface UserDao {
 
     /**
-     * Returns the number of members.
+     * Returns the number of users.
      */
     suspend fun count(): Int
 
     /**
-     * Returns the member with the given [id], if any.
+     * Returns the id of the user that matches the given [credential], if any.
      */
-    suspend fun getById(id: Int): Member?
+    suspend fun findId(credential: UserCredential): Int?
+
+    /**
+     * Returns the user with the given [id], if any.
+     */
+    suspend fun getById(id: Int): User?
 
     /**
      * Returns `true` if the given [id] is already stored, `false` otherwise.
@@ -40,8 +46,13 @@ interface MemberDao {
     suspend fun containsId(id: Int): Boolean
 
     /**
-     * Adds a new [member] with the given [userId].
-     * Returns the id of the new member if it was added succesfully, `null` otherwise.
+     * Returns `true` if the given [username] is already stored, `false` otherwise.
      */
-    suspend fun add(userId: Int, member: MemberUpdate): Int?
+    suspend fun containsUsername(username: String): Boolean
+
+    /**
+     * Adds a new [user].
+     * Returns the id of the new user if it was added succesfully, `null` otherwise.
+     */
+    suspend fun add(user: UserCredential): Int?
 }

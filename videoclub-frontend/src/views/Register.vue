@@ -29,7 +29,7 @@
           <section class="modal-card-body">
             <b-field label="Name">
               <b-input
-                v-model="info.name"
+                v-model="info.member.name"
                 v-focus
                 placeholder="Your full name"
                 required />
@@ -37,7 +37,7 @@
 
             <b-field label="Age">
               <b-numberinput
-                v-model="info.age"
+                v-model="info.member.age"
                 min="0"
                 max="150"
                 placeholder="Your age"
@@ -46,14 +46,14 @@
 
             <b-field label="Username">
               <b-input
-                v-model="info.username"
+                v-model="info.credential.username"
                 placeholder="Your username"
                 required />
             </b-field>
 
             <b-field label="Password">
               <b-input
-                v-model="info.password"
+                v-model="info.credential.password"
                 type="password"
                 password-reveal
                 placeholder="Your password"
@@ -95,10 +95,14 @@
         // ========== Data ========== //
 
         public info: IRegistrationInfo = {
-            name: '',
-            age: 0,
-            username: '',
-            password: '',
+            member: {
+                name: '',
+                age: 0,
+            },
+            credential: {
+                username: '',
+                password: '',
+            },
         };
 
 

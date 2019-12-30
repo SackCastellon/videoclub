@@ -19,42 +19,40 @@ package videoclub.db.dao
 import org.jetbrains.exposed.sql.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import videoclub.data.Member
-import videoclub.data.MemberUpdate
+import videoclub.data.Admin
+import videoclub.data.AdminUpdate
 import videoclub.db.DatabaseConfig.dbQuery
-import videoclub.db.sql.tables.Members
+import videoclub.db.sql.tables.Admins
 
-internal object MemberDaoImpl : MemberDao, KoinComponent {
+internal object AdminDaoImpl : AdminDao, KoinComponent {
 
     private val userDao by inject<UserDao>()
-    private val adminDao by inject<AdminDao>()
+    private val memberDao by inject<MemberDao>()
 
     override suspend fun count(): Int = dbQuery {
-        Members.selectAll().count()
+        Admins.selectAll().count()
     }
 
-    override suspend fun getById(id: Int): Member? = dbQuery {
-        Members.select { Members.id eq id }.mapLazy(::toMember).singleOrNull()
+    override suspend fun getById(id: Int): Admin? = dbQuery {
+        Admins.select { Admins.id eq id }.mapLazy(::toAdmin).singleOrNull()
     }
 
     override suspend fun containsId(id: Int): Boolean = dbQuery {
-        Members.select { Members.id eq id }.empty().not()
+        Admins.select { Admins.id eq id }.empty().not()
     }
 
-    override suspend fun add(userId: Int, member: MemberUpdate): Int? = dbQuery {
+    override suspend fun add(userId: Int, admin: AdminUpdate): Int? = dbQuery {
         if (!userDao.containsId(userId)) return@dbQuery null
-        if (adminDao.containsId(userId)) return@dbQuery null
+        if (memberDao.containsId(userId)) return@dbQuery null
 
-        Members.insert {
+        Admins.insert {
             it[id] = userId
-            it[name] = member.name
-            it[age] = member.age
-        }.getOrNull(Members.id)
+            it[name] = admin.name
+        }.getOrNull(Admins.id)
     }
 
-    private fun toMember(it: ResultRow) = Member(
-        id = it[Members.id],
-        name = it[Members.name],
-        age = it[Members.age]
+    private fun toAdmin(it: ResultRow) = Admin(
+        id = it[Admins.id],
+        name = it[Admins.name]
     )
 }

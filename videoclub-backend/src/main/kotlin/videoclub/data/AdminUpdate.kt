@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package videoclub.auth
-
-import videoclub.data.MemberUpdate
+package videoclub.data
 
 /**
- * Information required to register a new user into the system.
+ * An update of the information of an administrator of the system.
  */
-data class RegistrationInfo(
-    /**
-     * The member information.
-     */
-    val member: MemberUpdate,
-    /**
-     * User credential.
-     */
-    val credential: UserCredential
+data class AdminUpdate(
+    /** The updated name of this admin */
+    val name: String
 )

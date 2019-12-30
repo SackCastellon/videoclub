@@ -19,6 +19,6 @@ package videoclub.db.sql.tables
 import org.jetbrains.exposed.sql.Table
 
 internal object Admins : Table() {
-    val id = integer("id").autoIncrement().primaryKey()
+    val id = integer("user_id").primaryKey() references Users.id
     val name = varchar("name", 150)
 }

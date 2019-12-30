@@ -16,24 +16,24 @@
 
 import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
-import {getMemberData} from '@/api/member';
+import {getAdminData} from '@/api/admin';
 import {AuthModule} from '@/store/modules/auth';
 import {converter} from '@/util/JsonConverter';
-import {Member} from '@/data/Member';
+import {Admin} from '@/data/Admin';
 
-interface IMemberState {
-    data: Member | null;
+interface IAdminState {
+    data: Admin | null;
 }
 
-@Module({dynamic: true, store, name: 'member'})
-class MemberStore extends VuexModule implements IMemberState {
-    public data: Member | null = null;
+@Module({dynamic: true, store, name: 'admin'})
+class AdminStore extends VuexModule implements IAdminState {
+    public data: Admin | null = null;
 
     @MutationAction({mutate: ['data']})
-    public async fetchMemberData(): Promise<IMemberState> {
+    public async fetchAdminData(): Promise<IAdminState> {
         if (AuthModule.isAuthenticated) {
-            const response = await getMemberData();
-            const data = converter.deserializeObject(response.data, Member);
+            const response = await getAdminData();
+            const data = converter.deserializeObject(response.data, Admin);
             return {data};
         } else {
             return {data: null};
@@ -41,4 +41,4 @@ class MemberStore extends VuexModule implements IMemberState {
     }
 }
 
-export const MemberModule = getModule(MemberStore);
+export const AdminModule = getModule(AdminStore);

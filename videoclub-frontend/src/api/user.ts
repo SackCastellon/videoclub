@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
-package videoclub.auth
+import {AxiosResponse} from 'axios';
+import api from '@/api/index';
+import {User} from '@/data/User';
 
-import videoclub.data.MemberUpdate
-
-/**
- * Information required to register a new user into the system.
- */
-data class RegistrationInfo(
-    /**
-     * The member information.
-     */
-    val member: MemberUpdate,
-    /**
-     * User credential.
-     */
-    val credential: UserCredential
-)
+export const getUserData = (): Promise<AxiosResponse<User>> =>
+    api.get<User>('user');

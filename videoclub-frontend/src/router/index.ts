@@ -18,6 +18,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import {RouteConfig} from 'vue-router/types/router';
 import {AuthModule} from '@/store/modules/auth';
+import {refreshToken} from '@/api/auth';
 
 Vue.use(VueRouter);
 
@@ -60,6 +61,11 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+    if (!from.name) try {
+        await refreshToken();
+    } catch (e) {
+    }
+
     const requiresAuth = to.meta.requiresAuth;
     if (requiresAuth !== undefined && requiresAuth !== AuthModule.isAuthenticated) {
         return next({name: 'home'});

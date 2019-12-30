@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package videoclub.auth
+package videoclub.db.sql.tables
 
-import videoclub.data.MemberUpdate
+import org.jetbrains.exposed.sql.Table
 
-/**
- * Information required to register a new user into the system.
- */
-data class RegistrationInfo(
-    /**
-     * The member information.
-     */
-    val member: MemberUpdate,
-    /**
-     * User credential.
-     */
-    val credential: UserCredential
-)
+internal object Users : Table() {
+    val id = integer("id").autoIncrement().primaryKey()
+    val username = varchar("username", 24).uniqueIndex()
+    val password = varchar("password", 150)
+}

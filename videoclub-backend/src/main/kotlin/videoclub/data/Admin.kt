@@ -20,7 +20,7 @@ package videoclub.data
  * An administrator of the system.
  */
 data class Admin(
-    /** A unique id for this admin. */
+    /** The user id of this admin. */
     val id: Int,
     /** The name of this admin */
     val name: String

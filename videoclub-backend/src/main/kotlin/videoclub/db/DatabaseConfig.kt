@@ -19,14 +19,20 @@ package videoclub.db
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.koin.core.KoinComponent
+import org.koin.core.inject
+import videoclub.auth.UserCredential
+import videoclub.data.AdminUpdate
+import videoclub.db.dao.AdminDao
+import videoclub.db.dao.UserDao
 import videoclub.db.sql.tables.*
 
-internal object DatabaseConfig {
+internal object DatabaseConfig : KoinComponent {
 
     private val db by lazy { Database.connect(hikari()) }
 
@@ -40,17 +46,30 @@ internal object DatabaseConfig {
         }.also(HikariConfig::validate).let(::HikariDataSource)
     }
 
-    fun setup(): Unit = transaction(db) {
-        SchemaUtils.create(
-            Shops,
-            Movies,
-            Members,
-            Rentals,
-            RentalMovies,
-            Stats,
-            Admins,
-            inBatch = true
-        )
+    fun setup(): Unit = runBlocking {
+        dbQuery {
+            SchemaUtils.create(
+                Users,
+                Shops,
+                Movies,
+                Members,
+                Rentals,
+                RentalMovies,
+                Stats,
+                Admins,
+                inBatch = true
+            )
+
+            val userDao by inject<UserDao>()
+            val adminDao by inject<AdminDao>()
+
+            if (adminDao.count() == 0) {
+                val userId = userDao.add(UserCredential("admin", "adminpasswd"))
+                checkNotNull(userId) { "Failed to add user 'admin'" }
+                val adminId = adminDao.add(userId, AdminUpdate("Administrator"))
+                checkNotNull(adminId) { "Failed to add admin 'Administrator'" }
+            }
+        }
     }
 
     suspend fun <T> dbQuery(statement: suspend Transaction.() -> T): T =

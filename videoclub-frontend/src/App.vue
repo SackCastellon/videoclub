@@ -23,7 +23,6 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {refreshToken} from '@/api/auth';
 
     const Navbar = () => import(/* webpackChunkName: "navbar" */ '@/components/Navbar.vue');
 
@@ -41,14 +40,6 @@
 
 
         // ========== Lifecycle Hooks ========== //
-
-        // noinspection JSUnusedGlobalSymbols
-        public async beforeCreate() {
-            try {
-                await refreshToken();
-            } catch (error) {
-            }
-        }
 
 
         // ========== Methods ========== //

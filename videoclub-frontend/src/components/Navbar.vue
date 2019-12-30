@@ -1,3 +1,4 @@
+import {UserType} from '@/data/User';
 <!--
   - Copyright 2019 Juan José González Abril
   -
@@ -45,7 +46,7 @@
           <div
             class="d-flex align-items-center">
             <b-icon
-              :icon="isAuthenticated ? 'account-circle' : 'account-circle-outline'"
+              :icon="accountIcon"
               class="mr-1" />
             <p>
               Account
@@ -54,9 +55,17 @@
         </template>
         <template v-if="isAuthenticated">
           <b-navbar-item tag="div">
-            <p>
-              Signed in as <strong>{{ username }}</strong>
-            </p>
+            <div>
+              <p>
+                Signed in as <strong>{{ username }}</strong>
+              </p>
+              <b-tag
+                v-if="isAdmin"
+                type="is-info"
+                class="mt-2">
+                Admin
+              </b-tag>
+            </div>
           </b-navbar-item>
           <hr class="navbar-divider">
           <b-navbar-item
@@ -120,9 +129,11 @@
 <script lang="ts">
     import {Component, Vue, Watch} from 'vue-property-decorator';
     import {AuthModule} from '@/store/modules/auth';
-    import {MemberModule} from '@/store/modules/member';
     import {logout} from '@/api/auth';
+    import {UserModule} from '@/store/modules/user';
+    import {UserType} from '@/data/User';
 
+    const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
     const BIcon = () => import(/* webpackChunkName: "b_icon" */ 'buefy/src/components/icon/Icon.vue');
     const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
     const BNavbar = () => import(/* webpackChunkName: "b_navbar" */ 'buefy/src/components/navbar/Navbar.vue');
@@ -131,6 +142,7 @@
 
     @Component({
         components: {
+            BTag,
             BIcon,
             BButton,
             BNavbar,
@@ -145,12 +157,28 @@
 
         // ========== Computed ========== //
 
-        public get username(): string | null {
-            return MemberModule.username;
+        public get username(): string {
+            return UserModule.data?.username || '';
+        }
+
+        public get isAdmin(): boolean {
+            return UserModule.data?.type === UserType.ADMIN;
         }
 
         public get isAuthenticated(): boolean {
             return AuthModule.isAuthenticated;
+        }
+
+        public get accountIcon(): string {
+            if (this.isAuthenticated) {
+                if (this.isAdmin) {
+                    return 'shield-account';
+                } else {
+                    return 'account-circle';
+                }
+            } else {
+                return 'account-circle-outline';
+            }
         }
 
 
@@ -178,7 +206,7 @@
 
         @Watch('isAuthenticated', {immediate: true})
         public onAuthenticated() {
-            MemberModule.fetchMemberData();
+            UserModule.fetchUserData();
         }
     }
 </script>

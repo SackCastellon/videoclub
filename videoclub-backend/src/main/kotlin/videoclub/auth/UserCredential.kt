@@ -23,11 +23,11 @@ import io.ktor.auth.Credential
  */
 data class UserCredential(
     /**
-     * The username of the [User].
+     * The username of the User.
      */
     val username: String,
     /**
-     * The password of the [User].
+     * The password of the User.
      */
     val password: String
 ) : Credential

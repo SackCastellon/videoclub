@@ -19,5 +19,7 @@ package videoclub.db.dao
 import org.koin.dsl.module
 
 internal val daoModule = module {
+    single<UserDao> { UserDaoImpl }
     single<MemberDao> { MemberDaoImpl }
+    single<AdminDao> { AdminDaoImpl }
 }

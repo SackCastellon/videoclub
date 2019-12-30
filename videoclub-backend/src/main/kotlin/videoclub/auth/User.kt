@@ -16,7 +16,22 @@
 
 package videoclub.auth
 
+/**
+ * A user of the system.
+ */
 data class User(
+    /** The id of this user. */
     val id: Int,
-    val username: String
-)
+    /** The username. */
+    val username: String,
+    /** The type of user */
+    val type: Type
+) {
+    /**
+     * An enum representing the types of users.
+     */
+    @Suppress("KDocMissingDocumentation")
+    enum class Type {
+        MEMBER, ADMIN,
+    }
+}

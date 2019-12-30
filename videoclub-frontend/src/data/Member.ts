@@ -26,7 +26,4 @@ export class Member {
 
     @JsonProperty('age', Number)
     public age: number = undefined!;
-
-    @JsonProperty('username', String)
-    public username: string = undefined!;
 }

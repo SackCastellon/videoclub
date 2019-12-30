@@ -71,8 +71,12 @@ export interface ILoginInfo {
 }
 
 export interface IRegistrationInfo {
-    name: string;
-    age: number;
-    username: string;
-    password: string;
+    member: {
+        name: string;
+        age: number;
+    },
+    credential: {
+        username: string;
+        password: string;
+    }
 }

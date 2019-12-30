@@ -1,18 +1,14 @@
 package videoclub
 
 import io.ktor.application.Application
-import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.jwt.jwt
 import io.ktor.features.*
-import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.jackson.jackson
-import io.ktor.response.respondText
-import io.ktor.routing.get
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.websocket.WebSockets
@@ -24,7 +20,7 @@ import videoclub.auth.authModule
 import videoclub.db.DatabaseConfig
 import videoclub.db.dao.daoModule
 import videoclub.route.auth
-import videoclub.route.member
+import videoclub.route.users
 import java.time.Duration
 
 @Suppress("unused")
@@ -104,7 +100,7 @@ fun Application.module() {
     routing {
         route("api") {
             auth()
-            member()
+            users()
         }
     }
 }

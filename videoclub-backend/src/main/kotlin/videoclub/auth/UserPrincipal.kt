@@ -23,7 +23,7 @@ import io.ktor.auth.Principal
  */
 data class UserPrincipal(
     /**
-     * The id of the [User].
+     * The id of the User.
      */
     val id: Int
 ) : Principal

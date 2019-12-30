@@ -19,6 +19,11 @@
     <div class="column is-three-quarters-tablet is-half-desktop">
       <h1 class="title">
         Profile
+        <b-tag
+          v-if="isAdmin"
+          type="is-info">
+          Admin
+        </b-tag>
       </h1>
       <hr>
       <b-field horizontal>
@@ -39,7 +44,9 @@
           :loading="isLoading"
           readonly />
       </b-field>
-      <b-field horizontal>
+      <b-field
+        v-if="!isAdmin"
+        horizontal>
         <template slot="label">
           Age
         </template>
@@ -55,7 +62,11 @@
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
     import {MemberModule} from '@/store/modules/member';
+    import {UserModule} from '@/store/modules/user';
+    import {UserType} from '@/data/User';
+    import {AdminModule} from '@/store/modules/admin';
 
+    const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
     const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
@@ -63,6 +74,7 @@
 
     @Component({
         components: {
+            BTag,
             BField,
             BInput,
             BButton,
@@ -80,19 +92,36 @@
         // ========== Computed ========== //
 
         public get name(): string {
-            return MemberModule.name;
+            if (this.isAdmin) {
+                return AdminModule.data?.name || '';
+            } else {
+                return MemberModule.data?.name || '';
+            }
         }
 
-        public get age(): number {
-            return MemberModule.age;
+        public get age(): string | number {
+            if (this.isAdmin) {
+                return '';
+            } else {
+                const age = MemberModule.data?.age || -1;
+                return age < 0 ? '' : age;
+            }
         }
 
         public get username(): string {
-            return MemberModule.username;
+            return UserModule.data?.username || '';
         }
 
         public get isLoading(): boolean {
-            return !MemberModule.isLoaded;
+            if (this.isAdmin) {
+                return AdminModule.data === null;
+            } else {
+                return MemberModule.data === null;
+            }
+        }
+
+        public get isAdmin(): boolean {
+            return UserModule.data?.type === UserType.ADMIN;
         }
 
 
@@ -100,7 +129,13 @@
 
         // noinspection JSUnusedGlobalSymbols
         public created() {
-            if (!MemberModule.isLoaded) MemberModule.fetchMemberData();
+            if (this.isLoading) {
+                if (this.isAdmin) {
+                    AdminModule.fetchAdminData();
+                } else {
+                    MemberModule.fetchMemberData();
+                }
+            }
         }
 
 

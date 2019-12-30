@@ -16,24 +16,24 @@
 
 import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
-import {getMemberData} from '@/api/member';
+import {getUserData} from '@/api/user';
 import {AuthModule} from '@/store/modules/auth';
 import {converter} from '@/util/JsonConverter';
-import {Member} from '@/data/Member';
+import {User} from '@/data/User';
 
-interface IMemberState {
-    data: Member | null;
+interface IUserState {
+    data: User | null;
 }
 
-@Module({dynamic: true, store, name: 'member'})
-class MemberStore extends VuexModule implements IMemberState {
-    public data: Member | null = null;
+@Module({dynamic: true, store, name: 'user'})
+class UserStore extends VuexModule implements IUserState {
+    public data: User | null = null;
 
     @MutationAction({mutate: ['data']})
-    public async fetchMemberData(): Promise<IMemberState> {
+    public async fetchUserData(): Promise<IUserState> {
         if (AuthModule.isAuthenticated) {
-            const response = await getMemberData();
-            const data = converter.deserializeObject(response.data, Member);
+            const response = await getUserData();
+            const data = converter.deserializeObject(response.data, User);
             return {data};
         } else {
             return {data: null};
@@ -41,4 +41,4 @@ class MemberStore extends VuexModule implements IMemberState {
     }
 }
 
-export const MemberModule = getModule(MemberStore);
+export const UserModule = getModule(UserStore);

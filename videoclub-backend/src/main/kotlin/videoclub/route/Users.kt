@@ -26,12 +26,28 @@ import io.ktor.routing.get
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 import videoclub.auth.UserPrincipal
+import videoclub.db.dao.AdminDao
 import videoclub.db.dao.MemberDao
+import videoclub.db.dao.UserDao
 
-fun Route.member() {
+fun Route.users() {
+    val userDao by inject<UserDao>()
     val memberDao by inject<MemberDao>()
+    val adminDao by inject<AdminDao>()
 
     authenticate {
+        route("user") {
+            get {
+                val (id) = call.authentication.principal<UserPrincipal>()
+                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                val user = userDao.getById(id)
+                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                call.respond(user)
+            }
+        }
+
         route("member") {
             get {
                 val (id) = call.authentication.principal<UserPrincipal>()
@@ -41,6 +57,18 @@ fun Route.member() {
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
                 call.respond(member)
+            }
+        }
+
+        route("admin") {
+            get {
+                val (id) = call.authentication.principal<UserPrincipal>()
+                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                val admin = adminDao.getById(id)
+                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                call.respond(admin)
             }
         }
     }

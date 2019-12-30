@@ -20,12 +20,10 @@ package videoclub.data
  * A member of the APPV chain.
  */
 data class Member(
-    /** A unique id for this member. */
+    /** The user id of this member. */
     val id: Int,
     /** The full name of the member. */
     val name: String,
     /** The age of the member. */
-    val age: Int,
-    /** The username of the member. */
-    val username: String
+    val age: Int
 )
