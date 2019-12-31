@@ -21,7 +21,11 @@
         Profile
         <b-tag
           v-if="isAdmin"
-          type="is-info">
+          type="is-primary">
+          <b-icon
+            icon="shield-check"
+            size="is-small"
+            class="mr-0" />
           Admin
         </b-tag>
       </h1>

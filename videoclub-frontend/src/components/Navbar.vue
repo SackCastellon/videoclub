@@ -18,13 +18,13 @@ import {UserType} from '@/data/User';
 <template>
   <b-navbar
     id="navbar"
+    class="is-light"
     :fixed-top="true"
     :shadow="true"
     wrapper-class="container">
     <template v-slot:brand>
       <b-navbar-item
-        tag="router-link"
-        :to="{ path: '/' }">
+        href="/">
         <h1 class="title is-4">
           Videoclub
         </h1>
@@ -35,6 +35,11 @@ import {UserType} from '@/data/User';
         tag="router-link"
         :to="{ name: 'home' }">
         Home
+      </b-navbar-item>
+      <b-navbar-item
+        tag="router-link"
+        :to="{ name: 'movies' }">
+        Movies
       </b-navbar-item>
     </template>
     <template v-slot:end>
@@ -47,6 +52,7 @@ import {UserType} from '@/data/User';
             class="d-flex align-items-center">
             <b-icon
               :icon="accountIcon"
+              :type="isAuthenticated ? 'is-primary' : ''"
               class="mr-1" />
             <p>
               Account
@@ -61,8 +67,12 @@ import {UserType} from '@/data/User';
               </p>
               <b-tag
                 v-if="isAdmin"
-                type="is-info"
+                type="is-primary"
                 class="mt-2">
+                <b-icon
+                  icon="shield-check"
+                  size="is-small"
+                  class="mr-0" />
                 Admin
               </b-tag>
             </div>

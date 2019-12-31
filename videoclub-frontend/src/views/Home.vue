@@ -15,19 +15,26 @@
   -->
 
 <template>
-  <div class="container">
-    <section class="section">
-      <h1 class="title is-1">
+  <section class="section">
+    <div class="container">
+      <h1 class="title is-1 is-spaced">
         Videoclub
       </h1>
-    </section>
-    <MovieCarousel
-      title="New movies"
-      view-more-link="/" />
-    <MovieCarousel
-      title="Popular movies"
-      view-more-link="/" />
-  </div>
+      <h5 class="subtitle is-5">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam ultricies arcu at nibh tristique, ac accumsan
+        ligula commodo. Fusce et felis vitae nisl egestas elementum. Maecenas tincidunt, erat in mattis bibendum, lacus
+        nisl gravida augue, laoreet blandit odio dolor eget augue.
+      </h5>
+      <MovieCarousel
+        title="New movies"
+        :link="{name: 'movies', query: { sort: 'new' }}"
+        :movies="newMovies" />
+      <MovieCarousel
+        title="Popular movies"
+        :link="{name: 'movies', query: { sort: 'popular' }}"
+        :movies="popularMovies" />
+    </div>
+  </section>
 </template>
 
 <script lang="ts">
@@ -46,6 +53,9 @@
 
 
         // ========== Data ========== //
+
+        public newMovies = [...Array(6).keys()];
+        public popularMovies = [...Array(6).keys()];
 
 
         // ========== Computed ========== //

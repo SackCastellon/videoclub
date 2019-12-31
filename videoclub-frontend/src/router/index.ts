@@ -15,7 +15,7 @@
  */
 
 import Vue from 'vue';
-import VueRouter from 'vue-router';
+import VueRouter, {RouterOptions} from 'vue-router';
 import {RouteConfig} from 'vue-router/types/router';
 import {AuthModule} from '@/store/modules/auth';
 import {refreshToken} from '@/api/auth';
@@ -52,13 +52,24 @@ const routes: RouteConfig[] = [
             requiresAuth: true,
         },
     },
+    {
+        path: '/movies',
+        name: 'movies',
+        component: () => import(/* webpackChunkName: "movies" */ '@/views/Movies.vue'),
+        children: [{
+            path: ':id',
+            name: 'view-movie',
+            // TODO
+        }],
+    },
 ];
 
 const router = new VueRouter({
+    routes,
     mode: 'history',
     base: process.env.BASE_URL,
-    routes,
-});
+    linkExactActiveClass: 'is-active',
+} as RouterOptions);
 
 router.beforeEach(async (to, from, next) => {
     if (!from.name) try {
