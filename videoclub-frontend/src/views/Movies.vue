@@ -15,13 +15,17 @@
   -->
 
 <template>
-  <div class="container">
-    <section class="section">
-      <h1 class="title is-1">
+  <section class="section">
+    <div class="container">
+      <h1 class="title is-1 is-spaced">
         Movies
       </h1>
-    </section>
-    <section class="section">
+      <h5 class="subtitle is-5">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vitae mauris at nunc sagittis fermentum. Aliquam
+        congue orci sed neque ullamcorper egestas. Donec rhoncus massa at elit mattis, ut pellentesque quam porta. Nam
+        vestibulum a turpis a finibus. Donec iaculis rhoncus eros quis pulvinar.
+      </h5>
+      <hr>
       <!--<div class="columns is-centered">
         <div class="column is-10">
           <b-field>
@@ -48,8 +52,8 @@
             :image="`https://via.placeholder.com/200x300.png?text=Movie ${movie}`" />
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
 </template>
 
 <script lang="ts">
