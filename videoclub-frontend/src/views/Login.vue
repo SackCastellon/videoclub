@@ -98,7 +98,11 @@
                     message: 'Signed in successfully',
                     position: 'is-top',
                 });
-                await this.$router.push({name: 'home'});
+                const next = this.$route.query.next;
+                if (typeof next === 'string')
+                    await this.$router.push(next);
+                else
+                    await this.$router.push({name: 'home'});
             } catch (error) {
                 // TODO Improve error message
                 this.$buefy.toast.open({

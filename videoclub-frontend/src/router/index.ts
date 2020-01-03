@@ -24,6 +24,13 @@ import {UserType} from '@/data/User';
 
 Vue.use(VueRouter);
 
+export enum LoginMode {
+    NONE,
+    SOME,
+    MEMBER,
+    ADMIN,
+}
+
 const routes: RouteConfig[] = [
     {
         path: '/',
@@ -35,7 +42,7 @@ const routes: RouteConfig[] = [
         name: 'login',
         component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
         meta: {
-            requiredAuth: false,
+            requiredLogin: LoginMode.NONE,
         },
     },
     {
@@ -43,7 +50,7 @@ const routes: RouteConfig[] = [
         name: 'register',
         component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue'),
         meta: {
-            requiredAuth: false,
+            requiredLogin: LoginMode.NONE,
         },
     },
     {
@@ -51,7 +58,7 @@ const routes: RouteConfig[] = [
         name: 'profile-view',
         component: () => import(/* webpackChunkName: "profile_viewer" */ '@/views/Profile.vue'),
         meta: {
-            requiredAuth: true,
+            requiredLogin: LoginMode.SOME,
         },
     },
     {
@@ -63,8 +70,7 @@ const routes: RouteConfig[] = [
                 path: 'new',
                 name: 'movie-create',
                 meta: {
-                    requiredAuth: true,
-                    requiredAdmin: true,
+                    requiredLogin: LoginMode.ADMIN,
                 },
             },
             {
@@ -75,8 +81,7 @@ const routes: RouteConfig[] = [
                         path: 'edit',
                         name: 'movie-edit',
                         meta: {
-                            requiredAuth: true,
-                            requiredAdmin: true,
+                            requiredLogin: LoginMode.ADMIN,
                         },
                     },
                 ],
@@ -92,8 +97,7 @@ const routes: RouteConfig[] = [
                 path: 'new',
                 name: 'shop-create',
                 meta: {
-                    requiredAuth: true,
-                    requiredAdmin: true,
+                    requiredLogin: LoginMode.ADMIN,
                 },
             },
             {
@@ -104,8 +108,7 @@ const routes: RouteConfig[] = [
                         path: 'edit',
                         name: 'shop-edit',
                         meta: {
-                            requiredAuth: true,
-                            requiredAdmin: true,
+                            requiredLogin: LoginMode.ADMIN,
                         },
                     },
                 ],
@@ -131,11 +134,30 @@ router.beforeEach(async (to, from, next) => {
         await UserModule.fetchUserData();
     }
 
-    const requiredAuth = to.meta.requiredAuth;
-    if (requiredAuth !== undefined && requiredAuth !== AuthModule.isAuthenticated) {
-        return next({name: 'home'});
-    } else if (to.meta.requiredAdmin && UserModule.data?.type !== UserType.ADMIN) {
-        return next({name: 'home'});
+    const mode = to.meta.requiredLogin as LoginMode | undefined;
+
+    if (mode !== undefined) {
+        if (mode === LoginMode.NONE) {
+            // Current route requires user to be logged out
+            if (AuthModule.isAuthenticated) {
+                return next({name: 'home'});
+            }
+        } else {
+            // Current route requires user to be logged in
+            if (!AuthModule.isAuthenticated) {
+                return next({name: 'login', query: {next: to.fullPath}});
+            }
+
+            // Current route requires user to be a MEMBER
+            if (mode === LoginMode.MEMBER && UserModule.data?.type !== UserType.MEMBER) {
+                return next({name: 'home'});
+            }
+
+            // Current route requires user to be an ADMIN
+            if (mode === LoginMode.ADMIN && UserModule.data?.type !== UserType.ADMIN) {
+                return next({name: 'home'});
+            }
+        }
     }
 
     next();

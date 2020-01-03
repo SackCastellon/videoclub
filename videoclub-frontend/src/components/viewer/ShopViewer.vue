@@ -21,7 +21,7 @@
         <h1
           class="title"
           :class="{'is-italic has-text-grey-light': isLoading}">
-          {{ `Shop #${data.id}` }}
+          {{ data ? `Shop #${data.id}` : 'Shop ##' }}
         </h1>
         <hr>
         <b-field>
@@ -68,10 +68,10 @@
         <div class="buttons is-right">
           <b-button
             v-if="isAdmin"
-            tag="router-link"
-            :to="{name:'shop-edit', params: {id: data.id}}"
             type="is-primary"
-            outlined>
+            outlined
+            :loading="isLoading"
+            @click="onEdit">
             Edit
           </b-button>
         </div>
@@ -155,6 +155,13 @@
 
 
         // ========== Methods ========== //
+
+        public onEdit() {
+            const id = this.data?.id;
+            if (id !== undefined) {
+                this.$router.push({name: 'shop-edit', params: {id: id.toString()}});
+            }
+        }
 
 
         // ========== Watchers ========== //

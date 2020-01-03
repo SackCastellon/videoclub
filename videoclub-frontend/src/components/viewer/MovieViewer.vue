@@ -68,10 +68,10 @@
         <div class="buttons is-right">
           <b-button
             v-if="isAdmin"
-            tag="router-link"
-            :to="{name:'movie-edit', params: {id: data.id}}"
             type="is-primary"
-            outlined>
+            outlined
+            :loading="isLoading"
+            @click="onEdit">
             Edit
           </b-button>
           <b-button
@@ -165,6 +165,13 @@
 
 
         // ========== Methods ========== //
+
+        public onEdit() {
+            const id = this.data?.id;
+            if (id !== undefined) {
+                this.$router.push({name: 'movie-edit', params: {id: id.toString()}});
+            }
+        }
 
 
         // ========== Watchers ========== //

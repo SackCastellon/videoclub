@@ -1,3 +1,4 @@
+import {LoginMode} from '@/router';
 <!--
   - Copyright 2019 Juan José González Abril
   -
@@ -26,7 +27,9 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from 'vue-property-decorator';
+    import {Component, Vue, Watch} from 'vue-property-decorator';
+    import {AuthModule} from '@/store/modules/auth';
+    import {LoginMode} from '@/router';
 
     const Navbar = () => import(/* webpackChunkName: "navbar" */ '@/components/Navbar.vue');
 
@@ -42,6 +45,10 @@
 
         // ========== Computed ========== //
 
+        public get isAuthenticated(): boolean {
+            return AuthModule.isAuthenticated;
+        }
+
 
         // ========== Lifecycle Hooks ========== //
 
@@ -50,6 +57,14 @@
 
 
         // ========== Watchers ========== //
+
+        @Watch('isAuthenticated')
+        public onAuthenticated(authenticated: boolean) {
+            if (!authenticated) {
+                const mode = this.$route.meta.requiredLogin as LoginMode | undefined;
+                if (mode !== undefined && mode !== LoginMode.NONE) this.$router.push({name: 'home'});
+            }
+        }
 
     }
 </script>

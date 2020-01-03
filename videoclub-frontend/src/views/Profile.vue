@@ -21,8 +21,7 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue, Watch} from 'vue-property-decorator';
-    import {AuthModule} from '@/store/modules/auth';
+    import {Component, Vue} from 'vue-property-decorator';
 
     const ProfileViewer = () => import(/* webpackChunkName: "profile_viewer" */ '@/components/viewer/ProfileViewer.vue');
 
@@ -41,10 +40,6 @@
 
         // ========== Computed ========== //
 
-        public get isAuthenticated(): boolean {
-            return AuthModule.isAuthenticated;
-        }
-
 
         // ========== Lifecycle Hooks ========== //
 
@@ -53,10 +48,5 @@
 
 
         // ========== Watchers ========== //
-
-        @Watch('isAuthenticated')
-        public onAuthenticated(authenticated: boolean) {
-            if (!authenticated) this.$router.push({name: 'home'});
-        }
     }
 </script>

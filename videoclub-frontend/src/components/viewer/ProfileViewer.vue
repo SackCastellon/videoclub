@@ -20,15 +20,14 @@
       <div class="column is-10-tablet is-6-desktop">
         <h1 class="title">
           Profile
-          <b-tag
+          <b-tooltip
             v-if="isAdmin"
-            type="is-primary">
+            label="Admin">
             <b-icon
               icon="shield-check"
-              size="is-small"
-              class="mr-0" />
-            Admin
-          </b-tag>
+              size="is-medium"
+              type="is-primary" />
+          </b-tooltip>
         </h1>
         <hr>
         <b-field>

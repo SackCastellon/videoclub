@@ -94,10 +94,6 @@ import {UserType} from '@/data/User';
                 v-if="isAdmin"
                 type="is-primary"
                 class="mt-2">
-                <b-icon
-                  icon="shield-check"
-                  size="is-small"
-                  class="mr-0" />
                 Admin
               </b-tag>
             </div>
