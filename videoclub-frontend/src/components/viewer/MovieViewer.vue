@@ -18,46 +18,68 @@
   <div class="container">
     <div class="columns is-centered">
       <div class="column is-10-tablet is-6-desktop">
-        <h1 class="title">
-          Profile
-          <b-tag
-            v-if="isAdmin"
-            type="is-primary">
-            <b-icon
-              icon="shield-check"
-              size="is-small"
-              class="mr-0" />
-            Admin
-          </b-tag>
+        <h1
+          class="title"
+          :class="{'is-italic has-text-grey-light': isLoading}">
+          {{ movieTitle }}
         </h1>
         <hr>
         <b-field>
           <template slot="label">
-            Username
+            Title
           </template>
           <b-input
-            :value="username"
+            :value="movieTitle"
             :loading="isLoading"
+            icon="movie"
             readonly />
         </b-field>
         <b-field>
           <template slot="label">
-            Name
+            Director
           </template>
           <b-input
-            :value="name"
+            :value="movieDirector"
             :loading="isLoading"
+            icon="account-tie"
             readonly />
         </b-field>
-        <b-field v-if="!isAdmin">
+        <b-field>
           <template slot="label">
-            Age
+            Release date
           </template>
           <b-input
-            :value="age"
+            :value="movieReleaseDate"
             :loading="isLoading"
+            icon="calendar-today"
             readonly />
         </b-field>
+        <b-field>
+          <template slot="label">
+            Price
+          </template>
+          <b-input
+            :value="moviePrice"
+            :loading="isLoading"
+            icon="currency-eur"
+            readonly />
+        </b-field>
+        <hr>
+        <div class="buttons is-right">
+          <b-button
+            v-if="isAdmin"
+            tag="router-link"
+            :to="{name:'movie-edit', params: {id: data.id}}"
+            type="is-primary"
+            outlined>
+            Edit
+          </b-button>
+          <b-button
+            v-else
+            type="is-primary">
+            Rent
+          </b-button>
+        </div>
       </div>
     </div>
   </div>
@@ -65,61 +87,57 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {MemberModule} from '@/store/modules/member';
     import {UserModule} from '@/store/modules/user';
     import {UserType} from '@/data/User';
-    import {AdminModule} from '@/store/modules/admin';
+    import {Movie} from '@/data/Movie';
+    import {dateFormat, moment} from '@/util/Moment';
+    import {MovieModule} from '@/store/modules/movies';
 
-    const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
     const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
 
     @Component({
         components: {
-            BTag,
             BField,
             BInput,
             BButton,
         },
     })
-    export default class ProfileViewer extends Vue {
+    export default class MovieViewer extends Vue {
 
         // ========== Props ========== //
 
 
         // ========== Data ========== //
 
+        public data: Movie | null = null;
+
 
         // ========== Computed ========== //
 
-        public get name(): string {
-            if (this.isAdmin) {
-                return AdminModule.data?.name || '';
-            } else {
-                return MemberModule.data?.name || '';
-            }
+        public get movieTitle(): string {
+            return this.data?.name || 'Movie title';
         }
 
-        public get age(): string | number {
-            if (this.isAdmin) {
-                return '';
-            } else {
-                const age = MemberModule.data?.age || -1;
-                return age < 0 ? '' : age;
-            }
+        public get movieDirector(): string {
+            return this.data?.director || '';
         }
 
-        public get username(): string {
-            return UserModule.data?.username || '';
+        public get movieReleaseDate(): string {
+            const date = this.data?.releaseDate;
+            if (date) return moment(date).format(dateFormat);
+            else return '';
+        }
+
+        public get moviePrice(): string {
+            const price = this.data?.price;
+            if (price) return price.toFixed(2) + ' €';
+            else return '';
         }
 
         public get isLoading(): boolean {
-            if (this.isAdmin) {
-                return AdminModule.data === null;
-            } else {
-                return MemberModule.data === null;
-            }
+            return this.data === null;
         }
 
         public get isAdmin(): boolean {
@@ -130,13 +148,18 @@
         // ========== Lifecycle Hooks ========== //
 
         // noinspection JSUnusedGlobalSymbols
-        public created() {
-            if (this.isLoading) {
-                if (this.isAdmin) {
-                    AdminModule.fetchAdminData();
-                } else {
-                    MemberModule.fetchMemberData();
-                }
+        public async created() {
+            const id = parseInt(this.$route.params['id']);
+            if (isNaN(id)) {
+                this.$buefy.toast.open({message: 'Invalid movie ID', type: 'is-warning'});
+                return this.$router.push({name: 'movie-list'});
+            }
+
+            const movie = await MovieModule.getMovie(id);
+            if (movie) this.data = movie;
+            else {
+                this.$buefy.toast.open({message: `No movie with ID ${id} was found`, type: 'is-warning'});
+                return this.$router.push({name: 'movie-list'});
             }
         }
 

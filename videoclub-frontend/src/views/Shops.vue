@@ -19,9 +19,9 @@
     <transition
       mode="out-in"
       name="fade">
-      <MovieList v-if="routeName === 'movie-list'" />
-      <MovieViewer v-else-if="routeName === 'movie-view'" />
-      <MovieEditor v-else-if="routeName === 'movie-edit' || routeName === 'movie-create'" />
+      <ShopList v-if="routeName === 'shop-list'" />
+      <ShopViewer v-else-if="routeName === 'shop-view'" />
+      <ShopEditor v-else-if="routeName === 'shop-edit' || routeName === 'shop-create'" />
     </transition>
   </section>
 </template>
@@ -29,18 +29,18 @@
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
 
-    const MovieList = () => import(/* webpackChunkName: "movie_list" */ '@/components/list/MovieList.vue');
-    const MovieViewer = () => import(/* webpackChunkName: "movie_viewer" */ '@/components/viewer/MovieViewer.vue');
-    const MovieEditor = () => import(/* webpackChunkName: "movie_editor" */ '@/components/editor/MovieEditor.vue');
+    const ShopList = () => import(/* webpackChunkName: "shop_list" */ '@/components/list/ShopList.vue');
+    const ShopViewer = () => import(/* webpackChunkName: "shop_viewer" */ '@/components/viewer/ShopViewer.vue');
+    const ShopEditor = () => import(/* webpackChunkName: "shop_editor" */ '@/components/editor/ShopEditor.vue');
 
     @Component({
         components: {
-            MovieList,
-            MovieViewer,
-            MovieEditor,
+            ShopList,
+            ShopViewer,
+            ShopEditor,
         },
     })
-    export default class Movies extends Vue {
+    export default class Shops extends Vue {
 
         // ========== Props ========== //
 

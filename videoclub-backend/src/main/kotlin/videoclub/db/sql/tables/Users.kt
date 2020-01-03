@@ -19,7 +19,9 @@ package videoclub.db.sql.tables
 import org.jetbrains.exposed.sql.Table
 
 internal object Users : Table() {
-    val id = integer("id").autoIncrement().primaryKey()
+    val id = integer("id").autoIncrement()
     val username = varchar("username", 24).uniqueIndex()
     val password = varchar("password", 150)
+
+    override val primaryKey = PrimaryKey(id)
 }

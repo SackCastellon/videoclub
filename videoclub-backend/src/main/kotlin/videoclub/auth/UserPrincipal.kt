@@ -25,5 +25,9 @@ data class UserPrincipal(
     /**
      * The id of the User.
      */
-    val id: Int
+    val id: Int,
+    /**
+     * The type of the user.
+     */
+    val type: User.Type
 ) : Principal

@@ -27,12 +27,10 @@
       </h5>
       <MovieCarousel
         title="New movies"
-        :link="{name: 'movies', query: { sort: 'new' }}"
-        :movies="newMovies" />
+        type="new" />
       <MovieCarousel
         title="Popular movies"
-        :link="{name: 'movies', query: { sort: 'popular' }}"
-        :movies="popularMovies" />
+        type="top" />
     </div>
   </section>
 </template>
@@ -40,7 +38,7 @@
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
 
-    const MovieCarousel = () => import(/* webpackChunkName: "movie_carousel" */ '@/views/MovieCarousel.vue');
+    const MovieCarousel = () => import(/* webpackChunkName: "movie_carousel" */ '@/components/MovieCarousel.vue');
 
     @Component({
         components: {
@@ -53,9 +51,6 @@
 
 
         // ========== Data ========== //
-
-        public newMovies = [...Array(6).keys()];
-        public popularMovies = [...Array(6).keys()];
 
 
         // ========== Computed ========== //

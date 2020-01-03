@@ -32,7 +32,8 @@ internal object AuthConfig {
 
     internal val tokenLifespan = 10.minutes.toLongMilliseconds()
 
-    internal const val CLAIM_USER = "id"
+    internal const val CLAIM_ID = "id"
+    internal const val CLAIM_TYPE = "type"
     internal const val CLAIM_XSRF = "xsrf"
 
     internal const val COOKIE_JWT = "JWT-Token"
@@ -46,13 +47,14 @@ internal object AuthConfig {
         .build()
 
     /**
-     * Creates a _JSON Web Token_ for the given [userId], with the given [xsrfToken].
+     * Creates a _JSON Web Token_ for the given [user], with the given [xsrfToken].
      */
-    fun createToken(userId: Int, xsrfToken: String): String = JWT
+    fun createToken(user: User, xsrfToken: String): String = JWT
         .create()
         .withIssuer(issuer)
         .withSubject(subject)
-        .withClaim(CLAIM_USER, userId)
+        .withClaim(CLAIM_ID, user.id)
+        .withClaim(CLAIM_TYPE, user.type.name)
         .withClaim(CLAIM_XSRF, xsrfToken)
         .withExpiresAt(expiration)
         .sign(algorithm)

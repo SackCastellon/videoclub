@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package videoclub.db.sql.tables
+package videoclub.data
 
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.`java-time`.datetime
+import java.math.BigDecimal
+import java.time.LocalDate
 
-internal object Stats : Table() {
-    val id = integer("id").autoIncrement()
-    val memberId = integer("member_id") references Members.id
-    val creationDate = datetime("creation_date")
-    val totalSpent = decimal("total_spent", 8, 2)
-
-    override val primaryKey = PrimaryKey(id)
-}
+/**
+ * An update of the information of a movie available to be rented at a given [Shop].
+ */
+data class MovieUpdate(
+    /** The updated id of the shop this movie belongs to */
+    val shopId: Int,
+    /** The updated name of this movie. */
+    val name: String,
+    /** The updated director of this movie. This filed is optional. */
+    val director: String?,
+    /** The updated release date of this movie. */
+    val releaseDate: LocalDate,
+    /** The updated rent price of this movie. */
+    val price: BigDecimal
+)

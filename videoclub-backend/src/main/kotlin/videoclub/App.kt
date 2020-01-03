@@ -1,5 +1,6 @@
 package videoclub
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.auth.Authentication
@@ -15,11 +16,14 @@ import io.ktor.websocket.WebSockets
 import org.koin.Logger.slf4jLogger
 import org.koin.ktor.ext.Koin
 import videoclub.auth.AuthConfig
+import videoclub.auth.User
 import videoclub.auth.UserPrincipal
 import videoclub.auth.authModule
 import videoclub.db.DatabaseConfig
 import videoclub.db.dao.daoModule
 import videoclub.route.auth
+import videoclub.route.movies
+import videoclub.route.shops
 import videoclub.route.users
 import java.time.Duration
 
@@ -42,12 +46,20 @@ fun Application.module() {
                 HttpAuthHeader.Single("Bearer", jwtToken)
             }
             verifier(AuthConfig.verifier)
-            validate {
-                val xsrfHeader = request.headers[AuthConfig.HEADER_XSRF] ?: return@validate null
-                val xsrfToken = it.payload.getClaim(AuthConfig.CLAIM_XSRF).asString() ?: return@validate null
+            validate { call ->
+                val xsrfHeader = request.headers[AuthConfig.HEADER_XSRF]
+                    ?: return@validate null
+                val xsrfToken = call.payload.getClaim(AuthConfig.CLAIM_XSRF).asString()
+                    ?: return@validate null
+
                 if (xsrfHeader != xsrfToken) return@validate null
 
-                it.payload.getClaim(AuthConfig.CLAIM_USER).asInt()?.let(::UserPrincipal)
+                val id = call.payload.getClaim(AuthConfig.CLAIM_ID).asInt()
+                    ?: return@validate null
+                val type = call.payload.getClaim(AuthConfig.CLAIM_TYPE).`as`(User.Type::class.java)
+                    ?: return@validate null
+
+                UserPrincipal(id, type)
             }
         }
     }
@@ -55,7 +67,9 @@ fun Application.module() {
     install(CallLogging)
 
     install(ContentNegotiation) {
-        jackson()
+        jackson {
+            registerModule(JavaTimeModule())
+        }
     }
 
     install(Compression) {
@@ -101,6 +115,8 @@ fun Application.module() {
         route("api") {
             auth()
             users()
+            movies()
+            shops()
         }
     }
 }

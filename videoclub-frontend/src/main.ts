@@ -21,16 +21,29 @@ import store from './store';
 
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.min.css';
-
+// @ts-ignore
+import config from 'buefy/src/utils/config';
 // @ts-ignore
 import VueCarousel from 'vue-carousel';
 
 import '@mdi/font/css/materialdesignicons.min.css';
 import 'bootstrap/dist/css/bootstrap-grid.min.css';
+import {dateFormat, moment} from '@/util/Moment';
 
 Vue.config.productionTip = false;
 
 Vue.use(Buefy);
+
+// FIXME Workaround
+config.defaultTooltipAnimated = true;
+config.defaultInputAutocomplete = 'off';
+config.defaultDateFormatter = (date: Date) => moment(date).format(dateFormat);
+config.defaultDateParser = (date: string) => moment(date, dateFormat).toDate();
+config.defaultFirstDayOfWeek = 1;
+config.defaultUseHtml5Validation = false;
+config.defaultUseHtml5Validation = false;
+
+
 Vue.use(VueCarousel);
 
 Vue.directive('focus', {

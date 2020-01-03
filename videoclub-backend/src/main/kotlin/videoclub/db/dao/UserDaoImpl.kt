@@ -37,23 +37,21 @@ internal object UserDaoImpl : UserDao, KoinComponent {
         Users.selectAll().count()
     }
 
-    override suspend fun findId(credential: UserCredential): Int? = dbQuery {
-        val (id, encodedPassword) = Users.slice(Users.id, Users.password)
+    override suspend fun getByCredential(credential: UserCredential): User? = dbQuery {
+        val (id, username, encodedPassword) = Users
             .select { Users.username eq credential.username }
-            .mapLazy { it[Users.id] to it[Users.password] }
+            .mapLazy { Triple(it[Users.id], it[Users.username], it[Users.password]) }
             .singleOrNull() ?: return@dbQuery null
 
         if (!encoder.matches(credential.password, encodedPassword)) return@dbQuery null
 
-        id
+        val type = findUserType(id) ?: return@dbQuery null
+
+        User(id, username, type)
     }
 
     override suspend fun getById(id: Int): User? = dbQuery {
-        val type = when {
-            Members.select { Members.id eq id }.empty().not() -> User.Type.MEMBER
-            Admins.select { Admins.id eq id }.empty().not() -> User.Type.ADMIN
-            else -> return@dbQuery null
-        }
+        val type = findUserType(id) ?: return@dbQuery null
 
         Users.slice(publicColumns).select { Users.id eq id }.mapLazy {
             User(
@@ -79,5 +77,11 @@ internal object UserDaoImpl : UserDao, KoinComponent {
             it[username] = user.username
             it[password] = encodedPassword
         }.getOrNull(Users.id)
+    }
+
+    private fun findUserType(id: Int): User.Type? = when {
+        Members.select { Members.id eq id }.empty().not() -> User.Type.MEMBER
+        Admins.select { Admins.id eq id }.empty().not() -> User.Type.ADMIN
+        else -> null
     }
 }

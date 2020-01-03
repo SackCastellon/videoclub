@@ -29,10 +29,7 @@ import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
-import videoclub.auth.AuthConfig
-import videoclub.auth.RegistrationInfo
-import videoclub.auth.UserCredential
-import videoclub.auth.UserPrincipal
+import videoclub.auth.*
 import videoclub.db.dao.MemberDao
 import videoclub.db.dao.UserDao
 import java.nio.ByteBuffer
@@ -40,7 +37,7 @@ import java.util.*
 import kotlin.time.DurationUnit
 import kotlin.time.milliseconds
 
-fun Route.auth() {
+internal fun Route.auth() {
     val userDao by inject<UserDao>()
     val memberDao by inject<MemberDao>()
 
@@ -53,10 +50,10 @@ fun Route.auth() {
                 return@post call.respond(HttpStatusCode.BadRequest)
             }
 
-            val userId = userDao.findId(credential)
+            val user = userDao.getByCredential(credential)
                 ?: return@post call.respond(HttpStatusCode.Unauthorized)
 
-            call.respondAuth(userId)
+            call.respondAuth(user)
         }
 
         post("register") {
@@ -85,11 +82,10 @@ fun Route.auth() {
                 val (id) = call.authentication.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
-                if (!userDao.containsId(id)) {
-                    return@get call.respond(HttpStatusCode.Forbidden)
-                }
+                val user = userDao.getById(id)
+                    ?: return@get call.respond(HttpStatusCode.Unauthorized)
 
-                call.respondAuth(id)
+                call.respondAuth(user)
             }
 
             get("logout") {
@@ -103,11 +99,11 @@ fun Route.auth() {
     }
 }
 
-private suspend fun ApplicationCall.respondAuth(userId: Int) {
+private suspend fun ApplicationCall.respondAuth(user: User) {
     val xsrfToken = createXsrfToken()
 
     response.cookies.apply {
-        append(jwtCookie(userId, xsrfToken))
+        append(jwtCookie(user, xsrfToken))
         append(xsrfCookie(xsrfToken))
     }
 
@@ -128,9 +124,9 @@ private fun createXsrfToken(): String {
     return encoder.encodeToString(bytes.array())
 }
 
-private fun jwtCookie(userId: Int, xsrfToken: String): Cookie = Cookie(
+private fun jwtCookie(user: User, xsrfToken: String): Cookie = Cookie(
     name = AuthConfig.COOKIE_JWT,
-    value = AuthConfig.createToken(userId, xsrfToken),
+    value = AuthConfig.createToken(user, xsrfToken),
     maxAge = cookieMaxAge,
     path = "/",
     //secure = true,

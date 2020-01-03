@@ -31,14 +31,14 @@ interface UserDao {
     suspend fun count(): Int
 
     /**
-     * Returns the id of the user that matches the given [credential], if any.
-     */
-    suspend fun findId(credential: UserCredential): Int?
-
-    /**
      * Returns the user with the given [id], if any.
      */
     suspend fun getById(id: Int): User?
+
+    /**
+     * Returns the id of the user that matches the given [credential], if any.
+     */
+    suspend fun getByCredential(credential: UserCredential): User?
 
     /**
      * Returns `true` if the given [id] is already stored, `false` otherwise.

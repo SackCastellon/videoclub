@@ -54,7 +54,7 @@ internal object DatabaseConfig : KoinComponent {
                 Movies,
                 Members,
                 Rentals,
-                RentalMovies,
+                MemberMovieRental,
                 Stats,
                 Admins,
                 inBatch = true

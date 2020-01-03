@@ -30,7 +30,7 @@ import videoclub.db.dao.AdminDao
 import videoclub.db.dao.MemberDao
 import videoclub.db.dao.UserDao
 
-fun Route.users() {
+internal fun Route.users() {
     val userDao by inject<UserDao>()
     val memberDao by inject<MemberDao>()
     val adminDao by inject<AdminDao>()

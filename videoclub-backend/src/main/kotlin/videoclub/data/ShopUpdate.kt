@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package videoclub.db.sql.tables
+package videoclub.data
 
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.`java-time`.datetime
-
-internal object Stats : Table() {
-    val id = integer("id").autoIncrement()
-    val memberId = integer("member_id") references Members.id
-    val creationDate = datetime("creation_date")
-    val totalSpent = decimal("total_spent", 8, 2)
-
-    override val primaryKey = PrimaryKey(id)
-}
+/**
+ * An update of the information of a shop of the APPV chain.
+ */
+data class ShopUpdate(
+    /** The updated name of the manager of this shop. */
+    val manager: String,
+    /** The updated city where this shop is located. */
+    val city: String,
+    /** The updated street where this shop is located. */
+    val street: String,
+    /** The updated zip code of the zone where this shop is located. */
+    val zipCode: String
+)

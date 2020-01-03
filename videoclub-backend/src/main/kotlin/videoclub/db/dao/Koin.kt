@@ -22,4 +22,6 @@ internal val daoModule = module {
     single<UserDao> { UserDaoImpl }
     single<MemberDao> { MemberDaoImpl }
     single<AdminDao> { AdminDaoImpl }
+    single<MovieDao> { MovieDaoImpl }
+    single<ShopDao> { ShopDaoImpl }
 }

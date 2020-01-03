@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Juan José González Abril
+ * Copyright 2020 Juan José González Abril
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,10 @@
  * limitations under the License.
  */
 
-package videoclub.db.sql.tables
+import Moment from 'moment';
 
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.`java-time`.datetime
+Moment.locale('es');
 
-internal object Stats : Table() {
-    val id = integer("id").autoIncrement()
-    val memberId = integer("member_id") references Members.id
-    val creationDate = datetime("creation_date")
-    val totalSpent = decimal("total_spent", 8, 2)
+export const moment = Moment;
 
-    override val primaryKey = PrimaryKey(id)
-}
+export const dateFormat = 'DD/MM/YYYY';

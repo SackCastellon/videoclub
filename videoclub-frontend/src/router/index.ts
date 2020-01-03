@@ -19,6 +19,8 @@ import VueRouter, {RouterOptions} from 'vue-router';
 import {RouteConfig} from 'vue-router/types/router';
 import {AuthModule} from '@/store/modules/auth';
 import {refreshToken} from '@/api/auth';
+import {UserModule} from '@/store/modules/user';
+import {UserType} from '@/data/User';
 
 Vue.use(VueRouter);
 
@@ -33,7 +35,7 @@ const routes: RouteConfig[] = [
         name: 'login',
         component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
         meta: {
-            requiresAuth: false,
+            requiredAuth: false,
         },
     },
     {
@@ -41,26 +43,74 @@ const routes: RouteConfig[] = [
         name: 'register',
         component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue'),
         meta: {
-            requiresAuth: false,
+            requiredAuth: false,
         },
     },
     {
         path: '/profile',
-        name: 'profile',
+        name: 'profile-view',
         component: () => import(/* webpackChunkName: "profile_viewer" */ '@/views/Profile.vue'),
         meta: {
-            requiresAuth: true,
+            requiredAuth: true,
         },
     },
     {
-        path: '/movies',
-        name: 'movies',
+        path: '/movie',
+        name: 'movie-list',
         component: () => import(/* webpackChunkName: "movies" */ '@/views/Movies.vue'),
-        children: [{
-            path: ':id',
-            name: 'view-movie',
-            // TODO
-        }],
+        children: [
+            {
+                path: 'new',
+                name: 'movie-create',
+                meta: {
+                    requiredAuth: true,
+                    requiredAdmin: true,
+                },
+            },
+            {
+                path: ':id',
+                name: 'movie-view',
+                children: [
+                    {
+                        path: 'edit',
+                        name: 'movie-edit',
+                        meta: {
+                            requiredAuth: true,
+                            requiredAdmin: true,
+                        },
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        path: '/shop',
+        name: 'shop-list',
+        component: () => import(/* webpackChunkName: "shops" */ '@/views/Shops.vue'),
+        children: [
+            {
+                path: 'new',
+                name: 'shop-create',
+                meta: {
+                    requiredAuth: true,
+                    requiredAdmin: true,
+                },
+            },
+            {
+                path: ':id',
+                name: 'shop-view',
+                children: [
+                    {
+                        path: 'edit',
+                        name: 'shop-edit',
+                        meta: {
+                            requiredAuth: true,
+                            requiredAdmin: true,
+                        },
+                    },
+                ],
+            },
+        ],
     },
 ];
 
@@ -77,8 +127,14 @@ router.beforeEach(async (to, from, next) => {
     } catch (e) {
     }
 
-    const requiresAuth = to.meta.requiresAuth;
-    if (requiresAuth !== undefined && requiresAuth !== AuthModule.isAuthenticated) {
+    if (AuthModule.isAuthenticated && UserModule.data === null) {
+        await UserModule.fetchUserData();
+    }
+
+    const requiredAuth = to.meta.requiredAuth;
+    if (requiredAuth !== undefined && requiredAuth !== AuthModule.isAuthenticated) {
+        return next({name: 'home'});
+    } else if (to.meta.requiredAdmin && UserModule.data?.type !== UserType.ADMIN) {
         return next({name: 'home'});
     }
 

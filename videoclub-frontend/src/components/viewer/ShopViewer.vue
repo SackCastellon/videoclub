@@ -18,46 +18,63 @@
   <div class="container">
     <div class="columns is-centered">
       <div class="column is-10-tablet is-6-desktop">
-        <h1 class="title">
-          Profile
-          <b-tag
-            v-if="isAdmin"
-            type="is-primary">
-            <b-icon
-              icon="shield-check"
-              size="is-small"
-              class="mr-0" />
-            Admin
-          </b-tag>
+        <h1
+          class="title"
+          :class="{'is-italic has-text-grey-light': isLoading}">
+          {{ `Shop #${data.id}` }}
         </h1>
         <hr>
         <b-field>
           <template slot="label">
-            Username
+            Manager
           </template>
           <b-input
-            :value="username"
+            :value="shopManager"
             :loading="isLoading"
+            icon="account-tie"
             readonly />
         </b-field>
         <b-field>
           <template slot="label">
-            Name
+            City
           </template>
           <b-input
-            :value="name"
+            :value="shopCity"
             :loading="isLoading"
+            icon="city"
             readonly />
         </b-field>
-        <b-field v-if="!isAdmin">
+        <b-field>
           <template slot="label">
-            Age
+            Street
           </template>
           <b-input
-            :value="age"
+            :value="shopStreet"
             :loading="isLoading"
+            icon="routes"
             readonly />
         </b-field>
+        <b-field>
+          <template slot="label">
+            Zip code
+          </template>
+          <b-input
+            :value="shopZipCode"
+            :loading="isLoading"
+            icon="numeric"
+            readonly />
+        </b-field>
+        <hr>
+        <div class="buttons is-right">
+          <b-button
+            v-if="isAdmin"
+            tag="router-link"
+            :to="{name:'shop-edit', params: {id: data.id}}"
+            type="is-primary"
+            outlined>
+            Edit
+          </b-button>
+        </div>
       </div>
     </div>
   </div>
@@ -65,61 +82,52 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {MemberModule} from '@/store/modules/member';
     import {UserModule} from '@/store/modules/user';
     import {UserType} from '@/data/User';
-    import {AdminModule} from '@/store/modules/admin';
+    import {Shop} from '@/data/Shop';
+    import {ShopModule} from '@/store/modules/shops';
 
-    const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
     const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
 
     @Component({
         components: {
-            BTag,
             BField,
             BInput,
             BButton,
         },
     })
-    export default class ProfileViewer extends Vue {
+    export default class ShopViewer extends Vue {
 
         // ========== Props ========== //
 
 
         // ========== Data ========== //
 
+        public data: Shop | null = null;
+
 
         // ========== Computed ========== //
 
-        public get name(): string {
-            if (this.isAdmin) {
-                return AdminModule.data?.name || '';
-            } else {
-                return MemberModule.data?.name || '';
-            }
+        public get shopManager(): string {
+            return this.data?.manager || '';
         }
 
-        public get age(): string | number {
-            if (this.isAdmin) {
-                return '';
-            } else {
-                const age = MemberModule.data?.age || -1;
-                return age < 0 ? '' : age;
-            }
+        public get shopCity(): string {
+            return this.data?.city || '';
         }
 
-        public get username(): string {
-            return UserModule.data?.username || '';
+        public get shopStreet(): string {
+            return this.data?.street || '';
+        }
+
+        public get shopZipCode(): string {
+            return this.data?.zipCode || '';
         }
 
         public get isLoading(): boolean {
-            if (this.isAdmin) {
-                return AdminModule.data === null;
-            } else {
-                return MemberModule.data === null;
-            }
+            return this.data === null;
         }
 
         public get isAdmin(): boolean {
@@ -130,13 +138,18 @@
         // ========== Lifecycle Hooks ========== //
 
         // noinspection JSUnusedGlobalSymbols
-        public created() {
-            if (this.isLoading) {
-                if (this.isAdmin) {
-                    AdminModule.fetchAdminData();
-                } else {
-                    MemberModule.fetchMemberData();
-                }
+        public async created() {
+            const id = parseInt(this.$route.params['id']);
+            if (isNaN(id)) {
+                this.$buefy.toast.open({message: 'Invalid shop ID', type: 'is-warning'});
+                return this.$router.push({name: 'shop-list'});
+            }
+
+            const shop = await ShopModule.getShop(id);
+            if (shop) this.data = shop;
+            else {
+                this.$buefy.toast.open({message: `No shop with ID ${id} was found`, type: 'is-warning'});
+                return this.$router.push({name: 'shop-list'});
             }
         }
 

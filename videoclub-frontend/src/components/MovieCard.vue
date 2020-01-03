@@ -16,18 +16,22 @@
 
 <template>
   <div class="card">
-    <div class="card-image d-flex justify-content-center align-items-center">
-      <img :src="image">
-      <b-button
-        tag="router-link"
-        :to="{name: 'view-movie', params: { id }}"
-        :exact-active-class="''"
-        type="is-light"
-        class="mx-2 my-1">
-        <h6 class="title is-6">
+    <div class="card-image">
+      <figure class="image is-2by3">
+        <img
+          :src="image"
+          :alt="title">
+      </figure>
+      <b-tooltip :label="title">
+        <b-button
+          expanded
+          tag="router-link"
+          :to="{name: 'movie-view', params: { id }}"
+          type="is-light"
+          class="mx-2 mb-2">
           {{ title }}
-        </h6>
-      </b-button>
+        </b-button>
+      </b-tooltip>
     </div>
   </div>
 </template>
@@ -36,10 +40,12 @@
     import {Component, Prop, Vue} from 'vue-property-decorator';
 
     const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
+    const BTooltip = () => import(/* webpackChunkName: "b_tooltip" */ 'buefy/src/components/tooltip/Tooltip.vue');
 
     @Component({
         components: {
             BButton,
+            BTooltip,
         },
     })
     export default class MovieCard extends Vue {
@@ -74,24 +80,25 @@
 </script>
 
 <style scoped lang="scss">
-  .card {
+  div.card {
     box-shadow: 0 0.2rem 0.5rem rgba(10, 10, 10, 0.15) !important;
-  }
 
-  .card-image {
-    position: relative;
-  }
+    div.card-image {
+      position: relative;
 
-  img {
-    width: 300px;
-    max-width: 100%;
-  }
+      span.b-tooltip {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        position: absolute;
 
-  a {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: .25rem;
+        a {
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
   }
 </style>
 

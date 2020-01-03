@@ -21,10 +21,12 @@ import org.jetbrains.exposed.sql.`java-time`.date
 import java.math.BigDecimal
 
 internal object Movies : Table() {
-    val id = integer("id").autoIncrement().primaryKey()
+    val id = integer("id").autoIncrement()
     val shopId = integer("shop_id") references Shops.id
     val name = varchar("name", 150)
     val director = varchar("director", 150).nullable()
     val releaseDate = date("release_date")
     val price = decimal("price", 8, 2).check { it greater BigDecimal.ZERO }
+
+    override val primaryKey = PrimaryKey(id)
 }

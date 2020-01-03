@@ -19,9 +19,11 @@ package videoclub.db.sql.tables
 import org.jetbrains.exposed.sql.Table
 
 internal object Shops : Table() {
-    val id = integer("id").autoIncrement().primaryKey()
+    val id = integer("id").autoIncrement()
     val manager = varchar("manager", 150)
     val city = varchar("city", 150)
     val street = varchar("street", 150)
     val zipCode = varchar("zipCode", 5).check { it.regexp("^[0-9]{5}$") }
+
+    override val primaryKey = PrimaryKey(id)
 }

@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package videoclub.db.sql.tables
+import {AxiosResponse} from 'axios';
+import api from '@/api/index';
+import {Shop} from '@/data/Shop';
 
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.`java-time`.datetime
+export const getShops = (): Promise<AxiosResponse<Array<Shop>>> =>
+    api.get<Array<Shop>>('shop');
 
-internal object Stats : Table() {
-    val id = integer("id").autoIncrement()
-    val memberId = integer("member_id") references Members.id
-    val creationDate = datetime("creation_date")
-    val totalSpent = decimal("total_spent", 8, 2)
+export const getShop = (id: number): Promise<AxiosResponse<Shop>> =>
+    api.get<Shop>(`shop/${id}`);
 
-    override val primaryKey = PrimaryKey(id)
-}
+export const postShop = (shop: Shop): Promise<AxiosResponse> =>
+    api.post('shop', shop);

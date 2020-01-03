@@ -16,9 +16,7 @@
 
 <template>
   <section class="section">
-    <div class="container">
-      <ProfileViewer />
-    </div>
+    <ProfileViewer />
   </section>
 </template>
 

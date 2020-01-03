@@ -34,12 +34,38 @@ import {UserType} from '@/data/User';
       <b-navbar-item
         tag="router-link"
         :to="{ name: 'home' }">
-        Home
+        <div class="d-flex align-items-center">
+          <b-icon
+            icon="home"
+            class="mr-1" />
+          <p>
+            Home
+          </p>
+        </div>
       </b-navbar-item>
       <b-navbar-item
         tag="router-link"
-        :to="{ name: 'movies' }">
-        Movies
+        :to="{ name: 'movie-list' }">
+        <div class="d-flex align-items-center">
+          <b-icon
+            icon="movie"
+            class="mr-1" />
+          <p>
+            Movies
+          </p>
+        </div>
+      </b-navbar-item>
+      <b-navbar-item
+        tag="router-link"
+        :to="{ name: 'shop-list' }">
+        <div class="d-flex align-items-center">
+          <b-icon
+            icon="store"
+            class="mr-1" />
+          <p>
+            Shops
+          </p>
+        </div>
       </b-navbar-item>
     </template>
     <template v-slot:end>
@@ -48,8 +74,7 @@ import {UserType} from '@/data/User';
         right
         boxed>
         <template v-slot:label>
-          <div
-            class="d-flex align-items-center">
+          <div class="d-flex align-items-center">
             <b-icon
               :icon="accountIcon"
               :type="isAuthenticated ? 'is-primary' : ''"
@@ -80,7 +105,7 @@ import {UserType} from '@/data/User';
           <hr class="navbar-divider">
           <b-navbar-item
             tag="router-link"
-            :to="{ name: 'profile' }"
+            :to="{ name: 'profile-view' }"
             class="d-flex align-items-center"
             @click.native="closeMenu">
             <b-icon

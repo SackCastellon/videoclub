@@ -19,6 +19,8 @@ package videoclub.db.sql.tables
 import org.jetbrains.exposed.sql.Table
 
 internal object Admins : Table() {
-    val id = integer("user_id").primaryKey() references Users.id
+    val id = integer("user_id") references Users.id
     val name = varchar("name", 150)
+
+    override val primaryKey = PrimaryKey(id)
 }
