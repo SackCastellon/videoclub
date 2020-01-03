@@ -9,9 +9,14 @@ import io.ktor.features.*
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.auth.HttpAuthHeader
+import io.ktor.http.cio.websocket.pingPeriod
+import io.ktor.http.cio.websocket.timeout
+import io.ktor.http.content.EntityTagVersion
+import io.ktor.http.content.OutgoingContent
 import io.ktor.jackson.jackson
 import io.ktor.routing.route
 import io.ktor.routing.routing
+import io.ktor.util.toByteArray
 import io.ktor.websocket.WebSockets
 import org.koin.Logger.slf4jLogger
 import org.koin.ktor.ext.Koin
@@ -25,18 +30,15 @@ import videoclub.route.auth
 import videoclub.route.movies
 import videoclub.route.shops
 import videoclub.route.users
+import java.security.MessageDigest
 import java.time.Duration
+import java.util.*
 
+/**
+ * Application entry point
+ */
 @Suppress("unused")
 fun Application.module() {
-    install(Koin) {
-        slf4jLogger()
-
-        modules(authModule)
-        modules(daoModule)
-    }
-
-    DatabaseConfig.setup()
 
     install(Authentication) {
         jwt {
@@ -78,7 +80,22 @@ fun Application.module() {
         }
         deflate {
             priority = 10.0
-            minimumSize(1024) // condition
+            minimumSize(1024)
+        }
+    }
+
+    install(ConditionalHeaders) {
+        val encoder = Base64.getUrlEncoder().withoutPadding()
+        val digest = MessageDigest.getInstance("MD5")
+
+        fun ByteArray.version() = EntityTagVersion(encoder.encodeToString(digest.digest(this)))
+
+        version {
+            when (it) {
+                is OutgoingContent.ReadChannelContent -> listOf(it.readFrom().toByteArray().version())
+                is OutgoingContent.ByteArrayContent -> listOf(it.bytes().version())
+                else -> emptyList()
+            }
         }
     }
 
@@ -111,6 +128,13 @@ fun Application.module() {
         masking = false
     }
 
+    install(Koin) {
+        slf4jLogger()
+
+        modules(authModule)
+        modules(daoModule)
+    }
+
     routing {
         route("api") {
             auth()
@@ -119,4 +143,6 @@ fun Application.module() {
             shops()
         }
     }
+
+    DatabaseConfig.setup()
 }

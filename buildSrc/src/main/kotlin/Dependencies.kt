@@ -20,7 +20,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 
 const val kotlinVersion: String = "1.3.61"
 const val logbackVersion: String = "1.2.3"
-const val ktorVersion: String = "1.2.6"
+const val ktorVersion: String = "1.3.0-rc2"
 const val koinVersion: String = "2.0.1"
 const val exposedVersion: String = "0.20.2"
 
