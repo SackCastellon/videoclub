@@ -134,7 +134,6 @@
             if (typeof window !== 'undefined') {
                 window.addEventListener('resize', this.updateCarousel);
             }
-            m;
         }
 
         // noinspection JSUnusedGlobalSymbols
