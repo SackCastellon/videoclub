@@ -44,7 +44,7 @@
       <div
         v-for="movie in data"
         :key="movie.id"
-        class="column is-6-mobile is-4-tablet is-one-fifth-desktop">
+        class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop is-one-fifth-widescreen is-2-fullhd">
         <MovieCard
           :id="movie.id"
           :title="movie.name"
@@ -96,10 +96,3 @@
         // ========== Watchers ========== //
     };
 </script>
-
-<style scoped lang="scss">
-  img {
-    width: 300px;
-    max-width: 100%;
-  }
-</style>

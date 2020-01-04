@@ -37,15 +37,14 @@
         </a>
       </b-tooltip>
       <b-tooltip
-        class="movie-title"
+        class="movie-title mx-2 mb-2"
         :label="title"
         animated>
         <b-button
           expanded
           tag="router-link"
           :to="{name: 'movie-view', params: { id }}"
-          type="is-light"
-          class="mx-2 mb-2">
+          type="is-light">
           {{ title }}
         </b-button>
       </b-tooltip>

@@ -88,14 +88,17 @@
         public carouselConfig = {
             itemsToShow: 2,
             breakpoints: {
-                768: {
+                769: {
                     itemsToShow: 3,
                 },
-                1023: {
+                1024: {
                     itemsToShow: 4,
                 },
-                1200: {
+                1216: {
                     itemsToShow: 5,
+                },
+                1408: {
+                    itemsToShow: 6,
                 },
             },
         };
@@ -147,8 +150,10 @@
         public updateCarousel() {
             const carousel = this.$refs.carousel as any;
             const itemsToShow: number = carousel.settings.itemsToShow;
+            const newTotal = this.data.length - (itemsToShow);
 
-            carousel.total = this.data.length - (itemsToShow);
+            carousel.activeItem = Math.min(carousel.activeItem, newTotal);
+            carousel.total = newTotal;
 
             this.$nextTick(() => {
                 // noinspection JSDeprecatedSymbols

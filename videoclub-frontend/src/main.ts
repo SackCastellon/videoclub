@@ -27,7 +27,7 @@ import config from 'buefy/src/utils/config';
 import VueCarousel from 'vue-carousel';
 
 import '@mdi/font/css/materialdesignicons.min.css';
-import 'bootstrap/dist/css/bootstrap-grid.min.css';
+import '@/assets/scss/bootstrap.scss';
 import {dateFormat, moment} from '@/util/Moment';
 
 Vue.config.productionTip = false;
