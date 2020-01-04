@@ -20,7 +20,7 @@
       <form
         method="post"
         @submit.prevent="onLogin(info)">
-        <div class="modal-card">
+        <div class="modal-card shadow">
           <header class="modal-card-head">
             <p class="modal-card-title">
               Login
@@ -121,8 +121,6 @@
 
 <style lang="scss" scoped>
   .modal-card {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-
     @media screen and (min-width: 769px) {
       width: 350px;
       margin-top: 5rem;

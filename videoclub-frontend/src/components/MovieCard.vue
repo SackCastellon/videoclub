@@ -15,36 +15,53 @@
   -->
 
 <template>
-  <div class="card">
+  <div class="card shadow-sm">
     <div class="card-image">
       <figure class="image is-2by3">
         <img
-          src="https://via.placeholder.com/200x300.png"
+          :src="`https://placeimg.com/200/300/nature#${value.id}`"
           :alt="value.name">
       </figure>
+      <b-tooltip
+        v-if="isAdmin"
+        class="edit-icon"
+        label="Edit movie"
+        animated>
+        <b-button
+          :to="{name: 'movie-edit', params: { id: value.id }}"
+          tag="router-link"
+          type="is-light"
+          class="shadow-sm">
+          <b-icon icon="pencil" />
+        </b-button>
+      </b-tooltip>
       <b-tooltip
         class="cart-icon"
         :label="cartData.tooltip"
         :active="isActive"
         animated>
-        <a
+        <b-button
+          tag="a"
+          type="is-light"
+          class="shadow-sm"
           @click="onCartClicked"
           @mouseenter="onHover(true)"
           @mouseleave="onHover(false)">
           <b-icon
             :icon="cartData.icon"
             :type="cartData.type" />
-        </a>
+        </b-button>
       </b-tooltip>
       <b-tooltip
-        class="movie-title mx-2 mb-2"
+        class="movie-title"
         :label="value.name"
         animated>
         <b-button
-          expanded
-          tag="router-link"
           :to="{name: 'movie-view', params: { id: value.id }}"
-          type="is-light">
+          tag="router-link"
+          type="is-light"
+          class="shadow-sm"
+          expanded>
           {{ value.name }}
         </b-button>
       </b-tooltip>
@@ -56,6 +73,8 @@
     import {Component, Prop, Vue} from 'vue-property-decorator';
     import {CartModule} from '@/store/modules/cart';
     import {Movie} from '@/data/Movie';
+    import {UserModule} from '@/store/modules/user';
+    import {UserType} from '@/data/User';
 
     const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
     const BIcon = () => import(/* webpackChunkName: "b_icon" */ 'buefy/src/components/icon/Icon.vue');
@@ -86,6 +105,10 @@
 
 
         // ========== Computed ========== //
+
+        public get isAdmin(): boolean {
+            return UserModule.user?.type === UserType.ADMIN;
+        }
 
         public get isInCart(): boolean {
             return CartModule.has(this.value);
@@ -154,21 +177,25 @@
 
 <style scoped lang="scss">
   div.card {
-    box-shadow: 0 0.2rem 0.5rem rgba(10, 10, 10, 0.15) !important;
-
     div.card-image {
       position: relative;
 
+      span.edit-icon {
+        top: .3rem;
+        left: .3rem;
+        position: absolute;
+      }
+
       span.cart-icon {
-        top: .5rem;
-        right: .5rem;
+        top: .3rem;
+        right: .3rem;
         position: absolute;
       }
 
       span.movie-title {
-        left: 0;
-        right: 0;
-        bottom: 0;
+        left: .3rem;
+        right: .3rem;
+        bottom: .3rem;
         position: absolute;
 
         a {

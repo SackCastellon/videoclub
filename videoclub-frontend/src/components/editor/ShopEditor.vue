@@ -16,15 +16,17 @@
 
 <template>
   <div class="container">
-    <form
-      action=""
-      method="post">
-      <div class="columns is-centered">
-        <div class="column is-10-tablet is-6-desktop">
+    <div class="columns is-centered">
+      <div class="column is-9-tablet is-8-desktop is-7-widescreen is-6-fullhd">
+        <form
+          action=""
+          method="post">
           <header>
             <h1 class="title">
               {{ isEdit ? 'Editing: ' : 'New shop' }}
-              <i class="has-text-grey">{{ `Shop #${data.id}` }}</i>
+              <i
+                v-if="isEdit"
+                class="has-text-grey">{{ `Shop #${data.id}` }}</i>
             </h1>
           </header>
           <hr>
@@ -83,9 +85,9 @@
               Cancel
             </b-button>
           </footer>
-        </div>
+        </form>
       </div>
-    </form>
+    </div>
   </div>
 </template>
 

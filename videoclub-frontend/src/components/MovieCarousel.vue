@@ -36,7 +36,6 @@
       <b-carousel-list
         v-if="data.length > 0"
         ref="carousel"
-        style="box-shadow: initial"
         :data="data"
         :items-to-list="1"
         :arrow-hover="false"
@@ -168,5 +167,9 @@
 <style scoped lang="scss">
   div.tile.notification {
     max-width: 100%; // Fixes exponentially increasing size when resizing window
+  }
+
+  div.carousel-list {
+    box-shadow: initial;
   }
 </style>

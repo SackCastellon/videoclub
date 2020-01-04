@@ -16,118 +16,123 @@
 
 <template>
   <div class="container">
-    <h1 class="title is-1 is-spaced">
-      Cart ({{ size }})
-    </h1>
-    <h5 class="subtitle is-5">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec diam mauris, finibus vel turpis et, varius volutpat
-      nibh. Nunc vitae sem quis ex imperdiet rhoncus eu sit amet metus.
-    </h5>
-    <hr>
-    <b-table
-      :data="content"
-      :striped="true"
-      :loading="isLoading">
-      <template v-slot:default="props">
-        <b-table-column
-          field="id"
-          label="ID"
-          width="40"
-          numeric>
-          {{ props.row.id }}
-        </b-table-column>
-        <b-table-column
-          field="shipId"
-          label="Shop"
-          width="40"
-          numeric>
-          {{ props.row.shopId }}
-        </b-table-column>
-        <b-table-column
-          field="name"
-          label="Title">
-          <router-link :to="{name: 'movie-view', params: {id: props.row.id}}">
-            {{ props.row.name }}
-          </router-link>
-        </b-table-column>
-        <b-table-column
-          field="director"
-          label="Director">
-          {{ props.row.director }}
-        </b-table-column>
-        <b-table-column
-          field="releaseDate"
-          label="Release date"
-          centered>
-          {{ formatDate(props.row.releaseDate) }}
-        </b-table-column>
-        <b-table-column
-          field="price"
-          label="Price"
-          centered>
-          {{ `${props.row.price} €` }}
-        </b-table-column>
-        <b-table-column
-          label=""
-          centered>
-          <b-tooltip label="Remove from cart">
-            <a @click="onRemove(props.row)">
-              <b-icon
-                icon="cart-arrow-up"
-                type="is-danger" />
-            </a>
-          </b-tooltip>
-        </b-table-column>
-      </template>
-      <template
-        v-if="!isEmpty"
-        v-slot:footer>
-        <th class="is-hidden-mobile" />
-        <th class="is-hidden-mobile" />
-        <th class="is-hidden-mobile" />
-        <th class="is-hidden-mobile" />
-        <th class="is-hidden-mobile">
-          <div class="th-wrap is-numeric">
-            Total:
-          </div>
-        </th>
-        <th class="is-hidden-mobile">
-          <div class="th-wrap is-centered">
-            {{ totalPrice }}
-          </div>
-        </th>
-        <th class="is-hidden-mobile" />
-      </template>
-      <template v-slot:empty>
-        <section class="section">
-          <div class="content has-text-grey has-text-centered">
+    <div class="columns is-centered">
+      <div class="column is-10-widescreen is-9-fullhd">
+        <h1 class="title is-spaced">
+          Cart ({{ size }})
+        </h1>
+        <h5 class="subtitle">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec diam mauris, finibus vel turpis et, varius
+          volutpat
+          nibh. Nunc vitae sem quis ex imperdiet rhoncus eu sit amet metus.
+        </h5>
+        <hr>
+        <b-table
+          :data="content"
+          :striped="true"
+          :loading="isLoading">
+          <template v-slot:default="props">
+            <b-table-column
+              field="id"
+              label="ID"
+              width="40"
+              numeric>
+              {{ props.row.id }}
+            </b-table-column>
+            <b-table-column
+              field="shipId"
+              label="Shop"
+              width="40"
+              numeric>
+              {{ props.row.shopId }}
+            </b-table-column>
+            <b-table-column
+              field="name"
+              label="Title">
+              <router-link :to="{name: 'movie-view', params: {id: props.row.id}}">
+                {{ props.row.name }}
+              </router-link>
+            </b-table-column>
+            <b-table-column
+              field="director"
+              label="Director">
+              {{ props.row.director }}
+            </b-table-column>
+            <b-table-column
+              field="releaseDate"
+              label="Release date"
+              centered>
+              {{ formatDate(props.row.releaseDate) }}
+            </b-table-column>
+            <b-table-column
+              field="price"
+              label="Price"
+              centered>
+              {{ `${props.row.price} €` }}
+            </b-table-column>
+            <b-table-column
+              label=""
+              centered>
+              <b-tooltip label="Remove from cart">
+                <a @click="onRemove(props.row)">
+                  <b-icon
+                    icon="cart-arrow-up"
+                    type="is-danger" />
+                </a>
+              </b-tooltip>
+            </b-table-column>
+          </template>
+          <template
+            v-if="!isEmpty"
+            v-slot:footer>
+            <th class="is-hidden-mobile" />
+            <th class="is-hidden-mobile" />
+            <th class="is-hidden-mobile" />
+            <th class="is-hidden-mobile" />
+            <th class="is-hidden-mobile">
+              <div class="th-wrap is-numeric">
+                Total:
+              </div>
+            </th>
+            <th class="is-hidden-mobile">
+              <div class="th-wrap is-centered">
+                {{ totalPrice }}
+              </div>
+            </th>
+            <th class="is-hidden-mobile" />
+          </template>
+          <template v-slot:empty>
+            <section class="section">
+              <div class="content has-text-grey has-text-centered">
+                <p>
+                  <b-icon
+                    icon="cart-outline"
+                    size="is-large" />
+                </p>
+                <p>Looks like there is nothing in the cart.</p>
+              </div>
+            </section>
+          </template>
+        </b-table>
+        <div class="is-hidden-tablet">
+          <div class="d-flex justify-content-between">
             <p>
-              <b-icon
-                icon="cart-outline"
-                size="is-large" />
+              Total
             </p>
-            <p>Looks like there is nothing in the cart.</p>
+            <p>
+              {{ totalPrice }}
+            </p>
           </div>
-        </section>
-      </template>
-    </b-table>
-    <div class="is-hidden-tablet">
-      <div class="d-flex justify-content-between">
-        <p>
-          Total
-        </p>
-        <p>
-          {{ totalPrice }}
-        </p>
+        </div>
+        <div class="buttons is-right mt-2">
+          <b-button
+            tag="router-link"
+            :to="{name: 'checkout'}"
+            type="is-primary">
+            Checkout
+          </b-button>
+        </div>
       </div>
-    </div>
-    <div class="buttons is-right mt-2">
-      <b-button
-        tag="router-link"
-        :to="{name: 'checkout'}"
-        type="is-primary">
-        Checkout
-      </b-button>
     </div>
   </div>
 </template>

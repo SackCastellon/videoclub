@@ -20,7 +20,6 @@ import {UserType} from '@/data/User';
     id="navbar"
     class="is-light"
     :fixed-top="true"
-    :shadow="true"
     wrapper-class="container">
     <template v-slot:brand>
       <b-navbar-item
