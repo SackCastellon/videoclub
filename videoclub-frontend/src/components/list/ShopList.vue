@@ -42,7 +42,8 @@
     </div>-->
     <b-table
       :data="data"
-      :striped="true">
+      :striped="true"
+      :loading="isLoading">
       <template slot-scope="props">
         <b-table-column
           field="id"
@@ -62,19 +63,25 @@
           {{ props.row.street }}
         </b-table-column>
         <b-table-column
-          label="Actions">
-          <div class="buttons">
+          label="">
+          <div class="buttons is-centered">
+            <b-button
+              tag="router-link"
+              type="is-primary"
+              :to="{name:'movie-list', query: {shop: props.row.id}}">
+              View movies
+            </b-button>
             <b-button
               tag="router-link"
               type="is-info"
               :to="{name:'shop-view', params: {id: props.row.id}}">
-              View
+              View shop
             </b-button>
             <b-button
               v-if="isAdmin"
               tag="router-link"
               :to="{name:'shop-edit', params: {id: props.row.id}}">
-              Edit
+              Edit shop
             </b-button>
           </div>
         </b-table-column>
@@ -115,7 +122,7 @@
         // ========== Computed ========== //
 
         public get isAdmin(): boolean {
-            return UserModule.data?.type === UserType.ADMIN;
+            return UserModule.currentUser?.type === UserType.ADMIN;
         }
 
 

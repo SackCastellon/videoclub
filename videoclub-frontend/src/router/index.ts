@@ -115,6 +115,11 @@ const routes: RouteConfig[] = [
             },
         ],
     },
+    {
+        path: '/cart',
+        name: 'cart',
+        component: () => import(/* webpackChunkName: "cart" */ '@/views/Cart.vue'),
+    },
 ];
 
 const router = new VueRouter({
@@ -130,7 +135,7 @@ router.beforeEach(async (to, from, next) => {
     } catch (e) {
     }
 
-    if (AuthModule.isAuthenticated && UserModule.data === null) {
+    if (AuthModule.isAuthenticated && UserModule.currentUser === null) {
         await UserModule.fetchUserData();
     }
 
@@ -149,12 +154,12 @@ router.beforeEach(async (to, from, next) => {
             }
 
             // Current route requires user to be a MEMBER
-            if (mode === LoginMode.MEMBER && UserModule.data?.type !== UserType.MEMBER) {
+            if (mode === LoginMode.MEMBER && UserModule.currentUser?.type !== UserType.MEMBER) {
                 return next({name: 'home'});
             }
 
             // Current route requires user to be an ADMIN
-            if (mode === LoginMode.ADMIN && UserModule.data?.type !== UserType.ADMIN) {
+            if (mode === LoginMode.ADMIN && UserModule.currentUser?.type !== UserType.ADMIN) {
                 return next({name: 'home'});
             }
         }

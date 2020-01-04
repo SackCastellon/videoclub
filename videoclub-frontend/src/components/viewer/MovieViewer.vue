@@ -56,6 +56,16 @@
         </b-field>
         <b-field>
           <template slot="label">
+            Shop
+          </template>
+          <b-input
+            :value="shopName"
+            :loading="shopName === ''"
+            icon="store"
+            readonly />
+        </b-field>
+        <b-field>
+          <template slot="label">
             Price
           </template>
           <b-input
@@ -72,12 +82,21 @@
             outlined
             :loading="isLoading"
             @click="onEdit">
-            Edit
+            Edit information
+          </b-button>
+          <b-button
+            v-if="isInCart"
+            type="is-danger"
+            :loading="isLoading"
+            @click="onRemoveFromCart">
+            Remove from cart
           </b-button>
           <b-button
             v-else
-            type="is-primary">
-            Rent
+            type="is-primary"
+            :loading="isLoading"
+            @click="onAddToCart">
+            Add to cart
           </b-button>
         </div>
       </div>
@@ -92,6 +111,8 @@
     import {Movie} from '@/data/Movie';
     import {dateFormat, moment} from '@/util/Moment';
     import {MovieModule} from '@/store/modules/movies';
+    import {CartModule} from '@/store/modules/cart';
+    import {ShopModule} from '@/store/modules/shops';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
@@ -112,6 +133,8 @@
         // ========== Data ========== //
 
         public data: Movie | null = null;
+
+        public shopName: string = '';
 
 
         // ========== Computed ========== //
@@ -141,7 +164,11 @@
         }
 
         public get isAdmin(): boolean {
-            return UserModule.data?.type === UserType.ADMIN;
+            return UserModule.currentUser?.type === UserType.ADMIN;
+        }
+
+        public get isInCart(): boolean {
+            return CartModule.movieIds.find(id => id === this.data?.id) !== undefined;
         }
 
 
@@ -156,8 +183,11 @@
             }
 
             const movie = await MovieModule.getMovie(id);
-            if (movie) this.data = movie;
-            else {
+            if (movie) {
+                this.data = movie;
+                const shop = (await ShopModule.getShop(movie.shopId))!!;
+                this.shopName = `${shop.city} - ${shop.street}`;
+            } else {
                 this.$buefy.toast.open({message: `No movie with ID ${id} was found`, type: 'is-warning'});
                 return this.$router.push({name: 'movie-list'});
             }
@@ -170,6 +200,20 @@
             const id = this.data?.id;
             if (id !== undefined) {
                 this.$router.push({name: 'movie-edit', params: {id: id.toString()}});
+            }
+        }
+
+        public onAddToCart() {
+            const id = this.data?.id;
+            if (id !== undefined) {
+                CartModule.addToCart(id);
+            }
+        }
+
+        public onRemoveFromCart() {
+            const id = this.data?.id;
+            if (id !== undefined) {
+                CartModule.removeFromCart(id);
             }
         }
 

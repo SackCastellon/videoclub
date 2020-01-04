@@ -72,7 +72,7 @@
             outlined
             :loading="isLoading"
             @click="onEdit">
-            Edit
+            Edit information
           </b-button>
         </div>
       </div>
@@ -131,7 +131,7 @@
         }
 
         public get isAdmin(): boolean {
-            return UserModule.data?.type === UserType.ADMIN;
+            return UserModule.currentUser?.type === UserType.ADMIN;
         }
 
 

@@ -21,22 +21,23 @@ import {AuthModule} from '@/store/modules/auth';
 import {converter} from '@/util/JsonConverter';
 import {Admin} from '@/data/Admin';
 
-interface IAdminState {
-    data: Admin | null;
-}
+@Module({
+    dynamic: true,
+    store,
+    name: 'admin',
+})
+class AdminStore extends VuexModule {
 
-@Module({dynamic: true, store, name: 'admin'})
-class AdminStore extends VuexModule implements IAdminState {
-    public data: Admin | null = null;
+    public admin: Admin | null = null;
 
-    @MutationAction({mutate: ['data']})
-    public async fetchAdminData(): Promise<IAdminState> {
+    @MutationAction({mutate: ['admin']})
+    public async fetchAdminData() {
         if (AuthModule.isAuthenticated) {
             const response = await getAdminData();
             const data = converter.deserializeObject(response.data, Admin);
-            return {data};
+            return {admin: data};
         } else {
-            return {data: null};
+            return {admin: null};
         }
     }
 }

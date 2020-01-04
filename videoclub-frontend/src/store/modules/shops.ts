@@ -20,8 +20,13 @@ import store from '@/store';
 import {getShop, getShops} from '@/api/shops';
 import {converter} from '@/util/JsonConverter';
 
-@Module({dynamic: true, store, name: 'shops'})
+@Module({
+    dynamic: true,
+    store,
+    name: 'shops',
+})
 class ShopStore extends VuexModule {
+
     public shops: ReadonlyArray<Shop> = [];
 
     public get getShop(): (id: number) => Promise<Shop | null> {

@@ -17,18 +17,19 @@
 import {getModule, Module, Mutation, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
 
-interface IAuthState {
-    isAuthenticated: boolean;
-}
+@Module({
+    dynamic: true,
+    store,
+    name: 'auth',
+})
+class AuthStore extends VuexModule {
 
-@Module({dynamic: true, store, name: 'auth'})
-class Auth extends VuexModule implements IAuthState {
     public isAuthenticated: boolean = false;
 
     @Mutation
-    public setAuthenticated(authenticated: boolean) {
-        this.isAuthenticated = authenticated;
+    public setAuthenticated(value: boolean) {
+        this.isAuthenticated = value;
     }
 }
 
-export const AuthModule = getModule(Auth);
+export const AuthModule = getModule(AuthStore);

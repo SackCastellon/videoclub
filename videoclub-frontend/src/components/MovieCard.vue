@@ -22,7 +22,24 @@
           :src="image"
           :alt="title">
       </figure>
-      <b-tooltip :label="title">
+      <b-tooltip
+        class="cart-icon"
+        :label="cartData.tooltip"
+        :active="isActive"
+        animated>
+        <a
+          @click="onCartClicked"
+          @mouseenter="onHover(true)"
+          @mouseleave="onHover(false)">
+          <b-icon
+            :icon="cartData.icon"
+            :type="cartData.type" />
+        </a>
+      </b-tooltip>
+      <b-tooltip
+        class="movie-title"
+        :label="title"
+        animated>
         <b-button
           expanded
           tag="router-link"
@@ -38,12 +55,18 @@
 
 <script lang="ts">
     import {Component, Prop, Vue} from 'vue-property-decorator';
+    import {CartModule} from '@/store/modules/cart';
 
+    const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
+    const BIcon = () => import(/* webpackChunkName: "b_icon" */ 'buefy/src/components/icon/Icon.vue');
     const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
     const BTooltip = () => import(/* webpackChunkName: "b_tooltip" */ 'buefy/src/components/tooltip/Tooltip.vue');
 
+
     @Component({
         components: {
+            BTag,
+            BIcon,
             BButton,
             BTooltip,
         },
@@ -64,14 +87,70 @@
 
         // ========== Data ========== //
 
+        private isHovering = false;
+        private isActive = true;
+
 
         // ========== Computed ========== //
+
+        public get isInCart(): boolean {
+            return CartModule.movieIds.find(id => id === this.id) !== undefined;
+        }
+
+        public get cartData(): { icon: string, type: string, tooltip: string } {
+            if (this.isInCart) {
+                if (this.isHovering) {
+                    return {
+                        icon: 'cart-arrow-up',
+                        type: 'is-danger',
+                        tooltip: 'Remove from cart',
+                    };
+                } else {
+                    return {
+                        icon: 'cart',
+                        type: 'is-info',
+                        tooltip: 'Remove from cart',
+                    };
+                }
+            } else {
+                if (this.isHovering) {
+                    return {
+                        icon: 'cart-arrow-down',
+                        type: 'is-success',
+                        tooltip: 'Add to cart',
+                    };
+                } else {
+                    return {
+                        icon: 'cart-outline',
+                        type: 'is-dark',
+                        tooltip: 'Add to cart',
+                    };
+                }
+            }
+        }
 
 
         // ========== Lifecycle Hooks ========== //
 
 
         // ========== Methods ========== //
+
+        public onCartClicked() {
+            if (this.isInCart) {
+                CartModule.removeFromCart(this.id);
+            } else {
+                CartModule.addToCart(this.id);
+            }
+            this.isHovering = false;
+            this.isActive = false;
+        }
+
+        public onHover(hover: boolean) {
+            if (!this.isActive && !this.isHovering && hover) {
+                this.isActive = true;
+            }
+            this.isHovering = hover;
+        }
 
 
         // ========== Watchers ========== //
@@ -86,7 +165,13 @@
     div.card-image {
       position: relative;
 
-      span.b-tooltip {
+      span.cart-icon {
+        top: .5rem;
+        right: .5rem;
+        position: absolute;
+      }
+
+      span.movie-title {
         left: 0;
         right: 0;
         bottom: 0;

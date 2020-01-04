@@ -20,8 +20,13 @@ import store from '@/store';
 import {getMovie, getMovies, getNewMovies, getTopMovies} from '@/api/movies';
 import {converter} from '@/util/JsonConverter';
 
-@Module({dynamic: true, store, name: 'movies'})
+@Module({
+    dynamic: true,
+    store,
+    name: 'movies',
+})
 class MovieStore extends VuexModule {
+
     public movies: ReadonlyArray<Movie> = [];
     public newMovies: ReadonlyArray<Movie> = [];
     public topMovies: ReadonlyArray<Movie> = [];

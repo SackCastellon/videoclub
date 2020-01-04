@@ -69,6 +69,20 @@ import {UserType} from '@/data/User';
       </b-navbar-item>
     </template>
     <template v-slot:end>
+      <b-navbar-item
+        tag="router-link"
+        :to="{ name: 'cart' }">
+        <div class="d-flex align-items-center">
+          <b-icon
+            icon="cart"
+            class="mr-1" />
+          <b-tag
+            type="is-white"
+            rounded>
+            <b class="has-text-info">{{ cartCount }}</b>
+          </b-tag>
+        </div>
+      </b-navbar-item>
       <b-navbar-dropdown
         ref="dropdown"
         right
@@ -163,6 +177,7 @@ import {UserType} from '@/data/User';
     import {logout} from '@/api/auth';
     import {UserModule} from '@/store/modules/user';
     import {UserType} from '@/data/User';
+    import {CartModule} from '@/store/modules/cart';
 
     const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
     const BIcon = () => import(/* webpackChunkName: "b_icon" */ 'buefy/src/components/icon/Icon.vue');
@@ -188,12 +203,16 @@ import {UserType} from '@/data/User';
 
         // ========== Computed ========== //
 
+        public get cartCount() {
+            return CartModule.count;
+        }
+
         public get username(): string {
-            return UserModule.data?.username || '';
+            return UserModule.currentUser?.username || '';
         }
 
         public get isAdmin(): boolean {
-            return UserModule.data?.type === UserType.ADMIN;
+            return UserModule.currentUser?.type === UserType.ADMIN;
         }
 
         public get isAuthenticated(): boolean {
@@ -245,5 +264,17 @@ import {UserType} from '@/data/User';
 <style lang="scss" scoped>
   #navbar {
     box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15) !important;
+
+    /*a.navbar-item {*/
+    /*  &.is-active, &:focus, &:focus-within, &:hover {*/
+    /*    color: #7957d5;*/
+    /*  }*/
+    /*}*/
+
+    /*.navbar-link {*/
+    /*  &.is-active, &:focus, &:focus-within, &:hover {*/
+    /*    color: #7957d5;*/
+    /*  }*/
+    /*}*/
   }
 </style>

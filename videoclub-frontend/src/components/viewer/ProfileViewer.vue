@@ -94,9 +94,9 @@
 
         public get name(): string {
             if (this.isAdmin) {
-                return AdminModule.data?.name || '';
+                return AdminModule.admin?.name || '';
             } else {
-                return MemberModule.data?.name || '';
+                return MemberModule.member?.name || '';
             }
         }
 
@@ -104,25 +104,25 @@
             if (this.isAdmin) {
                 return '';
             } else {
-                const age = MemberModule.data?.age || -1;
+                const age = MemberModule.member?.age || -1;
                 return age < 0 ? '' : age;
             }
         }
 
         public get username(): string {
-            return UserModule.data?.username || '';
+            return UserModule.currentUser?.username || '';
         }
 
         public get isLoading(): boolean {
             if (this.isAdmin) {
-                return AdminModule.data === null;
+                return AdminModule.admin === null;
             } else {
-                return MemberModule.data === null;
+                return MemberModule.member === null;
             }
         }
 
         public get isAdmin(): boolean {
-            return UserModule.data?.type === UserType.ADMIN;
+            return UserModule.currentUser?.type === UserType.ADMIN;
         }
 
 

@@ -21,22 +21,23 @@ import {AuthModule} from '@/store/modules/auth';
 import {converter} from '@/util/JsonConverter';
 import {Member} from '@/data/Member';
 
-interface IMemberState {
-    data: Member | null;
-}
+@Module({
+    dynamic: true,
+    store,
+    name: 'member',
+})
+class MemberStore extends VuexModule {
 
-@Module({dynamic: true, store, name: 'member'})
-class MemberStore extends VuexModule implements IMemberState {
-    public data: Member | null = null;
+    public member: Member | null = null;
 
-    @MutationAction({mutate: ['data']})
-    public async fetchMemberData(): Promise<IMemberState> {
+    @MutationAction({mutate: ['member']})
+    public async fetchMemberData() {
         if (AuthModule.isAuthenticated) {
             const response = await getMemberData();
             const data = converter.deserializeObject(response.data, Member);
-            return {data};
+            return {member: data};
         } else {
-            return {data: null};
+            return {member: null};
         }
     }
 }
