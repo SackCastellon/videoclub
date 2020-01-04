@@ -1,6 +1,6 @@
 import {UserType} from '@/data/User';
 <!--
-  - Copyright 2019 Juan José González Abril
+  - Copyright 2020 Juan José González Abril
   -
   - Licensed under the Apache License, Version 2.0 (the "License");
   - you may not use this file except in compliance with the License.
