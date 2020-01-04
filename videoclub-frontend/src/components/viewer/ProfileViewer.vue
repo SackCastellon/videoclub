@@ -110,7 +110,7 @@
         }
 
         public get username(): string {
-            return UserModule.currentUser?.username || '';
+            return UserModule.user?.username || '';
         }
 
         public get isLoading(): boolean {
@@ -122,7 +122,7 @@
         }
 
         public get isAdmin(): boolean {
-            return UserModule.currentUser?.type === UserType.ADMIN;
+            return UserModule.user?.type === UserType.ADMIN;
         }
 
 
@@ -132,9 +132,9 @@
         public created() {
             if (this.isLoading) {
                 if (this.isAdmin) {
-                    AdminModule.fetchAdminData();
+                    AdminModule.load();
                 } else {
-                    MemberModule.fetchMemberData();
+                    MemberModule.load();
                 }
             }
         }

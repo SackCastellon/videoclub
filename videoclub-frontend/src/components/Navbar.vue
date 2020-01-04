@@ -72,6 +72,11 @@ import {UserType} from '@/data/User';
       <b-navbar-item
         tag="router-link"
         :to="{ name: 'cart' }">
+        <b-loading
+          :is-full-page="false"
+          :active="isLoadingCart">
+          <div class="cart-loading-icon" />
+        </b-loading>
         <div class="d-flex align-items-center">
           <b-icon
             icon="cart"
@@ -179,26 +184,29 @@ import {UserType} from '@/data/User';
     import {UserType} from '@/data/User';
     import {CartModule} from '@/store/modules/cart';
 
-    const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
-    const BIcon = () => import(/* webpackChunkName: "b_icon" */ 'buefy/src/components/icon/Icon.vue');
-    const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
     const BNavbar = () => import(/* webpackChunkName: "b_navbar" */ 'buefy/src/components/navbar/Navbar.vue');
     const BNavbarItem = () => import(/* webpackChunkName: "b_navbar_item" */ 'buefy/src/components/navbar/NavbarItem.vue');
     const BNavbarDropdown = () => import(/* webpackChunkName: "b_navbar_dropdown" */ 'buefy/src/components/navbar/NavbarDropdown.vue');
 
+    const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
+    const BIcon = () => import(/* webpackChunkName: "b_icon" */ 'buefy/src/components/icon/Icon.vue');
+    const BLoading = () => import(/* webpackChunkName: "b_loading" */ 'buefy/src/components/loading/Loading.vue');
+
     @Component({
         components: {
-            BTag,
-            BIcon,
-            BButton,
             BNavbar,
             BNavbarItem,
             BNavbarDropdown,
+            BTag,
+            BIcon,
+            BLoading,
         },
     })
     export default class Navbar extends Vue {
 
         // ========== Data ========== //
+
+        public isLoadingCart: boolean = true;
 
 
         // ========== Computed ========== //
@@ -208,11 +216,11 @@ import {UserType} from '@/data/User';
         }
 
         public get username(): string {
-            return UserModule.currentUser?.username || '';
+            return UserModule.user?.username || '';
         }
 
         public get isAdmin(): boolean {
-            return UserModule.currentUser?.type === UserType.ADMIN;
+            return UserModule.user?.type === UserType.ADMIN;
         }
 
         public get isAuthenticated(): boolean {
@@ -233,6 +241,11 @@ import {UserType} from '@/data/User';
 
 
         // ========== Lifecycle Hooks ========== //
+
+        public async created() {
+            await CartModule.load();
+            this.isLoadingCart = false;
+        }
 
 
         // ========== Methods ========== //
@@ -256,7 +269,7 @@ import {UserType} from '@/data/User';
 
         @Watch('isAuthenticated', {immediate: true})
         public onAuthenticated() {
-            UserModule.fetchUserData();
+            UserModule.load();
         }
     }
 </script>
@@ -265,16 +278,22 @@ import {UserType} from '@/data/User';
   #navbar {
     box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15) !important;
 
-    /*a.navbar-item {*/
-    /*  &.is-active, &:focus, &:focus-within, &:hover {*/
-    /*    color: #7957d5;*/
-    /*  }*/
-    /*}*/
+    .loading-overlay .cart-loading-icon {
+      position: relative;
+    }
 
-    /*.navbar-link {*/
-    /*  &.is-active, &:focus, &:focus-within, &:hover {*/
-    /*    color: #7957d5;*/
-    /*  }*/
-    /*}*/
+    .loading-overlay .cart-loading-icon:after {
+      animation: spinAround 500ms infinite linear;
+      border-radius: 290486px;
+      content: "";
+      display: block;
+      top: calc(50% - 1em);
+      left: calc(50% - 1em);
+      width: 2em;
+      height: 2em;
+      border: 0.16em solid transparent;
+      border-bottom-color: #dbdbdb;
+      border-left-color: #dbdbdb;
+    }
   }
 </style>

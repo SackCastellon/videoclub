@@ -60,7 +60,7 @@
           </template>
           <b-input
             :value="shopName"
-            :loading="shopName === ''"
+            :loading="isLoading"
             icon="store"
             readonly />
         </b-field>
@@ -136,6 +136,8 @@
 
         public shopName: string = '';
 
+        public isLoading: boolean = true;
+
 
         // ========== Computed ========== //
 
@@ -148,27 +150,31 @@
         }
 
         public get movieReleaseDate(): string {
-            const date = this.data?.releaseDate;
-            if (date) return moment(date).format(dateFormat);
-            else return '';
+            if (this.data) {
+                return moment(this.data.releaseDate).format(dateFormat);
+            } else {
+                return '';
+            }
         }
 
         public get moviePrice(): string {
-            const price = this.data?.price;
-            if (price) return price.toFixed(2) + ' €';
-            else return '';
-        }
-
-        public get isLoading(): boolean {
-            return this.data === null;
+            if (this.data) {
+                return this.data.price.toFixed(2) + ' €';
+            } else {
+                return '';
+            }
         }
 
         public get isAdmin(): boolean {
-            return UserModule.currentUser?.type === UserType.ADMIN;
+            return UserModule.user?.type === UserType.ADMIN;
         }
 
         public get isInCart(): boolean {
-            return CartModule.movieIds.find(id => id === this.data?.id) !== undefined;
+            if (this.data) {
+                return CartModule.has(this.data);
+            } else {
+                return false;
+            }
         }
 
 
@@ -182,38 +188,37 @@
                 return this.$router.push({name: 'movie-list'});
             }
 
-            const movie = await MovieModule.getMovie(id);
+            const movie = await MovieModule.get(id);
             if (movie) {
                 this.data = movie;
-                const shop = (await ShopModule.getShop(movie.shopId))!!;
+                const shop = (await ShopModule.get(movie.shopId))!!;
                 this.shopName = `${shop.city} - ${shop.street}`;
             } else {
                 this.$buefy.toast.open({message: `No movie with ID ${id} was found`, type: 'is-warning'});
                 return this.$router.push({name: 'movie-list'});
             }
+
+            this.isLoading = false;
         }
 
 
         // ========== Methods ========== //
 
         public onEdit() {
-            const id = this.data?.id;
-            if (id !== undefined) {
-                this.$router.push({name: 'movie-edit', params: {id: id.toString()}});
+            if (this.data) {
+                this.$router.push({name: 'movie-edit', params: {id: this.data.id.toString()}});
             }
         }
 
         public onAddToCart() {
-            const id = this.data?.id;
-            if (id !== undefined) {
-                CartModule.addToCart(id);
+            if (this.data) {
+                CartModule.add(this.data);
             }
         }
 
         public onRemoveFromCart() {
-            const id = this.data?.id;
-            if (id !== undefined) {
-                CartModule.removeFromCart(id);
+            if (this.data) {
+                CartModule.remove(this.data);
             }
         }
 

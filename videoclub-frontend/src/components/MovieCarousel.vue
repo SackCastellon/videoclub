@@ -45,9 +45,7 @@
           slot="item"
           slot-scope="props">
           <MovieCard
-            :id="props.list.id"
-            :title="props.list.name"
-            :image="`https://via.placeholder.com/200x300.png`"
+            :value="props.list"
             class="m-1 mb-2" />
         </template>
       </b-carousel-list>
@@ -113,11 +111,11 @@
         public async created() {
             switch (this.type) {
                 case 'new':
-                    await MovieModule.loadNewMovies();
+                    await MovieModule.loadNew();
                     this.data = MovieModule.newMovies;
                     break;
                 case 'top':
-                    await MovieModule.loadTopMovies();
+                    await MovieModule.loadTop();
                     this.data = MovieModule.topMovies;
                     break;
             }

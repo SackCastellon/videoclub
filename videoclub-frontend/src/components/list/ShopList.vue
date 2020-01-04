@@ -122,7 +122,7 @@
         // ========== Computed ========== //
 
         public get isAdmin(): boolean {
-            return UserModule.currentUser?.type === UserType.ADMIN;
+            return UserModule.user?.type === UserType.ADMIN;
         }
 
 
@@ -130,7 +130,7 @@
 
         // noinspection JSUnusedGlobalSymbols
         public async created() {
-            await ShopModule.loadShops();
+            await ShopModule.load();
             this.data = ShopModule.shops;
             this.isLoading = false;
         }

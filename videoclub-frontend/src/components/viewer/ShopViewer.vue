@@ -131,7 +131,7 @@
         }
 
         public get isAdmin(): boolean {
-            return UserModule.currentUser?.type === UserType.ADMIN;
+            return UserModule.user?.type === UserType.ADMIN;
         }
 
 
@@ -145,7 +145,7 @@
                 return this.$router.push({name: 'shop-list'});
             }
 
-            const shop = await ShopModule.getShop(id);
+            const shop = await ShopModule.get(id);
             if (shop) this.data = shop;
             else {
                 this.$buefy.toast.open({message: `No shop with ID ${id} was found`, type: 'is-warning'});

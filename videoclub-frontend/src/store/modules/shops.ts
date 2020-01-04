@@ -24,12 +24,13 @@ import {converter} from '@/util/JsonConverter';
     dynamic: true,
     store,
     name: 'shops',
+    namespaced: true,
 })
 class ShopStore extends VuexModule {
 
     public shops: ReadonlyArray<Shop> = [];
 
-    public get getShop(): (id: number) => Promise<Shop | null> {
+    public get get(): (id: number) => Promise<Shop | null> {
         return async id => {
             const shop = this.shops.find(shop => shop.id === id);
             if (shop) return shop;
@@ -43,7 +44,7 @@ class ShopStore extends VuexModule {
     }
 
     @MutationAction({mutate: ['shops']})
-    public async loadShops() {
+    public async load() {
         const response = await getShops();
         const data = converter.deserializeArray(response.data, Shop);
         return {shops: data};

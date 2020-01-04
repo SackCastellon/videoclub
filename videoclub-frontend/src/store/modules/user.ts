@@ -25,19 +25,20 @@ import {User} from '@/data/User';
     dynamic: true,
     store,
     name: 'user',
+    namespaced: true,
 })
 class UserStore extends VuexModule {
 
-    public currentUser: User | null = null;
+    public user: User | null = null;
 
-    @MutationAction({mutate: ['currentUser']})
-    public async fetchUserData() {
+    @MutationAction({mutate: ['user']})
+    public async load() {
         if (AuthModule.isAuthenticated) {
             const response = await getUserData();
             const data = converter.deserializeObject(response.data, User);
-            return {currentUser: data};
+            return {user: data};
         } else {
-            return {currentUser: null};
+            return {user: null};
         }
     }
 }

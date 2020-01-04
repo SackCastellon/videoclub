@@ -149,7 +149,7 @@
                     return this.$router.push({name: 'movie-list'});
                 }
 
-                const movie = await MovieModule.getMovie(id);
+                const movie = await MovieModule.get(id);
 
                 if (movie) this.data = cloneDeep(movie);
                 else {

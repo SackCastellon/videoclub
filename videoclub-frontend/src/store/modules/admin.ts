@@ -25,13 +25,14 @@ import {Admin} from '@/data/Admin';
     dynamic: true,
     store,
     name: 'admin',
+    namespaced: true,
 })
 class AdminStore extends VuexModule {
 
     public admin: Admin | null = null;
 
     @MutationAction({mutate: ['admin']})
-    public async fetchAdminData() {
+    public async load() {
         if (AuthModule.isAuthenticated) {
             const response = await getAdminData();
             const data = converter.deserializeObject(response.data, Admin);

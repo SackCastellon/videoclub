@@ -142,7 +142,7 @@
                     return this.$router.push({name: 'shop-list'});
                 }
 
-                const shop = await ShopModule.getShop(id);
+                const shop = await ShopModule.get(id);
 
                 if (shop) this.data = cloneDeep(shop);
                 else {

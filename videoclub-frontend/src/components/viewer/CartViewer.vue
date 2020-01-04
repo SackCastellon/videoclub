@@ -17,7 +17,7 @@
 <template>
   <div class="container">
     <h1 class="title is-1 is-spaced">
-      Cart ({{ cartSize }})
+      Cart ({{ size }})
     </h1>
     <h5 class="subtitle is-5">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec diam mauris, finibus vel turpis et, varius volutpat
@@ -25,7 +25,7 @@
     </h5>
     <hr>
     <b-table
-      :data="cartContent"
+      :data="content"
       :striped="true"
       :loading="isLoading">
       <template v-slot:default="props">
@@ -35,6 +35,13 @@
           width="40"
           numeric>
           {{ props.row.id }}
+        </b-table-column>
+        <b-table-column
+          field="shipId"
+          label="Shop"
+          width="40"
+          numeric>
+          {{ props.row.shopId }}
         </b-table-column>
         <b-table-column
           field="name"
@@ -64,7 +71,7 @@
           label=""
           centered>
           <b-tooltip label="Remove from cart">
-            <a @click="onRemove(props.row.id)">
+            <a @click="onRemove(props.row)">
               <b-icon
                 icon="cart-arrow-up"
                 type="is-danger" />
@@ -75,6 +82,7 @@
       <template
         v-if="!isEmpty"
         v-slot:footer>
+        <th class="is-hidden-mobile" />
         <th class="is-hidden-mobile" />
         <th class="is-hidden-mobile" />
         <th class="is-hidden-mobile" />
@@ -128,7 +136,6 @@
     import {Component, Vue} from 'vue-property-decorator';
     import {CartModule} from '@/store/modules/cart';
     import {Movie} from '@/data/Movie';
-    import {MovieModule} from '@/store/modules/movies';
     import {dateFormat} from '@/util/Moment';
     import moment from 'moment';
 
@@ -156,20 +163,19 @@
         // ========== Computed ========== //
 
         public get isEmpty(): boolean {
-            return this.cartContent.length === 0;
+            return CartModule.isEmpty;
         }
 
-        public get cartSize(): number {
+        public get size(): number {
             return CartModule.count;
         }
 
-        public get cartContent(): ReadonlyArray<Movie> {
-            const ids = new Set(CartModule.movieIds);
-            return MovieModule.movies.filter(movie => ids.has(movie.id));
+        public get content(): ReadonlyArray<Movie> {
+            return CartModule.movies;
         }
 
         public get totalPrice(): string {
-            return this.cartContent.map(movie => movie.price).reduce(((a, b) => a + b), 0).toString() + ' €';
+            return CartModule.totalPrice.toString() + ' €';
         }
 
 
@@ -177,7 +183,7 @@
 
         // noinspection JSUnusedGlobalSymbols
         public async created() {
-            await MovieModule.loadMovies();
+            await CartModule.load();
             this.isLoading = false;
         }
 
@@ -188,8 +194,8 @@
             return moment(date).format(dateFormat);
         }
 
-        public onRemove(id: number) {
-            CartModule.removeFromCart(id);
+        public onRemove(movie: Movie) {
+            CartModule.remove(movie);
         }
 
 

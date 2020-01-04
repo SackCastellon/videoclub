@@ -19,8 +19,8 @@
     <div class="card-image">
       <figure class="image is-2by3">
         <img
-          :src="image"
-          :alt="title">
+          src="https://via.placeholder.com/200x300.png"
+          :alt="value.name">
       </figure>
       <b-tooltip
         class="cart-icon"
@@ -38,14 +38,14 @@
       </b-tooltip>
       <b-tooltip
         class="movie-title mx-2 mb-2"
-        :label="title"
+        :label="value.name"
         animated>
         <b-button
           expanded
           tag="router-link"
-          :to="{name: 'movie-view', params: { id }}"
+          :to="{name: 'movie-view', params: { id: value.id }}"
           type="is-light">
-          {{ title }}
+          {{ value.name }}
         </b-button>
       </b-tooltip>
     </div>
@@ -55,6 +55,7 @@
 <script lang="ts">
     import {Component, Prop, Vue} from 'vue-property-decorator';
     import {CartModule} from '@/store/modules/cart';
+    import {Movie} from '@/data/Movie';
 
     const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
     const BIcon = () => import(/* webpackChunkName: "b_icon" */ 'buefy/src/components/icon/Icon.vue');
@@ -75,13 +76,7 @@
         // ========== Props ========== //
 
         @Prop({required: true})
-        public id!: number;
-
-        @Prop({required: true})
-        public title!: string;
-
-        @Prop({required: true})
-        public image!: string;
+        public value!: Movie;
 
 
         // ========== Data ========== //
@@ -93,7 +88,7 @@
         // ========== Computed ========== //
 
         public get isInCart(): boolean {
-            return CartModule.movieIds.find(id => id === this.id) !== undefined;
+            return CartModule.has(this.value);
         }
 
         public get cartData(): { icon: string, type: string, tooltip: string } {
@@ -136,9 +131,9 @@
 
         public onCartClicked() {
             if (this.isInCart) {
-                CartModule.removeFromCart(this.id);
+                CartModule.remove(this.value);
             } else {
-                CartModule.addToCart(this.id);
+                CartModule.add(this.value);
             }
             this.isHovering = false;
             this.isActive = false;

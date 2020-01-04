@@ -16,44 +16,68 @@
 
 import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
-
-const loadCart: () => (ReadonlyArray<number>) = () => {
-    const item = localStorage.getItem('cart');
-    if (item === null) return [];
-    else return JSON.parse(item) as number[];
-};
+import {MovieModule} from '@/store/modules/movies';
+import {Movie} from '@/data/Movie';
 
 @Module({
     dynamic: true,
     store,
     name: 'cart',
+    namespaced: true,
 })
 class CartStore extends VuexModule {
 
-    public movieIds: ReadonlyArray<number> = loadCart();
+    public movies: ReadonlyArray<Movie> = [];
+
+    public get isEmpty(): boolean {
+        return this.movies.length === 0;
+    }
 
     public get count(): number {
-        return this.movieIds.length;
+        return this.movies.length;
     }
 
-    @MutationAction({mutate: ['movieIds']})
-    public async addToCart(movieId: number) {
-        const newMovieIds = CartModule.movieIds.concat(movieId);
-        localStorage.setItem('cart', JSON.stringify(newMovieIds));
-        return {movieIds: newMovieIds};
+    public get has(): (movie: Movie) => boolean {
+        return movie => this.movies.findIndex(it => it.id === movie.id) !== -1;
     }
 
-    @MutationAction({mutate: ['movieIds']})
-    public async removeFromCart(movieId: number) {
-        const newMovieIds = CartModule.movieIds.filter(id => id !== movieId);
-        localStorage.setItem('cart', JSON.stringify(newMovieIds));
-        return {movieIds: newMovieIds};
+    public get totalPrice(): number {
+        return this.movies.map(movie => movie.price).reduce(((a, b) => a + b), 0);
     }
 
-    @MutationAction({mutate: ['movieIds']})
-    public async clearCart() {
+    @MutationAction({mutate: ['movies']})
+    public async add(movie: Movie) {
+        const newMovies = CartModule.movies.concat(movie);
+        localStorage.setItem('cart', JSON.stringify({movies: newMovies.map(it => it.id)}));
+        return {movies: newMovies};
+    }
+
+    @MutationAction({mutate: ['movies']})
+    public async remove(movie: Movie) {
+        const newMovies = CartModule.movies.filter(it => it.id !== movie.id);
+        localStorage.setItem('cart', JSON.stringify({movies: newMovies.map(it => it.id)}));
+        return {movies: newMovies};
+    }
+
+    @MutationAction({mutate: ['movies']})
+    public async load() {
+        const item = localStorage.getItem('cart');
+        if (item !== null) {
+            const cart = JSON.parse(item) as { movies: number[] };
+            if (cart.movies.length > 0) {
+                const promise = await Promise.all(cart.movies.map(id => MovieModule.get(id)));
+                const newMovies = promise.filter(it => it !== null) as Movie[];
+                return {movies: newMovies};
+            }
+        }
+
+        return {movies: []};
+    }
+
+    @MutationAction({mutate: ['movies']})
+    public async clear() {
         localStorage.removeItem('cart');
-        return {movieIds: []};
+        return {movies: []};
     }
 }
 

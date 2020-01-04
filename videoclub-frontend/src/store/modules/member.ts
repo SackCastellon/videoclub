@@ -25,13 +25,14 @@ import {Member} from '@/data/Member';
     dynamic: true,
     store,
     name: 'member',
+    namespaced: true,
 })
 class MemberStore extends VuexModule {
 
     public member: Member | null = null;
 
     @MutationAction({mutate: ['member']})
-    public async fetchMemberData() {
+    public async load() {
         if (AuthModule.isAuthenticated) {
             const response = await getMemberData();
             const data = converter.deserializeObject(response.data, Member);

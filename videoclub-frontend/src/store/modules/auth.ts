@@ -21,6 +21,7 @@ import store from '@/store';
     dynamic: true,
     store,
     name: 'auth',
+    namespaced: true,
 })
 class AuthStore extends VuexModule {
 

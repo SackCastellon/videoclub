@@ -135,8 +135,8 @@ router.beforeEach(async (to, from, next) => {
     } catch (e) {
     }
 
-    if (AuthModule.isAuthenticated && UserModule.currentUser === null) {
-        await UserModule.fetchUserData();
+    if (AuthModule.isAuthenticated && UserModule.user === null) {
+        await UserModule.load();
     }
 
     const mode = to.meta.requiredLogin as LoginMode | undefined;
@@ -154,12 +154,12 @@ router.beforeEach(async (to, from, next) => {
             }
 
             // Current route requires user to be a MEMBER
-            if (mode === LoginMode.MEMBER && UserModule.currentUser?.type !== UserType.MEMBER) {
+            if (mode === LoginMode.MEMBER && UserModule.user?.type !== UserType.MEMBER) {
                 return next({name: 'home'});
             }
 
             // Current route requires user to be an ADMIN
-            if (mode === LoginMode.ADMIN && UserModule.currentUser?.type !== UserType.ADMIN) {
+            if (mode === LoginMode.ADMIN && UserModule.user?.type !== UserType.ADMIN) {
                 return next({name: 'home'});
             }
         }

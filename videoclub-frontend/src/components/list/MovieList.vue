@@ -45,10 +45,7 @@
         v-for="movie in data"
         :key="movie.id"
         class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop is-one-fifth-widescreen is-2-fullhd">
-        <MovieCard
-          :id="movie.id"
-          :title="movie.name"
-          :image="`https://via.placeholder.com/200x300.png`" />
+        <MovieCard :value="movie" />
       </div>
     </div>
   </div>
@@ -84,7 +81,7 @@
 
         // noinspection JSUnusedGlobalSymbols
         public async created() {
-            await MovieModule.loadMovies();
+            await MovieModule.load();
             this.data = MovieModule.movies;
             this.isLoading = false;
         }

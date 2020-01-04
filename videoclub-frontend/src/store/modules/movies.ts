@@ -24,6 +24,7 @@ import {converter} from '@/util/JsonConverter';
     dynamic: true,
     store,
     name: 'movies',
+    namespaced: true,
 })
 class MovieStore extends VuexModule {
 
@@ -31,7 +32,7 @@ class MovieStore extends VuexModule {
     public newMovies: ReadonlyArray<Movie> = [];
     public topMovies: ReadonlyArray<Movie> = [];
 
-    public get getMovie(): (id: number) => Promise<Movie | null> {
+    public get get(): (id: number) => Promise<Movie | null> {
         return async id => {
             const movie = this.movies.find(movie => movie.id === id);
             if (movie) return movie;
@@ -45,21 +46,21 @@ class MovieStore extends VuexModule {
     }
 
     @MutationAction({mutate: ['movies']})
-    public async loadMovies() {
+    public async load() {
         const response = await getMovies();
         const data = converter.deserializeArray(response.data, Movie);
         return {movies: data};
     }
 
     @MutationAction({mutate: ['newMovies']})
-    public async loadNewMovies() {
+    public async loadNew() {
         const response = await getNewMovies();
         const data = converter.deserializeArray(response.data, Movie);
         return {newMovies: data};
     }
 
     @MutationAction({mutate: ['topMovies']})
-    public async loadTopMovies() {
+    public async loadTop() {
         const response = await getTopMovies();
         const data = converter.deserializeArray(response.data, Movie);
         return {topMovies: data};

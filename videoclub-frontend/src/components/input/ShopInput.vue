@@ -96,7 +96,7 @@
 
         // noinspection JSUnusedGlobalSymbols
         public async created() {
-            await ShopModule.loadShops();
+            await ShopModule.load();
             this.data = ShopModule.shops;
             this.isLoading = false;
 
