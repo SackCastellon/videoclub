@@ -15,51 +15,51 @@
   -->
 
 <template>
-  <section class="section">
-    <div class="container">
-      <form
-        method="post"
-        @submit.prevent="onLogin(info)">
-        <div class="modal-card shadow">
-          <header class="modal-card-head">
-            <p class="modal-card-title">
-              Login
-            </p>
-          </header>
-          <section class="modal-card-body">
-            <b-field label="Username">
-              <b-input
-                v-model="info.username"
-                v-focus
-                placeholder="Your username"
-                required />
-            </b-field>
+  <form
+    method="post"
+    @submit.prevent="onLogin">
+    <div
+      class="modal-card shadow"
+      style="width: auto">
+      <header class="modal-card-head">
+        <p class="modal-card-title">
+          Login
+        </p>
+      </header>
+      <section class="modal-card-body">
+        <b-field label="Username">
+          <b-input
+            v-model="info.username"
+            v-focus
+            placeholder="Your username"
+            required />
+        </b-field>
 
-            <b-field label="Password">
-              <b-input
-                v-model="info.password"
-                type="password"
-                password-reveal
-                placeholder="Your password"
-                required />
-            </b-field>
-          </section>
-          <footer class="modal-card-foot">
-            <b-button
-              tag="input"
-              native-type="submit"
-              type="is-primary"
-              value="Login" />
-          </footer>
+        <b-field label="Password">
+          <b-input
+            v-model="info.password"
+            type="password"
+            password-reveal
+            placeholder="Your password"
+            required />
+        </b-field>
+      </section>
+      <footer class="modal-card-foot">
+        <div class="buttons is-centered">
+          <b-button
+            tag="input"
+            native-type="submit"
+            type="is-primary"
+            value="Login" />
         </div>
-      </form>
+      </footer>
     </div>
-  </section>
+  </form>
 </template>
-
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
     import {ILoginInfo, login} from '@/api/auth';
+    import {UserModule} from '@/store/modules/user';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
@@ -90,27 +90,28 @@
 
         // ========== Methods ========== //
 
-        public async onLogin(info: ILoginInfo) {
+        public async onLogin() {
             try {
-                await login(info);
+                await login(this.info);
+                this.clear();
+                await UserModule.load();
                 this.$buefy.toast.open({
-                    type: 'is-primary',
+                    type: 'is-success',
                     message: 'Signed in successfully',
-                    position: 'is-top',
                 });
-                const next = this.$route.query.next;
-                if (typeof next === 'string')
-                    await this.$router.push(next);
-                else
-                    await this.$router.push({name: 'home'});
+                this.$emit('success');
             } catch (error) {
                 // TODO Improve error message
                 this.$buefy.toast.open({
                     type: 'is-danger',
                     message: 'Something went wrong during the sign in process',
-                    position: 'is-top',
                 });
             }
+        }
+
+        public clear() {
+            this.info.username = '';
+            this.info.password = '';
         }
 
 
@@ -121,18 +122,14 @@
 
 <style lang="scss" scoped>
   .modal-card {
-    @media screen and (min-width: 769px) {
-      width: 350px;
-      margin-top: 5rem;
-    }
     margin: 0 auto;
     border: 1px solid #dbdbdb;
     border-radius: 6px;
     overflow: initial;
     max-height: initial;
 
-    .modal-card-body {
-      overflow: initial;
+    .modal-card-foot .buttons {
+      width: 100%;
     }
   }
 </style>

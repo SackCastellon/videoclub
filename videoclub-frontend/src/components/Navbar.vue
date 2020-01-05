@@ -257,9 +257,7 @@ import {UserType} from '@/data/User';
             this.closeMenu();
             await logout();
             this.$buefy.toast.open({
-                type: 'is-primary',
                 message: 'Signed out successfully',
-                position: 'is-top',
             });
         }
 

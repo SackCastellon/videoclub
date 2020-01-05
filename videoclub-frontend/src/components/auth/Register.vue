@@ -15,64 +15,63 @@
   -->
 
 <template>
-  <section class="section">
-    <div class="container">
-      <form
-        method="post"
-        @submit.prevent="onRegister(info)">
-        <div class="modal-card shadow">
-          <header class="modal-card-head">
-            <p class="modal-card-title">
-              Register
-            </p>
-          </header>
-          <section class="modal-card-body">
-            <b-field label="Name">
-              <b-input
-                v-model="info.member.name"
-                v-focus
-                placeholder="Your full name"
-                required />
-            </b-field>
+  <form
+    method="post"
+    @submit.prevent="onRegister">
+    <div
+      class="modal-card shadow"
+      style="width: auto">
+      <header class="modal-card-head">
+        <p class="modal-card-title">
+          Register
+        </p>
+      </header>
+      <section class="modal-card-body">
+        <b-field label="Name">
+          <b-input
+            v-model="info.member.name"
+            v-focus
+            placeholder="Your full name"
+            required />
+        </b-field>
 
-            <b-field label="Age">
-              <b-numberinput
-                v-model="info.member.age"
-                min="0"
-                max="150"
-                placeholder="Your age"
-                required />
-            </b-field>
+        <b-field label="Age">
+          <b-numberinput
+            v-model="info.member.age"
+            min="0"
+            max="150"
+            placeholder="Your age"
+            required />
+        </b-field>
 
-            <b-field label="Username">
-              <b-input
-                v-model="info.credential.username"
-                placeholder="Your username"
-                required />
-            </b-field>
+        <b-field label="Username">
+          <b-input
+            v-model="info.credential.username"
+            placeholder="Your username"
+            required />
+        </b-field>
 
-            <b-field label="Password">
-              <b-input
-                v-model="info.credential.password"
-                type="password"
-                password-reveal
-                placeholder="Your password"
-                required />
-            </b-field>
-          </section>
-          <footer class="modal-card-foot">
-            <b-button
-              tag="input"
-              native-type="submit"
-              type="is-primary"
-              value="Register" />
-          </footer>
+        <b-field label="Password">
+          <b-input
+            v-model="info.credential.password"
+            type="password"
+            password-reveal
+            placeholder="Your password"
+            required />
+        </b-field>
+      </section>
+      <footer class="modal-card-foot">
+        <div class="buttons is-centered">
+          <b-button
+            tag="input"
+            native-type="submit"
+            type="is-primary"
+            value="Register" />
         </div>
-      </form>
+      </footer>
     </div>
-  </section>
+  </form>
 </template>
-
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
     import {IRegistrationInfo, register} from '@/api/auth';
@@ -114,23 +113,29 @@
 
         // ========== Methods ========== //
 
-        public async onRegister(info: IRegistrationInfo) {
+        public async onRegister() {
             try {
-                await register(info);
+                await register(this.info);
                 this.$buefy.toast.open({
-                    type: 'is-primary',
+                    type: 'is-success',
                     message: 'Registered successfully',
-                    position: 'is-top',
                 });
-                await this.$router.push({name: 'login'});
+                this.clear();
+                this.$emit('success');
             } catch (error) {
                 // TODO Improve error message
                 this.$buefy.toast.open({
                     type: 'is-danger',
                     message: 'Something went wrong during the registration process',
-                    position: 'is-top',
                 });
             }
+        }
+
+        public clear() {
+            this.info.member.name = '';
+            this.info.member.age = 0;
+            this.info.credential.username = '';
+            this.info.credential.password = '';
         }
 
 
@@ -141,18 +146,14 @@
 
 <style lang="scss" scoped>
   .modal-card {
-    @media screen and (min-width: 769px) {
-      width: 350px;
-      margin-top: 5rem;
-    }
     margin: 0 auto;
     border: 1px solid #dbdbdb;
     border-radius: 6px;
     overflow: initial;
     max-height: initial;
 
-    .modal-card-body {
-      overflow: initial;
+    .modal-card-foot .buttons {
+      width: 100%;
     }
   }
 </style>

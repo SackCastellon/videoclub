@@ -21,6 +21,7 @@ import videoclub.data.Movie
 import videoclub.data.MovieUpdate
 import videoclub.db.DatabaseConfig.dbQuery
 import videoclub.db.sql.tables.Movies
+import videoclub.db.sql.tables.RentalMovies
 
 internal object MovieDaoImpl : MovieDao {
 
@@ -37,7 +38,15 @@ internal object MovieDaoImpl : MovieDao {
     }
 
     override suspend fun getPopular(): List<Movie> = dbQuery {
-        emptyList<Movie>() // TODO
+        Movies.leftJoin(RentalMovies).slice(Movies.columns)
+            .selectAll()
+            .groupBy(Movies.id)
+            .orderBy(
+                RentalMovies.movieId.count() to SortOrder.DESC,
+                Movies.name to SortOrder.ASC
+            )
+            .limit(10)
+            .map(::toMovie)
     }
 
     override suspend fun getById(id: Int): Movie? = dbQuery {

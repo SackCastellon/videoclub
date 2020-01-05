@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Juan José González Abril
+ * Copyright 2020 Juan José González Abril
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package videoclub.db.dao
+import {AxiosResponse} from 'axios';
+import api from '@/api/index';
+import {Rental, RentalNew, RentalUpdate} from '@/data/Rental';
 
-import org.koin.dsl.module
+export const getRental = (id: number): Promise<AxiosResponse<Rental>> =>
+    api.get(`rental/${id}`);
 
-internal val daoModule = module {
-    single<UserDao> { UserDaoImpl }
-    single<MemberDao> { MemberDaoImpl }
-    single<AdminDao> { AdminDaoImpl }
-    single<MovieDao> { MovieDaoImpl }
-    single<ShopDao> { ShopDaoImpl }
-    single<RentalDao> { RentalDaoImpl }
-}
+export const postRental = (rental: RentalNew): Promise<AxiosResponse<{ rentalId: number }>> =>
+    api.post('rental', rental);
+
+export const patchRental = (id: number, rental: RentalUpdate): Promise<AxiosResponse> =>
+    api.post(`rental/${id}`, rental);

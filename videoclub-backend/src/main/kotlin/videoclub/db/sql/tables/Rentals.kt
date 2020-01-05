@@ -22,7 +22,7 @@ import java.math.BigDecimal
 
 internal object Rentals : Table() {
     val id = integer("id").autoIncrement()
-    val shopId = integer("shop_id") references Shops.id
+    val memberId = integer("member_id") references Members.id
     val pickupDate = datetime("pickup_date")
     val returnDate = datetime("return_date")
     val cost = decimal("cost", 8, 2).check { it greater BigDecimal.ZERO }
@@ -30,10 +30,9 @@ internal object Rentals : Table() {
     override val primaryKey = PrimaryKey(id)
 }
 
-internal object MemberMovieRental : Table() {
-    val memberId = integer("memeber_id") references Members.id
+internal object RentalMovies : Table() {
     val rentalId = integer("rental_id") references Rentals.id
     val movieId = integer("movie_id") references Movies.id
 
-    override val primaryKey = PrimaryKey(memberId, rentalId, movieId)
+    override val primaryKey = PrimaryKey(rentalId, movieId)
 }

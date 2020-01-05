@@ -25,14 +25,34 @@ import java.time.LocalDateTime
 data class Rental(
     /** A unique id for this rental. */
     val id: Int,
-    /** The shop where the movies where rented from */
-    val shopId: Int,
-    /** A set of the ids of movies being rented. */
-    val moviesIds: Set<Int>,
+    /** The member that rented the movies */
+    val memberId: Int,
+    /** The set of movies being rented. */
+    val movieIds: Set<Int>,
     /** The date when the movie was picked up. */
     val pickupDate: LocalDateTime,
-    /** The date when the movie was returned. */
+    /** The date when the movie will be returned. */
     val returnDate: LocalDateTime,
     /** The total cost of the rental. */
     val cost: BigDecimal
-)
+) {
+    /**
+     * New information about a movie rental.
+     */
+    data class New(
+        /** The set of movies being rented. */
+        val movieIds: Set<Int>,
+        /** The date when the movie was picked up. */
+        val pickupDate: LocalDateTime,
+        /** The date when the movie will be returned. */
+        val returnDate: LocalDateTime
+    )
+
+    /**
+     * An update of the information about a movie rental.
+     */
+    data class Update(
+        /** The updated date when the movie will be returned. */
+        val returnDate: LocalDateTime
+    )
+}

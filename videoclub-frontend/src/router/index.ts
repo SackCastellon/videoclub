@@ -40,7 +40,7 @@ const routes: RouteConfig[] = [
     {
         path: '/login',
         name: 'login',
-        component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue'),
+        component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth.vue'),
         meta: {
             requiredLogin: LoginMode.NONE,
         },
@@ -48,7 +48,7 @@ const routes: RouteConfig[] = [
     {
         path: '/register',
         name: 'register',
-        component: () => import(/* webpackChunkName: "register" */ '@/views/Register.vue'),
+        component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth.vue'),
         meta: {
             requiredLogin: LoginMode.NONE,
         },
@@ -118,7 +118,12 @@ const routes: RouteConfig[] = [
     {
         path: '/cart',
         name: 'cart',
-        component: () => import(/* webpackChunkName: "cart" */ '@/views/Cart.vue'),
+        component: () => import(/* webpackChunkName: "checkout" */ '@/views/Rental.vue'),
+    },
+    {
+        path: '/checkout',
+        name: 'checkout',
+        component: () => import(/* webpackChunkName: "checkout" */ '@/views/Rental.vue'),
     },
 ];
 

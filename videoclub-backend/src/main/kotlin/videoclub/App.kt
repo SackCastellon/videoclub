@@ -26,10 +26,7 @@ import videoclub.auth.UserPrincipal
 import videoclub.auth.authModule
 import videoclub.db.DatabaseConfig
 import videoclub.db.dao.daoModule
-import videoclub.route.auth
-import videoclub.route.movies
-import videoclub.route.shops
-import videoclub.route.users
+import videoclub.route.*
 import java.security.MessageDigest
 import java.time.Duration
 import java.util.*
@@ -141,6 +138,7 @@ fun Application.module() {
             users()
             movies()
             shops()
+            rentals()
         }
     }
 

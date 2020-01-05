@@ -43,6 +43,7 @@ internal object DatabaseConfig : KoinComponent {
             password = System.getenv("DATABASE_PASSWORD").let(::checkNotNull)
             maximumPoolSize = 5
             isAutoCommit = false
+            addDataSourceProperty("reWriteBatchedInserts", true)
         }.also(HikariConfig::validate).let(::HikariDataSource)
     }
 
@@ -54,7 +55,7 @@ internal object DatabaseConfig : KoinComponent {
                 Movies,
                 Members,
                 Rentals,
-                MemberMovieRental,
+                RentalMovies,
                 Stats,
                 Admins,
                 inBatch = true

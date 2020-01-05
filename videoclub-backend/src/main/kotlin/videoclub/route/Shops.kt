@@ -18,7 +18,7 @@ package videoclub.route
 
 import io.ktor.application.call
 import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
+import io.ktor.auth.principal
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveOrNull
 import io.ktor.response.respond
@@ -54,7 +54,7 @@ internal fun Route.shops() {
 
         authenticate {
             post {
-                val (_, type) = call.authentication.principal<UserPrincipal>()
+                val (_, type) = call.principal<UserPrincipal>()
                     ?: return@post call.respond(HttpStatusCode.Forbidden)
 
                 if (type != User.Type.ADMIN) {

@@ -19,7 +19,7 @@ package videoclub.route
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
+import io.ktor.auth.principal
 import io.ktor.http.Cookie
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveOrNull
@@ -79,7 +79,7 @@ internal fun Route.auth() {
 
         authenticate {
             get("refresh") {
-                val (id) = call.authentication.principal<UserPrincipal>()
+                val (id) = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
                 val user = userDao.getById(id)

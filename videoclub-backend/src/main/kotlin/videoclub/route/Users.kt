@@ -18,7 +18,7 @@ package videoclub.route
 
 import io.ktor.application.call
 import io.ktor.auth.authenticate
-import io.ktor.auth.authentication
+import io.ktor.auth.principal
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.Route
@@ -38,7 +38,7 @@ internal fun Route.users() {
     authenticate {
         route("user") {
             get {
-                val (id) = call.authentication.principal<UserPrincipal>()
+                val (id) = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
                 val user = userDao.getById(id)
@@ -50,7 +50,7 @@ internal fun Route.users() {
 
         route("member") {
             get {
-                val (id) = call.authentication.principal<UserPrincipal>()
+                val (id) = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
                 val member = memberDao.getById(id)
@@ -62,7 +62,7 @@ internal fun Route.users() {
 
         route("admin") {
             get {
-                val (id) = call.authentication.principal<UserPrincipal>()
+                val (id) = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
                 val admin = adminDao.getById(id)
