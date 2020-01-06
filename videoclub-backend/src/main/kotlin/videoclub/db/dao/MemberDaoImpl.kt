@@ -20,7 +20,6 @@ import org.jetbrains.exposed.sql.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import videoclub.data.Member
-import videoclub.data.MemberUpdate
 import videoclub.db.DatabaseConfig.dbQuery
 import videoclub.db.sql.tables.Members
 
@@ -41,7 +40,7 @@ internal object MemberDaoImpl : MemberDao, KoinComponent {
         Members.select { Members.id eq id }.empty().not()
     }
 
-    override suspend fun add(userId: Int, member: MemberUpdate): Int? = dbQuery {
+    override suspend fun add(userId: Int, member: Member.New): Int? = dbQuery {
         if (!userDao.containsId(userId)) return@dbQuery null
         if (adminDao.containsId(userId)) return@dbQuery null
 

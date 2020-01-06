@@ -17,7 +17,6 @@
 package videoclub.db.dao
 
 import videoclub.data.Admin
-import videoclub.data.AdminUpdate
 import videoclub.data.Member
 
 /**
@@ -44,5 +43,5 @@ interface AdminDao {
      * Adds a new [admin] with the given [userId].
      * Returns the id of the new admin if it was added succesfully, `null` otherwise.
      */
-    suspend fun add(userId: Int, admin: AdminUpdate): Int?
+    suspend fun add(userId: Int, admin: Admin.New): Int?
 }

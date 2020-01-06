@@ -37,7 +37,7 @@ data class Rental(
     val cost: BigDecimal
 ) {
     /**
-     * New information about a movie rental.
+     * Information about a new movie rental.
      */
     data class New(
         /** The set of movies being rented. */

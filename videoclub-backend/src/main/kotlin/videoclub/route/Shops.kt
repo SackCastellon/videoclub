@@ -29,7 +29,7 @@ import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 import videoclub.auth.User
 import videoclub.auth.UserPrincipal
-import videoclub.data.ShopUpdate
+import videoclub.data.Shop
 import videoclub.db.dao.ShopDao
 
 internal fun Route.shops() {
@@ -61,7 +61,7 @@ internal fun Route.shops() {
                     return@post call.respond(HttpStatusCode.Forbidden)
                 }
 
-                val shop = call.receiveOrNull<ShopUpdate>()
+                val shop = call.receiveOrNull<Shop.New>()
                     ?: return@post call.respond(HttpStatusCode.BadRequest)
 
                 val shopId = shopDao.add(shop)

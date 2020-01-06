@@ -17,7 +17,6 @@
 package videoclub.db.dao
 
 import videoclub.data.Shop
-import videoclub.data.ShopUpdate
 
 /**
  * DAO for [Shop]
@@ -48,5 +47,5 @@ interface ShopDao {
      * Adds a new [shop].
      * Returns the id of the new shop if it was added succesfully, `null` otherwise.
      */
-    suspend fun add(shop: ShopUpdate): Int?
+    suspend fun add(shop: Shop.New): Int?
 }

@@ -25,7 +25,7 @@ import java.time.LocalDate
 data class Movie(
     /** A unique id for this movie. */
     val id: Int,
-    /** The id of the shop this movie belongs to */
+    /** The id of the shop this movie belongs to. */
     val shopId: Int,
     /** The name of this movie. */
     val name: String,
@@ -35,4 +35,34 @@ data class Movie(
     val releaseDate: LocalDate,
     /** The rent price of this movie. */
     val price: BigDecimal
-)
+) {
+    /**
+     * Information of a new movie available to be rented at a given [Shop].
+     */
+    data class New(
+        /** The id of the shop this movie belongs to. */
+        val shopId: Int,
+        /** The name of this movie. */
+        val name: String,
+        /** The director of this movie. This filed is optional. */
+        val director: String?,
+        /** The release date of this movie. */
+        val releaseDate: LocalDate,
+        /** The rent price of this movie. */
+        val price: BigDecimal
+    )
+
+    /**
+     * An update of the information of a movie available to be rented at a given [Shop].
+     */
+    data class Update(
+        /** The updated name of this movie. */
+        val name: String,
+        /** The updated director of this movie. This filed is optional. */
+        val director: String?,
+        /** The updated release date of this movie. */
+        val releaseDate: LocalDate,
+        /** The updated rent price of this movie. */
+        val price: BigDecimal
+    )
+}

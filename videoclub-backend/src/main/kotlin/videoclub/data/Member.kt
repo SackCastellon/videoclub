@@ -26,4 +26,24 @@ data class Member(
     val name: String,
     /** The age of the member. */
     val age: Int
-)
+) {
+    /**
+     * Information of a new member of the APPV chain.
+     */
+    data class New(
+        /** The full name of the member. */
+        val name: String,
+        /** The age of the member. */
+        val age: Int
+    )
+
+    /**
+     * An update of the information of a member of the APPV chain.
+     */
+    data class Update(
+        /** The updated full name of the member. */
+        val name: String,
+        /** The updated age of the member. */
+        val age: Int
+    )
+}

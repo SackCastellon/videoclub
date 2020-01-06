@@ -20,7 +20,7 @@ import java.math.BigDecimal
 import java.time.LocalDateTime
 
 /**
- * A stat about rentals of a given [Member].
+ * A stat about the rentals of a given [Member].
  */
 data class Stat(
     /** A unique id for this stat. */
@@ -31,4 +31,14 @@ data class Stat(
     val creationDate: LocalDateTime,
     /** The total amount of money spent. */
     val totalSpent: BigDecimal
-)
+) {
+    /**
+     * Information of a new stat about the rentals of a given [Member].
+     */
+    data class New(
+        /** The id of the member this sta is about */
+        val memberId: Int,
+        /** The date when this stat was created. */
+        val creationDate: LocalDateTime
+    )
+}

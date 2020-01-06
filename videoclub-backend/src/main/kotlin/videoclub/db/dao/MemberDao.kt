@@ -17,7 +17,6 @@
 package videoclub.db.dao
 
 import videoclub.data.Member
-import videoclub.data.MemberUpdate
 
 /**
  * DAO for [Member].
@@ -43,5 +42,5 @@ interface MemberDao {
      * Adds a new [member] with the given [userId].
      * Returns the id of the new member if it was added succesfully, `null` otherwise.
      */
-    suspend fun add(userId: Int, member: MemberUpdate): Int?
+    suspend fun add(userId: Int, member: Member.New): Int?
 }

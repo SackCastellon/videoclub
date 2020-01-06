@@ -27,7 +27,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import videoclub.auth.UserCredential
-import videoclub.data.AdminUpdate
+import videoclub.data.Admin
 import videoclub.db.dao.AdminDao
 import videoclub.db.dao.UserDao
 import videoclub.db.sql.tables.*
@@ -67,7 +67,7 @@ internal object DatabaseConfig : KoinComponent {
             if (adminDao.count() == 0) {
                 val userId = userDao.add(UserCredential("admin", "adminpasswd"))
                 checkNotNull(userId) { "Failed to add user 'admin'" }
-                val adminId = adminDao.add(userId, AdminUpdate("Administrator"))
+                val adminId = adminDao.add(userId, Admin.New("Administrator"))
                 checkNotNull(adminId) { "Failed to add admin 'Administrator'" }
             }
         }

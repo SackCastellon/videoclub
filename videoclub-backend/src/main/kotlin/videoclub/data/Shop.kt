@@ -30,4 +30,32 @@ data class Shop(
     val street: String,
     /** The zip code of the zone where this shop is located. */
     val zipCode: String
-)
+) {
+    /**
+     * Information of a new shop of the APPV chain.
+     */
+    data class New(
+        /** The name of the manager of this shop. */
+        val manager: String,
+        /** The city where this shop is located. */
+        val city: String,
+        /** The street where this shop is located. */
+        val street: String,
+        /** The zip code of the zone where this shop is located. */
+        val zipCode: String
+    )
+
+    /**
+     * An update of the information of a shop of the APPV chain.
+     */
+    data class Update(
+        /** The updated name of the manager of this shop. */
+        val manager: String,
+        /** The updated city where this shop is located. */
+        val city: String,
+        /** The updated street where this shop is located. */
+        val street: String,
+        /** The updated zip code of the zone where this shop is located. */
+        val zipCode: String
+    )
+}

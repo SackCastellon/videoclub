@@ -29,7 +29,7 @@ import io.ktor.routing.route
 import org.koin.ktor.ext.inject
 import videoclub.auth.User
 import videoclub.auth.UserPrincipal
-import videoclub.data.MovieUpdate
+import videoclub.data.Movie
 import videoclub.db.dao.MovieDao
 import videoclub.db.dao.ShopDao
 
@@ -75,7 +75,7 @@ internal fun Route.movies() {
                     return@post call.respond(HttpStatusCode.Forbidden)
                 }
 
-                val movie = call.receiveOrNull<MovieUpdate>()
+                val movie = call.receiveOrNull<Movie.New>()
                     ?: return@post call.respond(HttpStatusCode.BadRequest)
 
                 if (!shopDao.containsId(movie.shopId)) {

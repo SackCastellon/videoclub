@@ -16,7 +16,7 @@
 
 package videoclub.auth
 
-import videoclub.data.MemberUpdate
+import videoclub.data.Member
 
 /**
  * Information required to register a new user into the system.
@@ -25,7 +25,7 @@ data class RegistrationInfo(
     /**
      * The member information.
      */
-    val member: MemberUpdate,
+    val member: Member.New,
     /**
      * User credential.
      */

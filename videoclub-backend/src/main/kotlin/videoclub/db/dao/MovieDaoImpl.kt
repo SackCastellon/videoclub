@@ -18,7 +18,6 @@ package videoclub.db.dao
 
 import org.jetbrains.exposed.sql.*
 import videoclub.data.Movie
-import videoclub.data.MovieUpdate
 import videoclub.db.DatabaseConfig.dbQuery
 import videoclub.db.sql.tables.Movies
 import videoclub.db.sql.tables.RentalMovies
@@ -53,7 +52,7 @@ internal object MovieDaoImpl : MovieDao {
         Movies.select { Movies.id eq id }.mapLazy(::toMovie).singleOrNull()
     }
 
-    override suspend fun add(movie: MovieUpdate): Int? = dbQuery {
+    override suspend fun add(movie: Movie.New): Int? = dbQuery {
         Movies.insert {
             it[shopId] = movie.shopId
             it[name] = movie.name

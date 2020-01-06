@@ -22,6 +22,22 @@ package videoclub.data
 data class Admin(
     /** The user id of this admin. */
     val id: Int,
-    /** The name of this admin */
+    /** The name of this admin. */
     val name: String
-)
+) {
+    /**
+     * Information of a new administrator of the system.
+     */
+    data class New(
+        /** The name of this admin. */
+        val name: String
+    )
+
+    /**
+     * An update of the information of an administrator of the system.
+     */
+    data class Update(
+        /** The updated name of this admin. */
+        val name: String
+    )
+}

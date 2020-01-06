@@ -17,7 +17,6 @@
 package videoclub.db.dao
 
 import videoclub.data.Movie
-import videoclub.data.MovieUpdate
 
 /**
  * DAO for [Movie]
@@ -53,5 +52,5 @@ interface MovieDao {
      * Adds a new [movie].
      * Returns the id of the new movie if it was added succesfully, `null` otherwise.
      */
-    suspend fun add(movie: MovieUpdate): Int?
+    suspend fun add(movie: Movie.New): Int?
 }
