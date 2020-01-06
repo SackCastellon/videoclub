@@ -16,8 +16,8 @@
 
 package videoclub.db.sql.tables
 
-import com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.`java-time`.date
 
 internal object Stats : Table() {
     val id = integer("id").autoIncrement()
