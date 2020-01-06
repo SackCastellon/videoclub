@@ -58,7 +58,7 @@
 </template>
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {ILoginInfo, login} from '@/api/auth';
+    import {ILoginInfo, login} from '@/api/modules/auth';
     import {UserModule} from '@/store/modules/user';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');

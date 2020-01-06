@@ -24,7 +24,6 @@
       congue orci sed neque ullamcorper egestas. Donec rhoncus massa at elit mattis, ut pellentesque quam porta. Nam
       vestibulum a turpis a finibus. Donec iaculis rhoncus eros quis pulvinar.
     </h5>
-    <hr>
     <!--<div class="columns is-centered">
       <div class="column is-10">
         <b-field>
@@ -40,6 +39,17 @@
         </b-field>
       </div>
     </div>-->
+    <div class="buttons is-right">
+      <b-button
+        v-if="isAdmin"
+        tag="router-link"
+        :to="{name: 'movie-create'}"
+        type="is-primary"
+        outlined>
+        New movie
+      </b-button>
+    </div>
+    <hr class="mt-0">
     <div class="columns is-multiline is-mobile">
       <div
         v-for="movie in data"
@@ -55,6 +65,8 @@
     import {Component, Vue} from 'vue-property-decorator';
     import {MovieModule} from '@/store/modules/movies';
     import {Movie} from '@/data/Movie';
+    import {UserModule} from '@/store/modules/user';
+    import {UserType} from '@/data/User';
 
     const MovieCard = () => import(/* webpackChunkName: "movie_card" */ '@/components/MovieCard.vue');
 
@@ -75,6 +87,10 @@
 
 
         // ========== Computed ========== //
+
+        public get isAdmin(): boolean {
+            return UserModule.user?.type === UserType.ADMIN;
+        }
 
 
         // ========== Lifecycle Hooks ========== //

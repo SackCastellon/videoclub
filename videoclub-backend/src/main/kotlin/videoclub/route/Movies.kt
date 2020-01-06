@@ -22,10 +22,7 @@ import io.ktor.auth.principal
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveOrNull
 import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.route
+import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 import videoclub.auth.User
 import videoclub.auth.UserPrincipal
@@ -86,6 +83,29 @@ internal fun Route.movies() {
                     ?: return@post call.respond(HttpStatusCode.InternalServerError)
 
                 call.respond(HttpStatusCode.Created, mapOf("movieId" to movieId))
+            }
+
+            patch("{id}") {
+                val (_, type) = call.principal<UserPrincipal>()
+                    ?: return@patch call.respond(HttpStatusCode.Forbidden)
+
+                if (type != User.Type.ADMIN) {
+                    return@patch call.respond(HttpStatusCode.Forbidden)
+                }
+
+                val movieId = call.parameters["id"]?.toIntOrNull()
+                    ?: return@patch call.respond(HttpStatusCode.BadRequest)
+
+                val movieUpdate = call.receiveOrNull<Movie.Update>()
+                    ?: return@patch call.respond(HttpStatusCode.BadRequest)
+
+                val success = movieDao.update(movieId, movieUpdate)
+
+                if (success) {
+                    call.respond(HttpStatusCode.NoContent)
+                } else {
+                    call.respond(HttpStatusCode.InternalServerError)
+                }
             }
         }
     }

@@ -16,7 +16,7 @@
 
 import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
-import {getAdminData} from '@/api/admin';
+import {getAdminData} from '@/api/modules/admin';
 import {AuthModule} from '@/store/modules/auth';
 import {converter} from '@/util/JsonConverter';
 import {Admin} from '@/data/Admin';

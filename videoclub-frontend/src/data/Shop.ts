@@ -33,3 +33,33 @@ export class Shop {
     @JsonProperty('zipCode', String)
     public zipCode: string = undefined!;
 }
+
+@JsonObject
+export class ShopNew {
+    @JsonProperty('manager', String)
+    public manager: string = undefined!;
+
+    @JsonProperty('city', String)
+    public city: string = undefined!;
+
+    @JsonProperty('street', String)
+    public street: string = undefined!;
+
+    @JsonProperty('zipCode', String)
+    public zipCode: string = undefined!;
+}
+
+@JsonObject
+export class ShopUpdate {
+    @JsonProperty('manager', String)
+    public manager: string = undefined!;
+
+    @JsonProperty('city', String)
+    public city: string = undefined!;
+
+    @JsonProperty('street', String)
+    public street: string = undefined!;
+
+    @JsonProperty('zipCode', String)
+    public zipCode: string = undefined!;
+}

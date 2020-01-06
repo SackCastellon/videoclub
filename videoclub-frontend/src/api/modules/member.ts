@@ -15,20 +15,8 @@
  */
 
 import {AxiosResponse} from 'axios';
-import api from '@/api/index';
-import {Movie} from '@/data/Movie';
+import api from '@/api';
+import {Member} from '@/data/Member';
 
-export const getMovies = (): Promise<AxiosResponse<Array<Movie>>> =>
-    api.get<Array<Movie>>('movie');
-
-export const getNewMovies = (): Promise<AxiosResponse<Array<Movie>>> =>
-    api.get<Array<Movie>>('movie/new');
-
-export const getTopMovies = (): Promise<AxiosResponse<Array<Movie>>> =>
-    api.get<Array<Movie>>('movie/top');
-
-export const getMovie = (id: number): Promise<AxiosResponse<Movie>> =>
-    api.get<Movie>(`movie/${id}`);
-
-export const postMovie = (movie: Movie): Promise<AxiosResponse> =>
-    api.post('movie', movie);
+export const getMemberData = (): Promise<AxiosResponse<Member>> =>
+    api.get<Member>('member');

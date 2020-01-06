@@ -25,7 +25,7 @@
             <h1 class="title">
               {{ isEdit ? 'Editing: ' : 'New movie' }}
               <i
-                v-if="isEdit"
+                v-if="isEdit && !isLoading"
                 class="has-text-grey">{{ `Movie #${data.id}` }}</i>
             </h1>
           </header>
@@ -41,6 +41,7 @@
                 icon="movie"
                 required />
             </b-field>
+
             <b-field>
               <template slot="label">
                 Director
@@ -51,6 +52,7 @@
                 icon="account-tie"
                 required />
             </b-field>
+
             <b-field>
               <template slot="label">
                 Release date
@@ -61,10 +63,13 @@
                 icon="calendar-today"
                 required />
             </b-field>
+
             <ShopInput
               v-model="data.shopId"
               title="Shop"
-              :loading="isLoading" />
+              :loading="isLoading"
+              :readonly="isEdit" />
+
             <b-field>
               <template slot="label">
                 Price
@@ -103,7 +108,7 @@
     import {Movie} from '@/data/Movie';
     import cloneDeep from 'lodash.clonedeep';
     import {MovieModule} from '@/store/modules/movies';
-    import {postMovie} from '@/api/movies';
+    import {patchMovie, postMovie} from '@/api/modules/movies';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
@@ -188,11 +193,11 @@
 
         public async onSave() {
             if (this.isEdit) {
-                // TODO
+                await patchMovie(this.data.id, this.data);
+                await this.$router.push({name: 'movie-view', params: {id: this.data.id.toString()}});
             } else {
-                const response = await postMovie(this.data);
-                const {movieId} = response.data;
-                await this.$router.push({name: 'movie-view', params: {id: movieId}});
+                const {data} = await postMovie(this.data);
+                await this.$router.push({name: 'movie-view', params: {id: data.movieId.toString()}});
             }
         }
 

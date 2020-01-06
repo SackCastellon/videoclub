@@ -16,7 +16,7 @@
 
 import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
-import {getMemberData} from '@/api/member';
+import {getMemberData} from '@/api/modules/member';
 import {AuthModule} from '@/store/modules/auth';
 import {converter} from '@/util/JsonConverter';
 import {Member} from '@/data/Member';

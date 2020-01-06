@@ -15,8 +15,18 @@
  */
 
 import {AxiosResponse} from 'axios';
-import api from '@/api/index';
-import {Member} from '@/data/Member';
+import api from '@/api';
+import {Rental, RentalNew, RentalUpdate} from '@/data/Rental';
+import {strip} from '@/util/Strip';
 
-export const getMemberData = (): Promise<AxiosResponse<Member>> =>
-    api.get<Member>('member');
+export const getRental = (id: number): Promise<AxiosResponse<Rental>> =>
+    api.get(`rental/${id}`);
+
+export const getRentals = (): Promise<AxiosResponse<Array<Rental>>> =>
+    api.get('rental');
+
+export const postRental = (rental: RentalNew): Promise<AxiosResponse<{ rentalId: number }>> =>
+    api.post('rental', strip(rental, RentalNew));
+
+export const patchRental = (id: number, rental: RentalUpdate): Promise<AxiosResponse> =>
+    api.patch(`rental/${id}`, strip(rental, RentalUpdate));

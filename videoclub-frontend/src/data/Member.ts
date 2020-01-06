@@ -27,3 +27,21 @@ export class Member {
     @JsonProperty('age', Number)
     public age: number = undefined!;
 }
+
+@JsonObject
+export class MemberNew {
+    @JsonProperty('name', String)
+    public name: string = undefined!;
+
+    @JsonProperty('age', Number)
+    public age: number = undefined!;
+}
+
+@JsonObject
+export class MemberUpdate {
+    @JsonProperty('name', String)
+    public name: string = undefined!;
+
+    @JsonProperty('age', Number)
+    public age: number = undefined!;
+}

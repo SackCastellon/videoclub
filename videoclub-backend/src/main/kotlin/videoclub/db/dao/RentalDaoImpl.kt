@@ -54,6 +54,24 @@ internal object RentalDaoImpl : RentalDao {
             }
     }
 
+    override suspend fun getByMember(memberId: Int): List<Rental> = dbQuery {
+        Rentals.innerJoin(RentalMovies).slice(Rentals.columns + RentalMovies.movieId)
+            .select { Rentals.memberId eq memberId }
+            .groupBy { it[Rentals.id] }
+            .values
+            .map { rows ->
+                val row = rows.first()
+                Rental(
+                    id = row[Rentals.id],
+                    memberId = row[Rentals.memberId],
+                    movieIds = rows.map { it[RentalMovies.movieId] }.toSet(),
+                    pickupDate = row[Rentals.pickupDate],
+                    returnDate = row[Rentals.returnDate],
+                    cost = row[Rentals.cost]
+                )
+            }
+    }
+
     override suspend fun add(memberId: Int, rental: Rental.New): Int? = dbQuery {
         val total = Movies.slice(priceSum)
             .select { Movies.id inList rental.movieIds }
@@ -77,8 +95,8 @@ internal object RentalDaoImpl : RentalDao {
         id
     }
 
-    override suspend fun update(rentalId: Int, rental: Rental.Update): Boolean = dbQuery {
-        val update = Rentals.update({ Rentals.id eq rentalId }) {
+    override suspend fun update(id: Int, rental: Rental.Update): Boolean = dbQuery {
+        val update = Rentals.update({ Rentals.id eq id }) {
             it[returnDate] = rental.returnDate
         }
 

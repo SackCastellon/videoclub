@@ -37,3 +37,36 @@ export class Movie {
     @JsonProperty('price', Number)
     public price: number = undefined!;
 }
+
+@JsonObject
+export class MovieNew {
+    @JsonProperty('shopId', Number)
+    public shopId: number = undefined!;
+
+    @JsonProperty('name', String)
+    public name: string = undefined!;
+
+    @JsonProperty('director', String, true)
+    public director: string | undefined = undefined;
+
+    @JsonProperty('releaseDate', DateConverter)
+    public releaseDate: Date = undefined!;
+
+    @JsonProperty('price', Number)
+    public price: number = undefined!;
+}
+
+@JsonObject
+export class MovieUpdate {
+    @JsonProperty('name', String)
+    public name: string = undefined!;
+
+    @JsonProperty('director', String, true)
+    public director: string | undefined = undefined;
+
+    @JsonProperty('releaseDate', DateConverter)
+    public releaseDate: Date = undefined!;
+
+    @JsonProperty('price', Number)
+    public price: number = undefined!;
+}

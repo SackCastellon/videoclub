@@ -40,14 +40,19 @@ interface RentalDao {
     suspend fun getById(id: Int): Rental?
 
     /**
+     * Returns all the rentals that belong to the member with the given [memberId].
+     */
+    suspend fun getByMember(memberId: Int): List<Rental>
+
+    /**
      * Adds information about a new [Rental].
      * Returns the id of the new rental if it was added succesfully, `null` otherwise.
      */
     suspend fun add(memberId: Int, rental: Rental.New): Int?
 
     /**
-     * Updates the information of the [Rental] with the given [rentalId].
+     * Updates the information of the [Rental] with the given [id].
      * Returns `true` if the update was successful, `false` otherwise.
      */
-    suspend fun update(rentalId: Int, rental: Rental.Update): Boolean
+    suspend fun update(id: Int, rental: Rental.Update): Boolean
 }

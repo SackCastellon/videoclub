@@ -22,10 +22,7 @@ import io.ktor.auth.principal
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveOrNull
 import io.ktor.response.respond
-import io.ktor.routing.Route
-import io.ktor.routing.get
-import io.ktor.routing.post
-import io.ktor.routing.route
+import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 import videoclub.auth.User
 import videoclub.auth.UserPrincipal
@@ -68,6 +65,29 @@ internal fun Route.shops() {
                     ?: return@post call.respond(HttpStatusCode.InternalServerError)
 
                 call.respond(HttpStatusCode.Created, mapOf("shopId" to shopId))
+            }
+
+            patch("{id}") {
+                val (_, type) = call.principal<UserPrincipal>()
+                    ?: return@patch call.respond(HttpStatusCode.Forbidden)
+
+                if (type != User.Type.ADMIN) {
+                    return@patch call.respond(HttpStatusCode.Forbidden)
+                }
+
+                val shopId = call.parameters["id"]?.toIntOrNull()
+                    ?: return@patch call.respond(HttpStatusCode.BadRequest)
+
+                val shopUpdate = call.receiveOrNull<Shop.Update>()
+                    ?: return@patch call.respond(HttpStatusCode.BadRequest)
+
+                val success = shopDao.update(shopId, shopUpdate)
+
+                if (success) {
+                    call.respond(HttpStatusCode.NoContent)
+                } else {
+                    call.respond(HttpStatusCode.InternalServerError)
+                }
             }
         }
     }

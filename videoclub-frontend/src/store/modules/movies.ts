@@ -17,7 +17,7 @@
 import {Movie} from '@/data/Movie';
 import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
-import {getMovie, getMovies, getNewMovies, getTopMovies} from '@/api/movies';
+import {getMovie, getMovies, getNewMovies, getTopMovies} from '@/api/modules/movies';
 import {converter} from '@/util/JsonConverter';
 
 @Module({

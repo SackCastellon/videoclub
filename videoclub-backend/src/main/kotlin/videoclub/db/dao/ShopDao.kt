@@ -48,4 +48,10 @@ interface ShopDao {
      * Returns the id of the new shop if it was added succesfully, `null` otherwise.
      */
     suspend fun add(shop: Shop.New): Int?
+
+    /**
+     * Updates the information of the [Shop] with the given [id].
+     * Returns `true` if the update was successful, `false` otherwise.
+     */
+    suspend fun update(id: Int, shop: Shop.Update): Boolean
 }

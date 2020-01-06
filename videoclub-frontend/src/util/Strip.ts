@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-import {AxiosResponse} from 'axios';
-import api from '@/api/index';
-import {User} from '@/data/User';
-
-export const getUserData = (): Promise<AxiosResponse<User>> =>
-    api.get<User>('user');
+export const strip = <T extends R, R extends any>(object: T, type: { new(): R }): R => {
+    const stripped = new type();
+    Object.getOwnPropertyNames(stripped).forEach(prop => {
+        if (stripped.hasOwnProperty(prop) && object.hasOwnProperty(prop)) {
+            stripped[prop] = object[prop];
+        }
+    });
+    return stripped;
+};

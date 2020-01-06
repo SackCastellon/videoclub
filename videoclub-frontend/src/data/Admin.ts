@@ -24,3 +24,15 @@ export class Admin {
     @JsonProperty('name', String)
     public name: string = undefined!;
 }
+
+@JsonObject
+export class AdminNew {
+    @JsonProperty('name', String)
+    public name: string = undefined!;
+}
+
+@JsonObject
+export class AdminUpdate {
+    @JsonProperty('name', String)
+    public name: string = undefined!;
+}

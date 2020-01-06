@@ -178,7 +178,7 @@ import {UserType} from '@/data/User';
 <script lang="ts">
     import {Component, Vue, Watch} from 'vue-property-decorator';
     import {AuthModule} from '@/store/modules/auth';
-    import {logout} from '@/api/auth';
+    import {logout} from '@/api/modules/auth';
     import {UserModule} from '@/store/modules/user';
     import {UserType} from '@/data/User';
     import {CartModule} from '@/store/modules/cart';

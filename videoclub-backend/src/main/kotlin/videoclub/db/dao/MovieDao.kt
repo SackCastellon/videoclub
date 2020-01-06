@@ -53,4 +53,10 @@ interface MovieDao {
      * Returns the id of the new movie if it was added succesfully, `null` otherwise.
      */
     suspend fun add(movie: Movie.New): Int?
+
+    /**
+     * Updates the information of the [Movie] with the given [id].
+     * Returns `true` if the update was successful, `false` otherwise.
+     */
+    suspend fun update(id: Int, movie: Movie.Update): Boolean
 }

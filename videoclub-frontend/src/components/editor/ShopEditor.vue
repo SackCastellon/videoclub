@@ -25,7 +25,7 @@
             <h1 class="title">
               {{ isEdit ? 'Editing: ' : 'New shop' }}
               <i
-                v-if="isEdit"
+                v-if="isEdit && !isLoading"
                 class="has-text-grey">{{ `Shop #${data.id}` }}</i>
             </h1>
           </header>
@@ -96,7 +96,7 @@
     import {Shop} from '@/data/Shop';
     import cloneDeep from 'lodash.clonedeep';
     import {ShopModule} from '@/store/modules/shops';
-    import {postShop} from '@/api/shops';
+    import {patchShop, postShop} from '@/api/modules/shops';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
@@ -152,6 +152,7 @@
                     return this.$router.push({name: 'shop-list'});
                 }
             }
+
             this.isLoading = false;
         }
 
@@ -178,11 +179,11 @@
 
         public async onSave() {
             if (this.isEdit) {
-                // TODO
+                await patchShop(this.data.id, this.data);
+                await this.$router.push({name: 'shop-view', params: {id: this.data.id.toString()}});
             } else {
-                const response = await postShop(this.data);
-                const {shopId} = response.data;
-                await this.$router.push({name: 'shop-view', params: {id: shopId}});
+                const {data} = await postShop(this.data);
+                await this.$router.push({name: 'shop-view', params: {id: data.shopId.toString()}});
             }
         }
 

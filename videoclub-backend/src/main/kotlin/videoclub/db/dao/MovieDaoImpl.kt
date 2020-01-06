@@ -62,6 +62,17 @@ internal object MovieDaoImpl : MovieDao {
         }.getOrNull(Movies.id)
     }
 
+    override suspend fun update(id: Int, movie: Movie.Update): Boolean = dbQuery {
+        val update = Movies.update({ Movies.id eq id }) {
+            it[name] = movie.name
+            it[director] = movie.director
+            it[releaseDate] = movie.releaseDate
+            it[price] = movie.price
+        }
+
+        update > 0
+    }
+
     private fun toMovie(it: ResultRow) = Movie(
         id = it[Movies.id],
         shopId = it[Movies.shopId],

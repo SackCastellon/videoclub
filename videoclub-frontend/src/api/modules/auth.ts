@@ -24,16 +24,15 @@ const minRefreshTimeout = 30000;
 let timeoutID: number;
 
 
-export const register = async (registrationInfo: IRegistrationInfo): Promise<AxiosResponse> => {
-    return await api.post('auth/register', registrationInfo);
-};
+export const register = (registrationInfo: IRegistrationInfo): Promise<AxiosResponse> =>
+    api.post('auth/register', registrationInfo);
 
 export const login = async (loginInfo: ILoginInfo): Promise<AxiosResponse> => {
     try {
         const response = await api.post('auth/login', loginInfo);
         const lifespan: number = response.data.lifespan;
         const timeout = Math.max(minRefreshTimeout, lifespan - refreshWindow);
-        timeoutID = window.setTimeout(refreshToken, timeout);
+        timeoutID = window.setTimeout(refresh, timeout);
         AuthModule.setAuthenticated(true);
         return response;
     } catch (error) {
@@ -42,13 +41,13 @@ export const login = async (loginInfo: ILoginInfo): Promise<AxiosResponse> => {
     }
 };
 
-export const refreshToken = async (): Promise<AxiosResponse> => {
+export const refresh = async (): Promise<AxiosResponse> => {
     try {
         window.clearTimeout(timeoutID);
         const response = await api.get('auth/refresh');
         const lifespan: number = response.data.lifespan;
         const timeout = Math.max(minRefreshTimeout, lifespan - refreshWindow);
-        timeoutID = window.setTimeout(refreshToken, timeout);
+        timeoutID = window.setTimeout(refresh, timeout);
         AuthModule.setAuthenticated(true);
         return response;
     } catch (error) {

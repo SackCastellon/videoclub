@@ -17,7 +17,7 @@
 import {Shop} from '@/data/Shop';
 import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
-import {getShop, getShops} from '@/api/shops';
+import {getShop, getShops} from '@/api/modules/shops';
 import {converter} from '@/util/JsonConverter';
 
 @Module({

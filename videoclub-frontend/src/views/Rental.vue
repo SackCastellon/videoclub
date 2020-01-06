@@ -201,7 +201,7 @@
     import {UserModule} from '@/store/modules/user';
     import {UserType} from '@/data/User';
     import {Movie} from '@/data/Movie';
-    import {postRental} from '@/api/rental';
+    import {postRental} from '@/api/modules/rental';
     import {dateFormat, moment} from '@/util/Moment';
 
     const BSteps = () => import(/* webpackChunkName: "b_steps" */ 'buefy/src/components/steps/Steps.vue');

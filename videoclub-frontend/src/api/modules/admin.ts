@@ -15,14 +15,8 @@
  */
 
 import {AxiosResponse} from 'axios';
-import api from '@/api/index';
-import {Shop} from '@/data/Shop';
+import api from '@/api';
+import {Admin} from '@/data/Admin';
 
-export const getShops = (): Promise<AxiosResponse<Array<Shop>>> =>
-    api.get<Array<Shop>>('shop');
-
-export const getShop = (id: number): Promise<AxiosResponse<Shop>> =>
-    api.get<Shop>(`shop/${id}`);
-
-export const postShop = (shop: Shop): Promise<AxiosResponse> =>
-    api.post('shop', shop);
+export const getAdminData = (): Promise<AxiosResponse<Admin>> =>
+    api.get<Admin>('admin');

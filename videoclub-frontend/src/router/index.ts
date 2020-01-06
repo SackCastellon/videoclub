@@ -18,7 +18,7 @@ import Vue from 'vue';
 import VueRouter, {RouterOptions} from 'vue-router';
 import {RouteConfig} from 'vue-router/types/router';
 import {AuthModule} from '@/store/modules/auth';
-import {refreshToken} from '@/api/auth';
+import {refresh} from '@/api/modules/auth';
 import {UserModule} from '@/store/modules/user';
 import {UserType} from '@/data/User';
 
@@ -136,7 +136,7 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
     if (!from.name) try {
-        await refreshToken();
+        await refresh();
     } catch (e) {
     }
 

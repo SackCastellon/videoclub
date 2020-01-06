@@ -34,6 +34,18 @@ internal fun Route.rentals() {
 
     authenticate {
         route("rental") {
+            get {
+                val (userId, type) = call.principal<UserPrincipal>()
+                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                if (type != User.Type.MEMBER) {
+                    return@get call.respond(HttpStatusCode.Forbidden)
+                }
+
+                val rentals = rentalDao.getByMember(userId)
+
+                call.respond(HttpStatusCode.OK, rentals)
+            }
             get("{id}") {
                 val (userId, type) = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Forbidden)

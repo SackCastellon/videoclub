@@ -1,4 +1,5 @@
 import {LoginMode} from '@/router';
+import {LoginMode} from '@/router';
 <!--
   - Copyright 2020 Juan José González Abril
   -
@@ -61,10 +62,17 @@ import {LoginMode} from '@/router';
         @Watch('isAuthenticated')
         public onAuthenticated(authenticated: boolean) {
             if (!authenticated) {
-                const mode = this.$route.meta.requiredLogin as LoginMode | undefined;
-                if (mode !== undefined && mode !== LoginMode.NONE) this.$router.push({name: 'home'});
+                const nextRoute = this.$route.matched.reverse().find(route => {
+                    const mode = route.meta.requiredLogin as LoginMode | undefined;
+                    return mode === undefined || mode === LoginMode.NONE;
+                });
+
+                if (nextRoute) {
+                    this.$router.push({name: nextRoute.name, params: this.$route.params});
+                } else {
+                    this.$router.push({name: 'home'});
+                }
             }
         }
-
     }
 </script>

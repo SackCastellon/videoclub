@@ -24,7 +24,6 @@
       ipsum primis in faucibus. Quisque dapibus, sem nec hendrerit consectetur, mauris lorem porta lectus, nec interdum
       libero diam sed dui. Nunc quis diam placerat, venenatis urna quis, pretium magna.
     </h5>
-    <hr>
     <!--<div class="columns is-centered">
       <div class="column is-10">
         <b-field>
@@ -40,6 +39,17 @@
         </b-field>
       </div>
     </div>-->
+    <div class="buttons is-right">
+      <b-button
+        v-if="isAdmin"
+        tag="router-link"
+        :to="{name: 'shop-create'}"
+        type="is-primary"
+        outlined>
+        New shop
+      </b-button>
+    </div>
+    <hr class="mt-0">
     <b-table
       :data="data"
       :striped="true"

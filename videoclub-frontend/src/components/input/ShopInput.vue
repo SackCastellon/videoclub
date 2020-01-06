@@ -19,7 +19,14 @@
     <template slot="label">
       Shop
     </template>
+    <b-input
+      v-if="readonly"
+      :value="query"
+      :loading="isLoading"
+      icon="store"
+      readonly />
     <b-autocomplete
+      v-else
       v-model="query"
       :custom-formatter="shopToString"
       :data="filteredData"
@@ -64,6 +71,9 @@
 
         @Prop({required: true})
         public value!: number | undefined;
+
+        @Prop({default: false})
+        public readonly!: boolean;
 
 
         // ========== Data ========== //

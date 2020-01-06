@@ -48,6 +48,17 @@ internal object ShopDaoImpl : ShopDao {
         }.getOrNull(Shops.id)
     }
 
+    override suspend fun update(id: Int, shop: Shop.Update): Boolean = dbQuery {
+        val update = Shops.update({ Shops.id eq id }) {
+            it[manager] = shop.manager
+            it[city] = shop.city
+            it[street] = shop.street
+            it[zipCode] = shop.zipCode
+        }
+
+        update > 0
+    }
+
     private fun toShop(it: ResultRow) = Shop(
         id = it[Shops.id],
         manager = it[Shops.manager],

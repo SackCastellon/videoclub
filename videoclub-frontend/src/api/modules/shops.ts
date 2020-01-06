@@ -15,8 +15,18 @@
  */
 
 import {AxiosResponse} from 'axios';
-import api from '@/api/index';
-import {Admin} from '@/data/Admin';
+import api from '@/api';
+import {Shop, ShopNew, ShopUpdate} from '@/data/Shop';
+import {strip} from '@/util/Strip';
 
-export const getAdminData = (): Promise<AxiosResponse<Admin>> =>
-    api.get<Admin>('admin');
+export const getShop = (id: number): Promise<AxiosResponse<Shop>> =>
+    api.get(`shop/${id}`);
+
+export const getShops = (): Promise<AxiosResponse<Array<Shop>>> =>
+    api.get('shop');
+
+export const postShop = (shop: ShopNew): Promise<AxiosResponse<{ shopId: number }>> =>
+    api.post('shop', strip(shop, ShopNew));
+
+export const patchShop = (id: number, shop: ShopUpdate): Promise<AxiosResponse> =>
+    api.patch(`shop/${id}`, strip(shop, ShopUpdate));
