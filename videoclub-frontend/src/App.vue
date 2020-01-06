@@ -1,5 +1,3 @@
-import {LoginMode} from '@/router';
-import {LoginMode} from '@/router';
 <!--
   - Copyright 2020 Juan José González Abril
   -
@@ -30,7 +28,7 @@ import {LoginMode} from '@/router';
 <script lang="ts">
     import {Component, Vue, Watch} from 'vue-property-decorator';
     import {AuthModule} from '@/store/modules/auth';
-    import {LoginMode} from '@/router';
+    import {LoginMode, nextAuthorizedRoute} from '@/router';
 
     const Navbar = () => import(/* webpackChunkName: "navbar" */ '@/components/Navbar.vue');
 
@@ -61,18 +59,7 @@ import {LoginMode} from '@/router';
 
         @Watch('isAuthenticated')
         public onAuthenticated(authenticated: boolean) {
-            if (!authenticated) {
-                const nextRoute = this.$route.matched.reverse().find(route => {
-                    const mode = route.meta.requiredLogin as LoginMode | undefined;
-                    return mode === undefined || mode === LoginMode.NONE;
-                });
-
-                if (nextRoute) {
-                    this.$router.push({name: nextRoute.name, params: this.$route.params});
-                } else {
-                    this.$router.push({name: 'home'});
-                }
-            }
+            if (!authenticated) this.$router.push(nextAuthorizedRoute(this.$route));
         }
     }
 </script>

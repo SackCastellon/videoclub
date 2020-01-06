@@ -15,7 +15,7 @@
  */
 
 import Vue from 'vue';
-import VueRouter, {RouterOptions} from 'vue-router';
+import VueRouter, {RawLocation, Route, RouterOptions} from 'vue-router';
 import {RouteConfig} from 'vue-router/types/router';
 import {AuthModule} from '@/store/modules/auth';
 import {refresh} from '@/api/modules/auth';
@@ -145,28 +145,13 @@ router.beforeEach(async (to, from, next) => {
     }
 
     const mode = to.meta.requiredLogin as LoginMode | undefined;
+    const userType = UserModule.user?.type;
 
     if (mode !== undefined) {
-        if (mode === LoginMode.NONE) {
-            // Current route requires user to be logged out
-            if (AuthModule.isAuthenticated) {
-                return next({name: 'home'});
-            }
+        if (!AuthModule.isAuthenticated) {
+            return next({name: 'login', query: {next: to.fullPath}});
         } else {
-            // Current route requires user to be logged in
-            if (!AuthModule.isAuthenticated) {
-                return next({name: 'login', query: {next: to.fullPath}});
-            }
-
-            // Current route requires user to be a MEMBER
-            if (mode === LoginMode.MEMBER && UserModule.user?.type !== UserType.MEMBER) {
-                return next({name: 'home'});
-            }
-
-            // Current route requires user to be an ADMIN
-            if (mode === LoginMode.ADMIN && UserModule.user?.type !== UserType.ADMIN) {
-                return next({name: 'home'});
-            }
+            return next(nextAuthorizedRoute(to, userType));
         }
     }
 
@@ -174,3 +159,27 @@ router.beforeEach(async (to, from, next) => {
 });
 
 export default router;
+
+export const nextAuthorizedRoute: (route: Route, userType?: UserType) => RawLocation = (route, userType) => {
+    const nextRoute = route.matched.reverse().find(it => {
+        const nextMode = it.meta.requiredLogin as LoginMode | undefined;
+        if (nextMode === undefined) {
+            return true;
+        } else switch (nextMode) {
+            case LoginMode.NONE:
+                return userType === undefined;
+            case LoginMode.MEMBER:
+                return userType === UserType.MEMBER;
+            case LoginMode.ADMIN:
+                return userType === UserType.ADMIN;
+            case LoginMode.SOME:
+                return userType === UserType.MEMBER || userType === UserType.ADMIN;
+        }
+    });
+
+    if (nextRoute) {
+        return {name: nextRoute.name, params: route.params};
+    } else {
+        return {name: 'home'};
+    }
+};
