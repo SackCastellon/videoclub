@@ -28,7 +28,7 @@
 <script lang="ts">
     import {Component, Vue, Watch} from 'vue-property-decorator';
     import {AuthModule} from '@/store/modules/auth';
-    import {LoginMode, nextAuthorizedRoute} from '@/router';
+    import {nextAuthorizedRoute} from '@/router';
 
     const Navbar = () => import(/* webpackChunkName: "navbar" */ '@/components/Navbar.vue');
 

@@ -50,6 +50,14 @@ internal object AdminDaoImpl : AdminDao, KoinComponent {
         }.getOrNull(Admins.id)
     }
 
+    override suspend fun update(userId: Int, admin: Admin.Update): Boolean = dbQuery {
+        val update = Admins.update({ Admins.id eq userId }) {
+            it[name] = admin.name
+        }
+
+        update > 0
+    }
+
     private fun toAdmin(it: ResultRow) = Admin(
         id = it[Admins.id],
         name = it[Admins.name]

@@ -18,6 +18,7 @@ import {AxiosResponse} from 'axios';
 import api from '@/api';
 import {Rental, RentalNew, RentalUpdate} from '@/data/Rental';
 import {strip} from '@/util/Strip';
+import {converter} from '@/util/JsonConverter';
 
 export const getRental = (id: number): Promise<AxiosResponse<Rental>> =>
     api.get(`rental/${id}`);
@@ -26,7 +27,7 @@ export const getRentals = (): Promise<AxiosResponse<Array<Rental>>> =>
     api.get('rental');
 
 export const postRental = (rental: RentalNew): Promise<AxiosResponse<{ rentalId: number }>> =>
-    api.post('rental', strip(rental, RentalNew));
+    api.post('rental', converter.serializeObject(strip(rental, RentalNew)));
 
 export const patchRental = (id: number, rental: RentalUpdate): Promise<AxiosResponse> =>
-    api.patch(`rental/${id}`, strip(rental, RentalUpdate));
+    api.patch(`rental/${id}`, converter.serializeObject(strip(rental, RentalUpdate)));

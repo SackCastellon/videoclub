@@ -17,6 +17,8 @@
 import {AxiosResponse} from 'axios';
 import api from '@/api';
 import {AuthModule} from '@/store/modules/auth';
+import {UserModule} from '@/store/modules/user';
+import {MemberNew} from '@/data/Member';
 
 
 const refreshWindow = 5000;
@@ -24,24 +26,24 @@ const minRefreshTimeout = 30000;
 let timeoutID: number;
 
 
-export const register = (registrationInfo: IRegistrationInfo): Promise<AxiosResponse> =>
+export const register = (registrationInfo: UserRegistration): Promise<AxiosResponse> =>
     api.post('auth/register', registrationInfo);
 
-export const login = async (loginInfo: ILoginInfo): Promise<AxiosResponse> => {
+export const login = async (loginInfo: UserCredential): Promise<void> => {
     try {
         const response = await api.post('auth/login', loginInfo);
         const lifespan: number = response.data.lifespan;
         const timeout = Math.max(minRefreshTimeout, lifespan - refreshWindow);
         timeoutID = window.setTimeout(refresh, timeout);
         AuthModule.setAuthenticated(true);
-        return response;
     } catch (error) {
         AuthModule.setAuthenticated(false);
-        throw error;
+    } finally {
+        await UserModule.load();
     }
 };
 
-export const refresh = async (): Promise<AxiosResponse> => {
+export const refresh = async (): Promise<void> => {
     try {
         window.clearTimeout(timeoutID);
         const response = await api.get('auth/refresh');
@@ -49,33 +51,30 @@ export const refresh = async (): Promise<AxiosResponse> => {
         const timeout = Math.max(minRefreshTimeout, lifespan - refreshWindow);
         timeoutID = window.setTimeout(refresh, timeout);
         AuthModule.setAuthenticated(true);
-        return response;
     } catch (error) {
         AuthModule.setAuthenticated(false);
-        throw error;
+    } finally {
+        await UserModule.load();
     }
 };
 
-export const logout = async (): Promise<AxiosResponse> => {
-    window.clearTimeout(timeoutID);
-    const response = await api.get('auth/logout');
-    AuthModule.setAuthenticated(false);
-    return response;
+export const logout = async (): Promise<void> => {
+    try {
+        window.clearTimeout(timeoutID);
+        await api.get('auth/logout');
+        AuthModule.setAuthenticated(false);
+    } finally {
+        await UserModule.load();
+    }
 };
 
 
-export interface ILoginInfo {
+export interface UserCredential {
     username: string;
     password: string;
 }
 
-export interface IRegistrationInfo {
-    member: {
-        name: string;
-        age: number;
-    },
-    credential: {
-        username: string;
-        password: string;
-    }
+export interface UserRegistration {
+    member: MemberNew,
+    credential: UserCredential
 }

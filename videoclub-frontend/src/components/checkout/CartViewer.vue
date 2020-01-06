@@ -16,11 +16,23 @@
 
 <template>
   <div>
-    <h2
-      v-if="size"
-      class="subtitle">
-      You have added a total of {{ size }} movies to the cart.
-    </h2>
+    <div class="d-flex justify-content-between">
+      <h2 class="subtitle">
+        <template v-if="isEmpty">
+          Your cart is empty. Try adding some movies.
+        </template>
+        <template v-else>
+          You have added a total of {{ size }} movies to the cart.
+        </template>
+      </h2>
+      <b-button
+        type="is-danger"
+        outlined
+        :disabled="isEmpty"
+        @click="onClear">
+        Empty cart
+      </b-button>
+    </div>
     <b-table
       :data="content"
       :striped="true"
@@ -187,6 +199,10 @@
 
         public formatDate(date: Date): string {
             return moment(date).format(dateFormat);
+        }
+
+        public onClear() {
+            CartModule.clear();
         }
 
         public onRemove(movie: Movie) {

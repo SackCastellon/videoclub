@@ -201,7 +201,7 @@
     import {UserModule} from '@/store/modules/user';
     import {UserType} from '@/data/User';
     import {Movie} from '@/data/Movie';
-    import {postRental} from '@/api/modules/rental';
+    import {postRental} from '@/api/modules/rentals';
     import {dateFormat, moment} from '@/util/Moment';
 
     const BSteps = () => import(/* webpackChunkName: "b_steps" */ 'buefy/src/components/steps/Steps.vue');
@@ -226,7 +226,7 @@
             Register,
         },
     })
-    export default class Checkout extends Vue {
+    export default class Cart extends Vue {
 
         // ========== Props ========== //
 

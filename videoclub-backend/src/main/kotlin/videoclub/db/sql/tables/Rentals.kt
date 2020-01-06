@@ -17,14 +17,14 @@
 package videoclub.db.sql.tables
 
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.`java-time`.datetime
+import org.jetbrains.exposed.sql.`java-time`.date
 import java.math.BigDecimal
 
 internal object Rentals : Table() {
     val id = integer("id").autoIncrement()
     val memberId = integer("member_id") references Members.id
-    val pickupDate = datetime("pickup_date")
-    val returnDate = datetime("return_date")
+    val pickupDate = date("pickup_date")
+    val returnDate = date("return_date")
     val cost = decimal("cost", 8, 2).check { it greater BigDecimal.ZERO }
 
     override val primaryKey = PrimaryKey(id)

@@ -15,14 +15,15 @@
  */
 
 import {JsonConverter, JsonCustomConvert} from 'json2typescript';
+import {moment} from '@/util/Moment';
 
 @JsonConverter
 export class DateConverter implements JsonCustomConvert<Date> {
-    public serialize(data: Date): string {
-        return data.toISOString();
+    public serialize(date: Date): string {
+        return moment(date).utc(true).format('YYYY-MM-DD');
     }
 
-    public deserialize(data: string): Date {
-        return new Date(data);
+    public deserialize(s: string): Date {
+        return moment.utc(s).toDate();
     }
 }

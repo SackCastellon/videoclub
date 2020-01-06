@@ -47,7 +47,7 @@ class CartStore extends VuexModule {
 
     @MutationAction({mutate: ['movies']})
     public async add(movie: Movie) {
-        const newMovies = CartModule.movies.concat(movie);
+        const newMovies = CartModule.movies.concat(movie).sort((a, b) => a.name.localeCompare(b.name));
         localStorage.setItem('cart', JSON.stringify({movies: newMovies.map(it => it.id)}));
         return {movies: newMovies};
     }

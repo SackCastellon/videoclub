@@ -21,7 +21,7 @@ import videoclub.data.Member
 /**
  * Information required to register a new user into the system.
  */
-data class RegistrationInfo(
+data class UserRegistration(
     /**
      * The member information.
      */

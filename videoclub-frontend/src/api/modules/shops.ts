@@ -18,6 +18,7 @@ import {AxiosResponse} from 'axios';
 import api from '@/api';
 import {Shop, ShopNew, ShopUpdate} from '@/data/Shop';
 import {strip} from '@/util/Strip';
+import {converter} from '@/util/JsonConverter';
 
 export const getShop = (id: number): Promise<AxiosResponse<Shop>> =>
     api.get(`shop/${id}`);
@@ -26,7 +27,7 @@ export const getShops = (): Promise<AxiosResponse<Array<Shop>>> =>
     api.get('shop');
 
 export const postShop = (shop: ShopNew): Promise<AxiosResponse<{ shopId: number }>> =>
-    api.post('shop', strip(shop, ShopNew));
+    api.post('shop', converter.serializeObject(strip(shop, ShopNew)));
 
 export const patchShop = (id: number, shop: ShopUpdate): Promise<AxiosResponse> =>
-    api.patch(`shop/${id}`, strip(shop, ShopUpdate));
+    api.patch(`shop/${id}`, converter.serializeObject(strip(shop, ShopUpdate)));

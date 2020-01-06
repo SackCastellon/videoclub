@@ -18,6 +18,14 @@
   <div class="container">
     <div class="columns is-centered">
       <div class="column is-9-tablet is-8-desktop is-7-widescreen is-6-fullhd">
+        <router-link
+          class="button mb-3"
+          :to="{name: 'shop-list'}">
+          <b-icon
+            icon="chevron-left"
+            class="mr-1" />
+          <p>Back to list</p>
+        </router-link>
         <h1
           class="title"
           :class="{'is-italic has-text-grey-light': isLoading}">

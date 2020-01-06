@@ -15,7 +15,7 @@
  */
 
 import Vue from 'vue';
-import VueRouter, {RawLocation, Route, RouterOptions} from 'vue-router';
+import VueRouter, {Location, Route, RouterOptions} from 'vue-router';
 import {RouteConfig} from 'vue-router/types/router';
 import {AuthModule} from '@/store/modules/auth';
 import {refresh} from '@/api/modules/auth';
@@ -54,12 +54,47 @@ const routes: RouteConfig[] = [
         },
     },
     {
-        path: '/profile',
+        path: '/account/profile',
         name: 'profile-view',
-        component: () => import(/* webpackChunkName: "profile_viewer" */ '@/views/Profile.vue'),
+        component: () => import(/* webpackChunkName: "profile" */ '@/views/Profile.vue'),
         meta: {
             requiredLogin: LoginMode.SOME,
         },
+        children: [
+            {
+                path: 'edit',
+                name: 'profile-edit',
+                meta: {
+                    requiredLogin: LoginMode.SOME,
+                },
+            },
+        ],
+    },
+    {
+        path: '/account/rental',
+        name: 'rental-list',
+        component: () => import(/* webpackChunkName: "rentals" */ '@/views/Rentals.vue'),
+        meta: {
+            requiredLogin: LoginMode.MEMBER,
+        },
+        children: [
+            {
+                path: ':id',
+                name: 'rental-view',
+                meta: {
+                    requiredLogin: LoginMode.MEMBER,
+                },
+                children: [
+                    {
+                        path: 'edit',
+                        name: 'rental-edit',
+                        meta: {
+                            requiredLogin: LoginMode.MEMBER,
+                        },
+                    },
+                ],
+            },
+        ],
     },
     {
         path: '/movie',
@@ -118,12 +153,7 @@ const routes: RouteConfig[] = [
     {
         path: '/cart',
         name: 'cart',
-        component: () => import(/* webpackChunkName: "checkout" */ '@/views/Rental.vue'),
-    },
-    {
-        path: '/checkout',
-        name: 'checkout',
-        component: () => import(/* webpackChunkName: "checkout" */ '@/views/Rental.vue'),
+        component: () => import(/* webpackChunkName: "cart" */ '@/views/Cart.vue'),
     },
 ];
 
@@ -138,10 +168,6 @@ router.beforeEach(async (to, from, next) => {
     if (!from.name) try {
         await refresh();
     } catch (e) {
-    }
-
-    if (AuthModule.isAuthenticated && UserModule.user === null) {
-        await UserModule.load();
     }
 
     const mode = to.meta.requiredLogin as LoginMode | undefined;

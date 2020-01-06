@@ -33,7 +33,10 @@ internal object MovieDaoImpl : MovieDao {
     }
 
     override suspend fun getNewest(): List<Movie> = dbQuery {
-        Movies.selectAll().orderBy(Movies.releaseDate to SortOrder.DESC).limit(10).map(::toMovie)
+        Movies.selectAll().orderBy(
+            Movies.releaseDate to SortOrder.DESC,
+            Movies.name to SortOrder.ASC
+        ).limit(10).map(::toMovie)
     }
 
     override suspend fun getPopular(): List<Movie> = dbQuery {
@@ -50,6 +53,13 @@ internal object MovieDaoImpl : MovieDao {
 
     override suspend fun getById(id: Int): Movie? = dbQuery {
         Movies.select { Movies.id eq id }.mapLazy(::toMovie).singleOrNull()
+    }
+
+    override suspend fun getByRentalId(rentalId: Int): List<Movie> = dbQuery {
+        Movies.leftJoin(RentalMovies).slice(Movies.columns)
+            .select { RentalMovies.rentalId eq rentalId }
+            .orderBy(Movies.name to SortOrder.ASC)
+            .map(::toMovie)
     }
 
     override suspend fun add(movie: Movie.New): Int? = dbQuery {

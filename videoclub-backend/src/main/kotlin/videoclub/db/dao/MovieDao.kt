@@ -49,6 +49,11 @@ interface MovieDao {
     suspend fun getById(id: Int): Movie?
 
     /**
+     * Returns the movies from the rental with the given [rentalId].
+     */
+    suspend fun getByRentalId(rentalId: Int): List<Movie>
+
+    /**
      * Adds a new [movie].
      * Returns the id of the new movie if it was added succesfully, `null` otherwise.
      */

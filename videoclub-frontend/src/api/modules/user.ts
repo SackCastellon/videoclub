@@ -17,6 +17,16 @@
 import {AxiosResponse} from 'axios';
 import api from '@/api';
 import {User} from '@/data/User';
+import {Member, MemberUpdate} from '@/data/Member';
+import {Admin, AdminUpdate} from '@/data/Admin';
+import {strip} from '@/util/Strip';
+import {converter} from '@/util/JsonConverter';
 
-export const getUserData = (): Promise<AxiosResponse<User>> =>
-    api.get<User>('user');
+export const getUser = (): Promise<AxiosResponse<{ user: User, member?: Member, admin?: Admin }>> =>
+    api.get('user');
+
+export const patchMember = (member: MemberUpdate): Promise<AxiosResponse> =>
+    api.patch('user', converter.serializeObject(strip(member, MemberUpdate)));
+
+export const patchAdmin = (admin: AdminUpdate): Promise<AxiosResponse> =>
+    api.patch('user', converter.serializeObject(strip(admin, AdminUpdate)));

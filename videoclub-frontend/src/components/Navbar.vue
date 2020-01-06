@@ -1,4 +1,3 @@
-import {UserType} from '@/data/User';
 <!--
   - Copyright 2020 Juan José González Abril
   -
@@ -29,6 +28,7 @@ import {UserType} from '@/data/User';
         </h1>
       </b-navbar-item>
     </template>
+
     <template v-slot:start>
       <b-navbar-item
         tag="router-link"
@@ -42,6 +42,7 @@ import {UserType} from '@/data/User';
           </p>
         </div>
       </b-navbar-item>
+
       <b-navbar-item
         tag="router-link"
         :to="{ name: 'movie-list' }">
@@ -54,6 +55,7 @@ import {UserType} from '@/data/User';
           </p>
         </div>
       </b-navbar-item>
+
       <b-navbar-item
         tag="router-link"
         :to="{ name: 'shop-list' }">
@@ -67,6 +69,7 @@ import {UserType} from '@/data/User';
         </div>
       </b-navbar-item>
     </template>
+
     <template v-slot:end>
       <b-navbar-item
         tag="router-link"
@@ -87,6 +90,7 @@ import {UserType} from '@/data/User';
           </b-tag>
         </div>
       </b-navbar-item>
+
       <b-navbar-dropdown
         ref="dropdown"
         right
@@ -116,7 +120,9 @@ import {UserType} from '@/data/User';
               </b-tag>
             </div>
           </b-navbar-item>
+
           <hr class="navbar-divider">
+
           <b-navbar-item
             tag="router-link"
             :to="{ name: 'profile-view' }"
@@ -129,7 +135,23 @@ import {UserType} from '@/data/User';
               Profile
             </p>
           </b-navbar-item>
+
+          <b-navbar-item
+            v-if="isMember"
+            tag="router-link"
+            :to="{ name: 'rental-list' }"
+            class="d-flex align-items-center"
+            @click.native="closeMenu">
+            <b-icon
+              icon="book-multiple"
+              class="mr-1" />
+            <p>
+              Rentals
+            </p>
+          </b-navbar-item>
+
           <hr class="navbar-divider">
+
           <b-navbar-item
             class="d-flex align-items-center"
             @click="logout">
@@ -155,7 +177,9 @@ import {UserType} from '@/data/User';
               Sign in
             </p>
           </b-navbar-item>
+
           <hr class="navbar-divider">
+
           <b-navbar-item
             tag="router-link"
             :to="{ name: 'register' }"
@@ -176,11 +200,10 @@ import {UserType} from '@/data/User';
 </template>
 
 <script lang="ts">
-    import {Component, Vue, Watch} from 'vue-property-decorator';
+    import {Component, Vue} from 'vue-property-decorator';
     import {AuthModule} from '@/store/modules/auth';
     import {logout} from '@/api/modules/auth';
     import {UserModule} from '@/store/modules/user';
-    import {UserType} from '@/data/User';
     import {CartModule} from '@/store/modules/cart';
 
     const BNavbar = () => import(/* webpackChunkName: "b_navbar" */ 'buefy/src/components/navbar/Navbar.vue');
@@ -210,6 +233,19 @@ import {UserType} from '@/data/User';
 
         // ========== Computed ========== //
 
+        public get isAuthenticated(): boolean {
+            return AuthModule.isAuthenticated;
+        }
+
+        public get isAdmin(): boolean {
+            return UserModule.isAdmin;
+        }
+
+        public get isMember(): boolean {
+            return UserModule.isMember;
+        }
+
+
         public get cartCount() {
             return CartModule.count;
         }
@@ -218,13 +254,6 @@ import {UserType} from '@/data/User';
             return UserModule.user?.username || '';
         }
 
-        public get isAdmin(): boolean {
-            return UserModule.user?.type === UserType.ADMIN;
-        }
-
-        public get isAuthenticated(): boolean {
-            return AuthModule.isAuthenticated;
-        }
 
         public get accountIcon(): string {
             if (this.isAuthenticated) {
@@ -263,11 +292,6 @@ import {UserType} from '@/data/User';
 
 
         // ========== Watchers ========== //
-
-        @Watch('isAuthenticated', {immediate: true})
-        public onAuthenticated() {
-            UserModule.load();
-        }
     }
 </script>
 

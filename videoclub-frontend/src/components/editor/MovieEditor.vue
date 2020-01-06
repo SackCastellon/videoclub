@@ -61,6 +61,7 @@
                 v-model="data.releaseDate"
                 :loading="isLoading"
                 icon="calendar-today"
+                editable
                 required />
             </b-field>
 
@@ -194,6 +195,7 @@
         public async onSave() {
             if (this.isEdit) {
                 await patchMovie(this.data.id, this.data);
+                await MovieModule.load();
                 await this.$router.push({name: 'movie-view', params: {id: this.data.id.toString()}});
             } else {
                 const {data} = await postMovie(this.data);

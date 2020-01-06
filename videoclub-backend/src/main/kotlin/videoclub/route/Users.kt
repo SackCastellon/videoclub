@@ -20,12 +20,18 @@ import io.ktor.application.call
 import io.ktor.auth.authenticate
 import io.ktor.auth.principal
 import io.ktor.http.HttpStatusCode
+import io.ktor.request.receiveOrNull
 import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
+import io.ktor.routing.patch
 import io.ktor.routing.route
 import org.koin.ktor.ext.inject
+import videoclub.auth.User.Type.ADMIN
+import videoclub.auth.User.Type.MEMBER
 import videoclub.auth.UserPrincipal
+import videoclub.data.Admin
+import videoclub.data.Member
 import videoclub.db.dao.AdminDao
 import videoclub.db.dao.MemberDao
 import videoclub.db.dao.UserDao
@@ -38,37 +44,68 @@ internal fun Route.users() {
     authenticate {
         route("user") {
             get {
-                val (id) = call.principal<UserPrincipal>()
+                val (userId, userType) = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
-                val user = userDao.getById(id)
+                val user = userDao.getById(userId)
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
-                call.respond(user)
+                when (userType) {
+                    MEMBER -> {
+                        val member = memberDao.getById(userId)
+                            ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                        call.respond(
+                            HttpStatusCode.OK, mapOf(
+                                "user" to user,
+                                "member" to member
+                            )
+                        )
+                    }
+                    ADMIN -> {
+                        val admin = adminDao.getById(userId)
+                            ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                        call.respond(
+                            HttpStatusCode.OK, mapOf(
+                                "user" to user,
+                                "admin" to admin
+                            )
+                        )
+                    }
+                }
             }
-        }
 
-        route("member") {
-            get {
-                val (id) = call.principal<UserPrincipal>()
-                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+            patch {
+                val (userId, userType) = call.principal<UserPrincipal>()
+                    ?: return@patch call.respond(HttpStatusCode.Forbidden)
 
-                val member = memberDao.getById(id)
-                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+                when (userType) {
+                    MEMBER -> {
+                        val memberUpdate = call.receiveOrNull<Member.Update>()
+                            ?: return@patch call.respond(HttpStatusCode.BadRequest)
 
-                call.respond(member)
-            }
-        }
+                        val success = memberDao.update(userId, memberUpdate)
 
-        route("admin") {
-            get {
-                val (id) = call.principal<UserPrincipal>()
-                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+                        if (success) {
+                            call.respond(HttpStatusCode.NoContent)
+                        } else {
+                            call.respond(HttpStatusCode.InternalServerError)
+                        }
+                    }
+                    ADMIN -> {
+                        val adminUpdate = call.receiveOrNull<Admin.Update>()
+                            ?: return@patch call.respond(HttpStatusCode.BadRequest)
 
-                val admin = adminDao.getById(id)
-                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+                        val success = adminDao.update(userId, adminUpdate)
 
-                call.respond(admin)
+                        if (success) {
+                            call.respond(HttpStatusCode.NoContent)
+                        } else {
+                            call.respond(HttpStatusCode.InternalServerError)
+                        }
+                    }
+                }
             }
         }
     }

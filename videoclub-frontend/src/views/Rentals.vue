@@ -19,8 +19,9 @@
     <transition
       mode="out-in"
       name="fade">
-      <ProfileViewer v-if="routeName === 'profile-view'" />
-      <ProfileEditor v-else-if="routeName === 'profile-edit'" />
+      <RentalList v-if="routeName === 'rental-list'" />
+      <RentalViewer v-else-if="routeName === 'rental-view'" />
+      <RentalEditor v-else-if="routeName === 'rental-edit'" />
     </transition>
   </section>
 </template>
@@ -28,16 +29,18 @@
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
 
-    const ProfileViewer = () => import(/* webpackChunkName: "profile_viewer" */ '@/components/viewer/ProfileViewer.vue');
-    const ProfileEditor = () => import(/* webpackChunkName: "profile_editor" */ '@/components/editor/ProfileEditor.vue');
+    const RentalList = () => import(/* webpackChunkName: "rental_list" */ '@/components/list/RentalList.vue');
+    const RentalViewer = () => import(/* webpackChunkName: "rental_viewer" */ '@/components/viewer/RentalViewer.vue');
+    const RentalEditor = () => import(/* webpackChunkName: "rental_editor" */ '@/components/editor/RentalEditor.vue');
 
     @Component({
         components: {
-            ProfileViewer,
-            ProfileEditor,
+            RentalList,
+            RentalViewer,
+            RentalEditor,
         },
     })
-    export default class Profile extends Vue {
+    export default class Rentals extends Vue {
 
         // ========== Props ========== //
 
@@ -59,5 +62,5 @@
 
 
         // ========== Watchers ========== //
-    }
+    };
 </script>

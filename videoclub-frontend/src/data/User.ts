@@ -29,6 +29,6 @@ export class User {
 }
 
 export enum UserType {
-    MEMBER = 'MEMBER',
-    ADMIN = 'ADMIN'
+    ADMIN = 'ADMIN',
+    MEMBER = 'MEMBER'
 }

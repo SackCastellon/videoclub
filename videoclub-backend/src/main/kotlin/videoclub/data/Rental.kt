@@ -17,7 +17,7 @@
 package videoclub.data
 
 import java.math.BigDecimal
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 /**
  * Information about a movie rental.
@@ -30,9 +30,9 @@ data class Rental(
     /** The set of movies being rented. */
     val movieIds: Set<Int>,
     /** The date when the movie was picked up. */
-    val pickupDate: LocalDateTime,
+    val pickupDate: LocalDate,
     /** The date when the movie will be returned. */
-    val returnDate: LocalDateTime,
+    val returnDate: LocalDate,
     /** The total cost of the rental. */
     val cost: BigDecimal
 ) {
@@ -43,9 +43,9 @@ data class Rental(
         /** The set of movies being rented. */
         val movieIds: Set<Int>,
         /** The date when the movie was picked up. */
-        val pickupDate: LocalDateTime,
+        val pickupDate: LocalDate,
         /** The date when the movie will be returned. */
-        val returnDate: LocalDateTime
+        val returnDate: LocalDate
     )
 
     /**
@@ -53,6 +53,6 @@ data class Rental(
      */
     data class Update(
         /** The updated date when the movie will be returned. */
-        val returnDate: LocalDateTime
+        val returnDate: LocalDate
     )
 }

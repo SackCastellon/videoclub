@@ -57,7 +57,7 @@ internal fun Route.auth() {
         }
 
         post("register") {
-            val (member, credential) = call.receiveOrNull<RegistrationInfo>()
+            val (member, credential) = call.receiveOrNull<UserRegistration>()
                 ?: return@post call.respond(HttpStatusCode.BadRequest)
 
             if (credential.username.length !in 4..24 || credential.password.length !in 8..128) {

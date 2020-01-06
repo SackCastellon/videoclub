@@ -23,52 +23,40 @@
           method="post">
           <header>
             <h1 class="title">
-              {{ isEdit ? 'Editing: ' : 'New shop' }}
-              <i
-                v-if="isEdit && !isLoading"
-                class="has-text-grey">{{ `Shop #${data.id}` }}</i>
+              Profile editor
             </h1>
           </header>
           <hr>
           <section>
             <b-field>
               <template slot="label">
-                Manager
+                Username
               </template>
               <b-input
-                v-model="data.manager"
+                :value="username"
                 :loading="isLoading"
-                icon="account-tie"
-                required />
+                readonly />
             </b-field>
+
             <b-field>
               <template slot="label">
-                City
+                Name
               </template>
               <b-input
-                v-model="data.city"
+                v-model="data.name"
                 :loading="isLoading"
-                icon="city"
                 required />
             </b-field>
-            <b-field>
+
+            <b-field v-if="isMember">
               <template slot="label">
-                Street
+                Age
               </template>
-              <b-input
-                v-model="data.street"
+              <b-numberinput
+                v-model="data.age"
                 :loading="isLoading"
-                icon="routes"
-                required />
-            </b-field>
-            <b-field>
-              <template slot="label">
-                Zip code
-              </template>
-              <b-input
-                v-model="data.zipCode"
-                :loading="isLoading"
-                icon="numeric"
+                min="1"
+                max="150"
                 required />
             </b-field>
           </section>
@@ -93,37 +81,45 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {Shop} from '@/data/Shop';
     import cloneDeep from 'lodash.clonedeep';
-    import {ShopModule} from '@/store/modules/shops';
-    import {patchShop, postShop} from '@/api/modules/shops';
+    import {Admin} from '@/data/Admin';
+    import {UserModule} from '@/store/modules/user';
+    import {Member} from '@/data/Member';
+    import {patchAdmin, patchMember} from '@/api/modules/user';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
     const BButton = () => import(/* webpackChunkName: "b_button" */ 'buefy/src/components/button/Button.vue');
+    const BNumberinput = () => import(/* webpackChunkName: "b_numberinput" */ 'buefy/src/components/numberinput/Numberinput.vue');
 
     @Component({
         components: {
             BField,
             BInput,
             BButton,
+            BNumberinput,
         },
     })
-    export default class ShopEditor extends Vue {
+    export default class ProfileEditor extends Vue {
 
         // ========== Props ========== //
 
 
         // ========== Data ========== //
 
-        public data: Shop = new Shop();
+        public data: Member | Admin = null!;
         public isLoading: boolean = true;
 
 
         // ========== Computed ========== //
 
-        public get isEdit(): boolean {
-            return this.$route.name === 'shop-edit';
+        public get isMember(): boolean {
+            return UserModule.isMember;
+        }
+
+
+        public get username(): string {
+            return UserModule.user?.username || '';
         }
 
 
@@ -131,20 +127,10 @@
 
         // noinspection JSUnusedGlobalSymbols
         public async created() {
-            if (this.isEdit) {
-                const id = parseInt(this.$route.params['id']);
-                if (isNaN(id)) {
-                    this.$buefy.toast.open({message: 'Invalid shop ID', type: 'is-warning'});
-                    return this.$router.push({name: 'shop-list'});
-                }
-
-                const shop = await ShopModule.get(id);
-
-                if (shop) this.data = cloneDeep(shop);
-                else {
-                    this.$buefy.toast.open({message: `No shop with ID ${id} was found`, type: 'is-warning'});
-                    return this.$router.push({name: 'shop-list'});
-                }
+            if (UserModule.isAdmin) {
+                this.data = cloneDeep(UserModule.admin!!);
+            } else {
+                this.data = cloneDeep(UserModule.member!!);
             }
 
             this.isLoading = false;
@@ -161,25 +147,18 @@
                 confirmText: 'Close editor',
                 type: 'is-danger',
                 hasIcon: true,
-                onConfirm: () => {
-                    if (this.isEdit) {
-                        this.$router.push({name: 'shop-view', params: {id: this.data.id.toString()}});
-                    } else {
-                        this.$router.push({name: 'shop-list'});
-                    }
-                },
+                onConfirm: () => this.$router.push({name: 'profile-view'}),
             });
         }
 
         public async onSave() {
-            if (this.isEdit) {
-                await patchShop(this.data.id, this.data);
-                await ShopModule.load();
-                await this.$router.push({name: 'shop-view', params: {id: this.data.id.toString()}});
+            if (this.data instanceof Admin) {
+                await patchAdmin(this.data);
             } else {
-                const {data} = await postShop(this.data);
-                await this.$router.push({name: 'shop-view', params: {id: data.shopId.toString()}});
+                await patchMember(this.data);
             }
+            await UserModule.load();
+            await this.$router.push({name: 'profile-view'});
         }
 
 

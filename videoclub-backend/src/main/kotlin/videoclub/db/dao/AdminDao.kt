@@ -44,4 +44,10 @@ interface AdminDao {
      * Returns the id of the new admin if it was added succesfully, `null` otherwise.
      */
     suspend fun add(userId: Int, admin: Admin.New): Int?
+
+    /**
+     * Updates the information of the [Admin] with the given [userId].
+     * Returns `true` if the update was successful, `false` otherwise.
+     */
+    suspend fun update(userId: Int, admin: Admin.Update): Boolean
 }

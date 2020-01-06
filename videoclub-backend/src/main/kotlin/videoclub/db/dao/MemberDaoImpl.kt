@@ -51,6 +51,15 @@ internal object MemberDaoImpl : MemberDao, KoinComponent {
         }.getOrNull(Members.id)
     }
 
+    override suspend fun update(userId: Int, member: Member.Update): Boolean = dbQuery {
+        val update = Members.update({ Members.id eq userId }) {
+            it[name] = member.name
+            it[age] = member.age
+        }
+
+        update > 0
+    }
+
     private fun toMember(it: ResultRow) = Member(
         id = it[Members.id],
         name = it[Members.name],

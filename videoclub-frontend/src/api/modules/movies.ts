@@ -18,6 +18,7 @@ import {AxiosResponse} from 'axios';
 import api from '@/api';
 import {Movie, MovieNew, MovieUpdate} from '@/data/Movie';
 import {strip} from '@/util/Strip';
+import {converter} from '@/util/JsonConverter';
 
 export const getMovie = (id: number): Promise<AxiosResponse<Movie>> =>
     api.get(`movie/${id}`);
@@ -31,8 +32,11 @@ export const getNewMovies = (): Promise<AxiosResponse<Array<Movie>>> =>
 export const getTopMovies = (): Promise<AxiosResponse<Array<Movie>>> =>
     api.get('movie/top');
 
+export const getRentalMovies = (id: number): Promise<AxiosResponse<Array<Movie>>> =>
+    api.get(`movie/rental/${id}`);
+
 export const postMovie = (movie: MovieNew): Promise<AxiosResponse<{ movieId: number }>> =>
-    api.post('movie', strip(movie, MovieNew));
+    api.post('movie', converter.serializeObject(strip(movie, MovieNew)));
 
 export const patchMovie = (id: number, movie: MovieUpdate): Promise<AxiosResponse> =>
-    api.patch(`movie/${id}`, strip(movie, MovieUpdate));
+    api.patch(`movie/${id}`, converter.serializeObject(strip(movie, MovieUpdate)));

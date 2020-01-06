@@ -17,7 +17,7 @@
 package videoclub.data
 
 import java.math.BigDecimal
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 /**
  * A stat about the rentals of a given [Member].
@@ -28,7 +28,7 @@ data class Stat(
     /** The id of the member this sta is about */
     val memberId: Int,
     /** The date when this stat was created. */
-    val creationDate: LocalDateTime,
+    val creationDate: LocalDate,
     /** The total amount of money spent. */
     val totalSpent: BigDecimal
 ) {
@@ -39,6 +39,6 @@ data class Stat(
         /** The id of the member this sta is about */
         val memberId: Int,
         /** The date when this stat was created. */
-        val creationDate: LocalDateTime
+        val creationDate: LocalDate
     )
 }

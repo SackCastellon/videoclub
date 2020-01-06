@@ -16,10 +16,18 @@
 
 import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
-import {getUserData} from '@/api/modules/user';
+import {getUser} from '@/api/modules/user';
 import {AuthModule} from '@/store/modules/auth';
 import {converter} from '@/util/JsonConverter';
-import {User} from '@/data/User';
+import {User, UserType} from '@/data/User';
+import {Admin} from '@/data/Admin';
+import {Member} from '@/data/Member';
+
+interface UserState {
+    user: User | null;
+    admin: Admin | null;
+    member: Member | null;
+}
 
 @Module({
     dynamic: true,
@@ -27,18 +35,39 @@ import {User} from '@/data/User';
     name: 'user',
     namespaced: true,
 })
-class UserStore extends VuexModule {
+class UserStore extends VuexModule implements UserState {
 
     public user: User | null = null;
+    public admin: Admin | null = null;
+    public member: Member | null = null;
 
-    @MutationAction({mutate: ['user']})
-    public async load() {
+    public get isAdmin(): boolean {
+        return this.user?.type === UserType.ADMIN;
+    }
+
+    public get isMember(): boolean {
+        return this.user?.type === UserType.MEMBER;
+    }
+
+    public get isLoaded(): boolean {
+        return this.user !== null && (this.admin !== null || this.member !== null);
+    }
+
+    @MutationAction({mutate: ['user', 'admin', 'member']})
+    public async load(): Promise<UserState> {
         if (AuthModule.isAuthenticated) {
-            const response = await getUserData();
-            const data = converter.deserializeObject(response.data, User);
-            return {user: data};
+            const {data} = await getUser();
+            const user = converter.deserializeObject(data.user, User);
+            switch (user.type) {
+                case UserType.ADMIN:
+                    const admin = converter.deserializeObject(data.admin, Admin);
+                    return {user, admin, member: null};
+                case UserType.MEMBER:
+                    const member = converter.deserializeObject(data.member, Member);
+                    return {user, admin: null, member};
+            }
         } else {
-            return {user: null};
+            return {user: null, admin: null, member: null};
         }
     }
 }

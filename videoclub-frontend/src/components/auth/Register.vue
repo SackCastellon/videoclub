@@ -38,7 +38,7 @@
         <b-field label="Age">
           <b-numberinput
             v-model="info.member.age"
-            min="0"
+            min="1"
             max="150"
             placeholder="Your age"
             required />
@@ -74,7 +74,7 @@
 </template>
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {IRegistrationInfo, register} from '@/api/modules/auth';
+    import {register, UserRegistration} from '@/api/modules/auth';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
@@ -93,7 +93,7 @@
 
         // ========== Data ========== //
 
-        public info: IRegistrationInfo = {
+        public info: UserRegistration = {
             member: {
                 name: '',
                 age: 0,

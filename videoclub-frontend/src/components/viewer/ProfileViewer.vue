@@ -39,6 +39,7 @@
             :loading="isLoading"
             readonly />
         </b-field>
+
         <b-field>
           <template slot="label">
             Name
@@ -48,7 +49,8 @@
             :loading="isLoading"
             readonly />
         </b-field>
-        <b-field v-if="!isAdmin">
+
+        <b-field v-if="isMember">
           <template slot="label">
             Age
           </template>
@@ -57,6 +59,16 @@
             :loading="isLoading"
             readonly />
         </b-field>
+        <hr>
+        <div class="buttons is-right">
+          <b-button
+            type="is-primary"
+            outlined
+            :loading="isLoading"
+            @click="onEdit">
+            Edit information
+          </b-button>
+        </div>
       </div>
     </div>
   </div>
@@ -64,10 +76,7 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {MemberModule} from '@/store/modules/member';
     import {UserModule} from '@/store/modules/user';
-    import {UserType} from '@/data/User';
-    import {AdminModule} from '@/store/modules/admin';
 
     const BTag = () => import(/* webpackChunkName: "b_tag" */ 'buefy/src/components/tag/Tag.vue');
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
@@ -89,58 +98,56 @@
 
         // ========== Data ========== //
 
+        public isLoading: boolean = true;
+
 
         // ========== Computed ========== //
 
-        public get name(): string {
-            if (this.isAdmin) {
-                return AdminModule.admin?.name || '';
-            } else {
-                return MemberModule.member?.name || '';
-            }
+        public get isAdmin(): boolean {
+            return UserModule.isAdmin;
         }
 
-        public get age(): string | number {
-            if (this.isAdmin) {
-                return '';
-            } else {
-                const age = MemberModule.member?.age || -1;
-                return age < 0 ? '' : age;
-            }
+        public get isMember(): boolean {
+            return UserModule.isMember;
         }
+
 
         public get username(): string {
             return UserModule.user?.username || '';
         }
 
-        public get isLoading(): boolean {
-            if (this.isAdmin) {
-                return AdminModule.admin === null;
+        public get name(): string {
+            if (UserModule.isAdmin) {
+                return UserModule.admin?.name || '';
             } else {
-                return MemberModule.member === null;
+                return UserModule.member?.name || '';
             }
         }
 
-        public get isAdmin(): boolean {
-            return UserModule.user?.type === UserType.ADMIN;
+        public get age(): string {
+            if (UserModule.isAdmin) {
+                return '';
+            } else {
+                return UserModule.member?.age?.toString() || '';
+            }
         }
 
 
         // ========== Lifecycle Hooks ========== //
 
         // noinspection JSUnusedGlobalSymbols
-        public created() {
-            if (this.isLoading) {
-                if (this.isAdmin) {
-                    AdminModule.load();
-                } else {
-                    MemberModule.load();
-                }
-            }
+        public async created() {
+            if (!UserModule.isLoaded) await UserModule.load();
+
+            this.isLoading = false;
         }
 
 
         // ========== Methods ========== //
+
+        public onEdit() {
+            this.$router.push({name: 'profile-edit'});
+        }
 
 
         // ========== Watchers ========== //

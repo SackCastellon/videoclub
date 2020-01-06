@@ -31,6 +31,7 @@
           <b-datepicker
             v-model="data.pickupDate"
             icon="calendar-today"
+            editable
             required />
         </b-field>
 
@@ -42,6 +43,7 @@
             v-model="data.returnDate"
             :min-date="minDate"
             icon="calendar"
+            editable
             required />
         </b-field>
       </form>

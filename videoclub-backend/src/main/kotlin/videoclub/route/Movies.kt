@@ -53,6 +53,16 @@ internal fun Route.movies() {
             call.respond(HttpStatusCode.OK, movies)
         }
 
+        get("rental/{id}") {
+            val id = call.parameters["id"]?.toIntOrNull()
+                ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+            val movie = movieDao.getByRentalId(id)
+                ?: return@get call.respond(HttpStatusCode.NotFound)
+
+            call.respond(HttpStatusCode.OK, movie)
+        }
+
         get("{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
                 ?: return@get call.respond(HttpStatusCode.BadRequest)

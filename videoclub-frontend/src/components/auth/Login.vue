@@ -58,8 +58,7 @@
 </template>
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator';
-    import {ILoginInfo, login} from '@/api/modules/auth';
-    import {UserModule} from '@/store/modules/user';
+    import {login, UserCredential} from '@/api/modules/auth';
 
     const BField = () => import(/* webpackChunkName: "b_field" */ 'buefy/src/components/field/Field.vue');
     const BInput = () => import(/* webpackChunkName: "b_input" */ 'buefy/src/components/input/Input.vue');
@@ -76,7 +75,7 @@
 
         // ========== Data ========== //
 
-        protected info: ILoginInfo = {
+        protected info: UserCredential = {
             username: '',
             password: '',
         };
@@ -94,7 +93,6 @@
             try {
                 await login(this.info);
                 this.clear();
-                await UserModule.load();
                 this.$buefy.toast.open({
                     type: 'is-success',
                     message: 'Signed in successfully',

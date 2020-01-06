@@ -43,4 +43,10 @@ interface MemberDao {
      * Returns the id of the new member if it was added succesfully, `null` otherwise.
      */
     suspend fun add(userId: Int, member: Member.New): Int?
+
+    /**
+     * Updates the information of the [Member] with the given [userId].
+     * Returns `true` if the update was successful, `false` otherwise.
+     */
+    suspend fun update(userId: Int, member: Member.Update): Boolean
 }
