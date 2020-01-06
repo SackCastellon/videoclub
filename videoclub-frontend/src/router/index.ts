@@ -153,7 +153,10 @@ router.beforeEach(async (to, from, next) => {
                 return next({name: 'login', query: {next: to.fullPath}});
             }
         } else {
-            return next(nextAuthorizedRoute(to, userType));
+            const newRoute = nextAuthorizedRoute(to, userType);
+            if (newRoute.name !== to.name) {
+                return next(newRoute);
+            }
         }
     }
 
@@ -162,8 +165,8 @@ router.beforeEach(async (to, from, next) => {
 
 export default router;
 
-export const nextAuthorizedRoute: (route: Route, userType?: UserType) => RawLocation = (route, userType) => {
-    const nextRoute = route.matched.reverse().find(it => {
+export const nextAuthorizedRoute: (route: Route, userType?: UserType) => Location = (route, userType) => {
+    const nextRoute = route.matched.slice().reverse().find(it => {
         const nextMode = it.meta.requiredLogin as LoginMode | undefined;
         if (nextMode === undefined) {
             return true;
