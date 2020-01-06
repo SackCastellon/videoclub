@@ -149,7 +149,9 @@ router.beforeEach(async (to, from, next) => {
 
     if (mode !== undefined) {
         if (!AuthModule.isAuthenticated) {
-            return next({name: 'login', query: {next: to.fullPath}});
+            if (mode !== LoginMode.NONE) {
+                return next({name: 'login', query: {next: to.fullPath}});
+            }
         } else {
             return next(nextAuthorizedRoute(to, userType));
         }
