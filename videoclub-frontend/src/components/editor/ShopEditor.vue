@@ -39,6 +39,7 @@
                 v-model="data.manager"
                 :loading="isLoading"
                 icon="account-tie"
+                :maxlength="150"
                 required />
             </b-field>
             <b-field>
@@ -49,6 +50,7 @@
                 v-model="data.city"
                 :loading="isLoading"
                 icon="city"
+                :maxlength="150"
                 required />
             </b-field>
             <b-field>
@@ -59,6 +61,7 @@
                 v-model="data.street"
                 :loading="isLoading"
                 icon="routes"
+                :maxlength="150"
                 required />
             </b-field>
             <b-field>
@@ -69,6 +72,7 @@
                 v-model="data.zipCode"
                 :loading="isLoading"
                 icon="numeric"
+                :maxlength="5"
                 required />
             </b-field>
           </section>

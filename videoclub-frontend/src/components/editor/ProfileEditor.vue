@@ -45,6 +45,7 @@
               <b-input
                 v-model="data.name"
                 :loading="isLoading"
+                :maxlength="150"
                 required />
             </b-field>
 
@@ -55,8 +56,8 @@
               <b-numberinput
                 v-model="data.age"
                 :loading="isLoading"
-                min="1"
-                max="150"
+                :min="1"
+                :max="150"
                 required />
             </b-field>
           </section>

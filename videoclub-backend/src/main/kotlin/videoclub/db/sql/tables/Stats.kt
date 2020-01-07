@@ -23,7 +23,7 @@ internal object Stats : Table() {
     val id = integer("id").autoIncrement()
     val memberId = integer("member_id") references Members.id
     val creationDate = date("creation_date")
-    val totalSpent = decimal("total_spent", 8, 2)
+    val totalSpent = decimal("total_spent", 15, 2)
 
     override val primaryKey = PrimaryKey(id)
 

@@ -39,6 +39,7 @@
                 v-model="data.name"
                 :loading="isLoading"
                 icon="movie"
+                :maxlength="150"
                 required />
             </b-field>
 
@@ -50,7 +51,7 @@
                 v-model="data.director"
                 :loading="isLoading"
                 icon="account-tie"
-                required />
+                :maxlength="150" />
             </b-field>
 
             <b-field>
@@ -77,7 +78,7 @@
               </template>
               <b-numberinput
                 v-model="data.price"
-                :min="0.1"
+                :min="1"
                 :step="0.1"
                 :max="100"
                 :loading="isLoading"

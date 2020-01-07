@@ -26,7 +26,7 @@ internal object Movies : Table() {
     val name = varchar("name", 150)
     val director = varchar("director", 150).nullable()
     val releaseDate = date("release_date")
-    val price = decimal("price", 8, 2).check { it greater BigDecimal.ZERO }
+    val price = decimal("price", 5, 2).check { it greater BigDecimal.ZERO }
 
     override val primaryKey = PrimaryKey(id)
 }

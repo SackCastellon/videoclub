@@ -32,6 +32,7 @@
             v-model="info.username"
             v-focus
             placeholder="Your username"
+            :maxlength="24"
             required />
         </b-field>
 
@@ -41,6 +42,7 @@
             type="password"
             password-reveal
             placeholder="Your password"
+            :maxlength="128"
             required />
         </b-field>
       </section>

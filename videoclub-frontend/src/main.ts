@@ -41,7 +41,6 @@ config.defaultDateFormatter = (date: Date) => moment(date).format(dateFormat);
 config.defaultDateParser = (date: string) => moment(date, dateFormat).toDate();
 config.defaultDateCreator = () => moment().toDate();
 config.defaultFirstDayOfWeek = 1;
-config.defaultUseHtml5Validation = false;
 
 
 Vue.use(VueCarousel);

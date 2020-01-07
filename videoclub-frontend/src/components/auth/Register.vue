@@ -32,31 +32,37 @@
             v-model="info.member.name"
             v-focus
             placeholder="Your full name"
+            :maxlength="150"
             required />
         </b-field>
 
         <b-field label="Age">
           <b-numberinput
             v-model="info.member.age"
-            min="1"
-            max="150"
+            :min="1"
+            :max="150"
             placeholder="Your age"
             required />
         </b-field>
 
-        <b-field label="Username">
+        <b-field
+          label="Username"
+          message="The username must be between 4 and 24 characters long">
           <b-input
             v-model="info.credential.username"
             placeholder="Your username"
+            :maxlength="24"
             required />
         </b-field>
 
-        <b-field label="Password">
+        <b-field label="Password"
+                 message="The password must be between 8 and 128 characters long">
           <b-input
             v-model="info.credential.password"
             type="password"
             password-reveal
             placeholder="Your password"
+            :maxlength="128"
             required />
         </b-field>
       </section>

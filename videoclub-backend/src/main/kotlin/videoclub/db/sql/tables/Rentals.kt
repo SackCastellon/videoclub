@@ -25,7 +25,7 @@ internal object Rentals : Table() {
     val memberId = integer("member_id") references Members.id
     val pickupDate = date("pickup_date")
     val returnDate = date("return_date")
-    val cost = decimal("cost", 8, 2).check { it greater BigDecimal.ZERO }
+    val cost = decimal("cost", 10, 2).check { it greater BigDecimal.ZERO }
 
     override val primaryKey = PrimaryKey(id)
 }
