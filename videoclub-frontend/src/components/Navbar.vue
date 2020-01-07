@@ -68,6 +68,20 @@
           </p>
         </div>
       </b-navbar-item>
+
+      <b-navbar-item
+        v-if="isAdmin"
+        tag="router-link"
+        :to="{ name: 'stat-list' }">
+        <div class="d-flex align-items-center">
+          <b-icon
+            icon="file-chart"
+            class="mr-1" />
+          <p>
+            Stats
+          </p>
+        </div>
+      </b-navbar-item>
     </template>
 
     <template v-slot:end>

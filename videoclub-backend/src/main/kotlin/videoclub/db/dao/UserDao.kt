@@ -31,6 +31,11 @@ interface UserDao {
     suspend fun count(): Int
 
     /**
+     * Returns a list with all the users.
+     */
+    suspend fun getAll(): List<User>
+
+    /**
      * Returns the user with the given [id], if any.
      */
     suspend fun getById(id: Int): User?

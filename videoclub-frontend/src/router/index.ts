@@ -151,6 +151,30 @@ const routes: RouteConfig[] = [
         ],
     },
     {
+        path: '/stats',
+        name: 'stat-list',
+        component: () => import(/* webpackChunkName: "stats" */ '@/views/Stats.vue'),
+        meta: {
+            requiredLogin: LoginMode.ADMIN,
+        },
+        children: [
+            {
+                path: 'new',
+                name: 'stat-create',
+                meta: {
+                    requiredLogin: LoginMode.ADMIN,
+                },
+            },
+            {
+                path: ':id',
+                name: 'stat-view',
+                meta: {
+                    requiredLogin: LoginMode.ADMIN,
+                },
+            },
+        ],
+    },
+    {
         path: '/cart',
         name: 'cart',
         component: () => import(/* webpackChunkName: "cart" */ '@/views/Cart.vue'),

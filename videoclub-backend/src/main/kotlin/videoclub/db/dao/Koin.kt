@@ -25,4 +25,5 @@ internal val daoModule = module {
     single<MovieDao> { MovieDaoImpl }
     single<ShopDao> { ShopDaoImpl }
     single<RentalDao> { RentalDaoImpl }
+    single<StatDao> { StatDaoImpl }
 }

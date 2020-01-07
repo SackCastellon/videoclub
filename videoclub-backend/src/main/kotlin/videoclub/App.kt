@@ -157,6 +157,7 @@ fun Application.module() {
             movies()
             shops()
             rentals()
+            stats()
         }
     }
 

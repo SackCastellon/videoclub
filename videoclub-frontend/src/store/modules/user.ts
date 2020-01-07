@@ -16,7 +16,7 @@
 
 import {getModule, Module, MutationAction, VuexModule} from 'vuex-module-decorators';
 import store from '@/store';
-import {getUser} from '@/api/modules/user';
+import {getCurrentUser} from '@/api/modules/user';
 import {AuthModule} from '@/store/modules/auth';
 import {converter} from '@/util/JsonConverter';
 import {User, UserType} from '@/data/User';
@@ -56,7 +56,7 @@ class UserStore extends VuexModule implements UserState {
     @MutationAction({mutate: ['user', 'admin', 'member']})
     public async load(): Promise<UserState> {
         if (AuthModule.isAuthenticated) {
-            const {data} = await getUser();
+            const {data} = await getCurrentUser();
             const user = converter.deserializeObject(data.user, User);
             switch (user.type) {
                 case UserType.ADMIN:

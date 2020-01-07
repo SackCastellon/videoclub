@@ -37,6 +37,16 @@ internal object UserDaoImpl : UserDao, KoinComponent {
         Users.selectAll().count()
     }
 
+    override suspend fun getAll(): List<User> = dbQuery {
+        Users.innerJoin(Members).slice(publicColumns).selectAll().map {
+            User(
+                id = it[Users.id],
+                username = it[Users.username],
+                type = User.Type.MEMBER
+            )
+        }
+    }
+
     override suspend fun getByCredential(credential: UserCredential): User? = dbQuery {
         val (id, username, encodedPassword) = Users
             .select { Users.username eq credential.username }

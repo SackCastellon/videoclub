@@ -22,8 +22,14 @@ import {Admin, AdminUpdate} from '@/data/Admin';
 import {strip} from '@/util/Strip';
 import {converter} from '@/util/JsonConverter';
 
-export const getUser = (): Promise<AxiosResponse<{ user: User, member?: Member, admin?: Admin }>> =>
-    api.get('user');
+export const getUser = (id: number): Promise<AxiosResponse<User>> =>
+    api.get(`user/${id}`);
+
+export const getUsers = (): Promise<AxiosResponse<Array<User>>> =>
+    api.get(`user`);
+
+export const getCurrentUser = (): Promise<AxiosResponse<{ user: User, member?: Member, admin?: Admin }>> =>
+    api.get('user/current');
 
 export const patchMember = (member: MemberUpdate): Promise<AxiosResponse> =>
     api.patch('user', converter.serializeObject(strip(member, MemberUpdate)));

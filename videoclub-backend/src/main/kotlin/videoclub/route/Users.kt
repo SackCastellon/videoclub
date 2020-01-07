@@ -44,6 +44,36 @@ internal fun Route.users() {
     authenticate {
         route("user") {
             get {
+                val (_, userType) = call.principal<UserPrincipal>()
+                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                if (userType != ADMIN) {
+                    return@get call.respond(HttpStatusCode.Forbidden)
+                }
+
+                val usernames = userDao.getAll()
+
+                call.respond(HttpStatusCode.OK, usernames)
+            }
+
+            get("{id}") {
+                val (_, userType) = call.principal<UserPrincipal>()
+                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                if (userType != ADMIN) {
+                    return@get call.respond(HttpStatusCode.Forbidden)
+                }
+
+                val userId = call.parameters["id"]?.toIntOrNull()
+                    ?: return@get call.respond(HttpStatusCode.BadRequest)
+
+                val username = userDao.getById(userId)
+                    ?: return@get call.respond(HttpStatusCode.Forbidden)
+
+                call.respond(HttpStatusCode.OK, username)
+            }
+
+            get("current") {
                 val (userId, userType) = call.principal<UserPrincipal>()
                     ?: return@get call.respond(HttpStatusCode.Forbidden)
 
@@ -107,6 +137,7 @@ internal fun Route.users() {
                     }
                 }
             }
+
         }
     }
 }

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package videoclub.db.sql.tables
+import {AxiosResponse} from 'axios';
+import api from '@/api';
+import {Stat, StatNew} from '@/data/Stat';
+import {strip} from '@/util/Strip';
+import {converter} from '@/util/JsonConverter';
 
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.`java-time`.date
+export const getStat = (id: number): Promise<AxiosResponse<Stat>> =>
+    api.get(`stat/${id}`);
 
-internal object Stats : Table() {
-    val id = integer("id").autoIncrement()
-    val memberId = integer("member_id") references Members.id
-    val creationDate = date("creation_date")
-    val totalSpent = decimal("total_spent", 8, 2)
+export const getStats = (): Promise<AxiosResponse<Array<Stat>>> =>
+    api.get('stat');
 
-    override val primaryKey = PrimaryKey(id)
+export const postStat = (stat: StatNew): Promise<AxiosResponse<{ statId: number }>> =>
+    api.post('stat', converter.serializeObject(strip(stat, StatNew)));
 
-    init {
-        uniqueIndex(memberId, creationDate)
-    }
-}
